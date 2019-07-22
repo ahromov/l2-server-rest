@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ua.com.zzz.hromov.login.dto.AccountDto;
 import ua.com.zzz.hromov.login.model.Account;
-import ua.com.zzz.hromov.login.service.impl.AccountService;
+import ua.com.zzz.hromov.login.service.AccountService;
 
 @CrossOrigin(origins = "http://hromovl2test.zzz.com.ua", allowedHeaders = "*")
 @RestController
@@ -124,13 +124,16 @@ public class AccountController {
 		    e.printStackTrace();
 		}
 
-		if (account.getPassword().equals(encodedOldPassword) && newFirstPassword.equals(newSecondPassword)) {
-		    account.setPassword(encodedNewPassword);
-		    accountService.update(account);
-		    return new AccountDto("Success");
-		} else {
-		    return new AccountDto("No match");
-		}
+		if (account.getPassword().equals(encodedOldPassword)) {
+		    if (newFirstPassword.equals(newSecondPassword)) {
+			account.setPassword(encodedNewPassword);
+			accountService.update(account);
+			return new AccountDto("Success");
+		    } else {
+			return new AccountDto("No match");
+		    }
+		} else 
+		    return new AccountDto("Invalid pass");
 	    } catch (NoSuchElementException e) {
 		e.getMessage();
 		return new AccountDto("Not exists");

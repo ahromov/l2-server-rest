@@ -33,6 +33,7 @@ public class GameServerController {
 	    socket.connect(address, timeout);
 	    return new GameServerDto("ON", service.countOnlineChars());
 	} catch (IOException e) {
+	    e.getMessage();
 	    return new GameServerDto();
 	}
     }

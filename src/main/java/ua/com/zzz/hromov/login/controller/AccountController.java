@@ -6,6 +6,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.NoSuchElementException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,9 +18,11 @@ import ua.com.zzz.hromov.login.dto.AccountDto;
 import ua.com.zzz.hromov.login.model.Account;
 import ua.com.zzz.hromov.login.service.AccountService;
 
-@CrossOrigin(origins = "http://hromovl2test.zzz.com.ua", allowedHeaders = "*")
+@CrossOrigin(origins = "http://la2dev.000webhostapp.com", allowedHeaders = "*")
 @RestController
 public class AccountController {
+
+    private static Logger logger = LoggerFactory.getLogger(AccountController.class);
 
     @Autowired
     AccountService accountService;
@@ -33,24 +37,24 @@ public class AccountController {
 		try {
 		    md = MessageDigest.getInstance("SHA");
 		} catch (NoSuchAlgorithmException e) {
-		    e.printStackTrace();
+		    logger.error(e.getMessage(), e);
 		} catch (NullPointerException e) {
-		    e.printStackTrace();
+		    logger.error(e.getMessage(), e);
 		}
 
 		String encodedPassword = null;
 		try {
 		    encodedPassword = Base64.getEncoder().encodeToString(md.digest(password.getBytes("UTF-8")));
 		} catch (UnsupportedEncodingException e) {
-		    e.printStackTrace();
+		    logger.error(e.getMessage(), e);
 		}
 
 		try {
 		    accountService.get(login);
 		    return new AccountDto("Exists");
 		} catch (NoSuchElementException e) {
-		    e.getMessage();
 		    accountService.add(new Account(login, encodedPassword, email));
+		    logger.error(e.getMessage());
 		    return new AccountDto("Success");
 		}
 	    } else
@@ -70,14 +74,14 @@ public class AccountController {
 	    try {
 		md = MessageDigest.getInstance("SHA");
 	    } catch (NoSuchAlgorithmException e) {
-		e.getMessage();
+		logger.error(e.getMessage(), e);
 	    }
 
 	    String encodedPassword = null;
 	    try {
 		encodedPassword = Base64.getEncoder().encodeToString(md.digest(password.getBytes("UTF-8")));
 	    } catch (UnsupportedEncodingException e) {
-		e.getMessage();
+		logger.error(e.getMessage(), e);
 	    }
 
 	    if (account.getPassword().equals(encodedPassword)) {
@@ -85,7 +89,7 @@ public class AccountController {
 	    } else
 		return new AccountDto("Incorrect password");
 	} catch (NoSuchElementException e) {
-	    e.getMessage();
+	    logger.error(e.getMessage());
 	    return new AccountDto("Not exists");
 	}
     }
@@ -106,14 +110,14 @@ public class AccountController {
 		try {
 		    md = MessageDigest.getInstance("SHA");
 		} catch (NoSuchAlgorithmException e) {
-		    e.getMessage();
+		    logger.error(e.getMessage(), e);
 		}
 
 		String encodedOldPassword = null;
 		try {
 		    encodedOldPassword = Base64.getEncoder().encodeToString(md.digest(oldPassword.getBytes("UTF-8")));
 		} catch (UnsupportedEncodingException e) {
-		    e.getMessage();
+		    logger.error(e.getMessage(), e);
 		}
 
 		String encodedNewPassword = null;
@@ -121,7 +125,7 @@ public class AccountController {
 		    encodedNewPassword = Base64.getEncoder()
 			    .encodeToString(md.digest(newFirstPassword.getBytes("UTF-8")));
 		} catch (UnsupportedEncodingException e) {
-		    e.printStackTrace();
+		    logger.error(e.getMessage(), e);
 		}
 
 		if (account.getPassword().equals(encodedOldPassword)) {
@@ -132,10 +136,10 @@ public class AccountController {
 		    } else {
 			return new AccountDto("No match");
 		    }
-		} else 
+		} else
 		    return new AccountDto("Invalid pass");
 	    } catch (NoSuchElementException e) {
-		e.getMessage();
+		logger.error(e.getMessage());
 		return new AccountDto("Not exists");
 	    }
 	} else {

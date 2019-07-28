@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,10 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 import ua.com.zzz.hromov.game.dto.GameServerDto;
 import ua.com.zzz.hromov.game.service.CharService;
 
-@CrossOrigin(origins = "http://hromovl2test.zzz.com.ua", allowedHeaders = "*")
+@CrossOrigin(origins = "http://la2dev.000webhostapp.com", allowedHeaders = "*")
 @RestController
 public class GameServerController {
 
+    private static Logger logger = LoggerFactory.getLogger(GameServerController.class);
     private static InetSocketAddress address;
     private static Integer timeout;
 
@@ -33,7 +36,7 @@ public class GameServerController {
 	    socket.connect(address, timeout);
 	    return new GameServerDto("ON", service.countOnlineChars());
 	} catch (IOException e) {
-	    e.getMessage();
+	    logger.error(e.getMessage());
 	    return new GameServerDto();
 	}
     }

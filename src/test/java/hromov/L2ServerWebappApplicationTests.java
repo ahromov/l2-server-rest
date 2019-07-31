@@ -1,4 +1,4 @@
-package ua.com.zzz.hromov;
+package hromov;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

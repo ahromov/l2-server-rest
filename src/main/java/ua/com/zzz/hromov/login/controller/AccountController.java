@@ -6,9 +6,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.NoSuchElementException;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,6 +31,9 @@ public class AccountController {
 
     @Autowired
     AccountService accountService;
+
+    @Autowired
+    private JavaMailSender javaMailSender;
 
     @PostMapping("/reg")
     public AccountDto registration(@RequestParam("login") String login, @RequestParam("email") String email,
@@ -55,7 +63,8 @@ public class AccountController {
 		} catch (NoSuchElementException e) {
 		    accountService.add(new Account(login, encodedPassword, email));
 		    logger.error(e.getMessage());
-		    return new AccountDto("Success");
+		    if (sendEmail(login, email, password))
+			return new AccountDto("Success", true);
 		}
 	    } else
 		return new AccountDto("No match");
@@ -145,6 +154,29 @@ public class AccountController {
 	} else {
 	    return new AccountDto("Invalid data");
 	}
+    }
+
+    private boolean sendEmail(String login, String email, String password) {
+	MimeMessage msg = javaMailSender.createMimeMessage();
+
+	MimeMessageHelper helper;
+	try {
+	    helper = new MimeMessageHelper(msg, true);
+	    helper.setTo(email);
+	    helper.setSubject("Welcome " + login + "!");
+	    helper.setText("<h1>Поздравляем!</h1>" + "<p>Вы были зарегистрированы на нешем сервере!</p>"
+		    + "<p>Для начала игры:<br>"
+		    + "<a href=\"https://drive.google.com/drive/folders/1a9jqbmIrBIJxJzH0ADN5LaAdtMbB_zKo\">Скачайте</a> патч или полный клиент(он уже настроен)<br>"
+		    + "Для входа в игру с клиента используйте ваши:<br>" + "Логин: " + login + "<br>" + "Пароль: "
+		    + password + "</p>" + "<p>Приятной игры!:)</p>", true);
+	} catch (MessagingException e) {
+	    logger.error(e.getMessage());
+	    return false;
+	}
+
+	javaMailSender.send(msg);
+
+	return true;
     }
 
 }

@@ -30,7 +30,7 @@ public class AccountController {
     private static Logger logger = LoggerFactory.getLogger(AccountController.class);
 
     @Autowired
-    AccountService accountService;
+    private AccountService accountService;
 
     @Autowired
     private JavaMailSender javaMailSender;

@@ -1,7 +1,5 @@
 package ua.com.zzz.hromov.login.service;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +12,8 @@ public class AccountService {
     @Autowired
     private AccountRepository repository;
 
-    public Account add(Account Account) {
-	return repository.save(Account);
-    }
-
-    public void delete(String id) {
-	repository.deleteById(id);
+    public Account add(Account account) {
+	return repository.save(account);
     }
 
     public Account get(String login) {
@@ -32,10 +26,6 @@ public class AccountService {
 
     public Account getByEmail(String email) {
 	return repository.findByEmail(email);
-    }
-
-    public List<Account> getAll() {
-	return repository.findAll();
     }
 
 }

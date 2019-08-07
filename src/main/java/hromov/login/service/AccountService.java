@@ -28,4 +28,8 @@ public class AccountService {
 	return repository.findByEmail(email);
     }
 
+    public Long countAccounts() {
+	return repository.countAccounts();
+    }
+
 }

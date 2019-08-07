@@ -11,10 +11,13 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import hromov.game.dto.CharsDto;
 import hromov.game.dto.GameServerDto;
 import hromov.game.service.CharService;
+import hromov.game.service.ClanService;
+import hromov.game.service.HeroService;
 
-@CrossOrigin(origins = "http://la2dev.000webhostapp.com", allowedHeaders = "*")
+@CrossOrigin(origins = "https://93.170.116.143", allowedHeaders = "*")
 @RestController
 public class GameServerController {
 
@@ -23,22 +26,34 @@ public class GameServerController {
     private static Integer timeout;
 
     static {
-	address = new InetSocketAddress("127.0.0.1", 7777);
+	address = new InetSocketAddress("93.170.116.143", 7777);
 	timeout = 3000;
     }
 
     @Autowired
-    CharService service;
+    CharService characterService;
+
+    @Autowired
+    HeroService heroService;
+
+    @Autowired
+    ClanService clanService;
 
     @GetMapping("/status")
     public GameServerDto getServerStatus() {
 	try (Socket socket = new Socket()) {
 	    socket.connect(address, timeout);
-	    return new GameServerDto("ON", service.countOnlineChars());
+	    return new GameServerDto("ON", characterService.countOnlineChars());
 	} catch (IOException e) {
 	    logger.error(e.getMessage());
 	    return new GameServerDto();
 	}
+    }
+
+    @GetMapping("/countChars")
+    public CharsDto countChars() {
+	return new CharsDto(characterService.countAllChars(), characterService.countNoblessChars(),
+		heroService.countHeroes(), characterService.countGmChars(), clanService.countClans());
     }
 
 }

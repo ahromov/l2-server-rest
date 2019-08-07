@@ -11,4 +11,7 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     @Query("select b from accounts b where b.email = :email")
     Account findByEmail(@Param("email") String email);
 
+    @Query("select count(*) from accounts")
+    Long countAccounts();
+
 }

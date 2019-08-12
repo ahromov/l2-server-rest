@@ -36,7 +36,7 @@ public class Char {
     private Integer onlineTime;
 
     @Column(name = "pvpkills")
-    private Integer pvPKills;
+    private Integer pvpKills;
 
     @Column(name = "pkkills")
     private Integer pkKills;
@@ -56,7 +56,7 @@ public class Char {
 	return accountName;
     }
 
-    public String getCharName() {
+    public String getName() {
 	return charName;
     }
 
@@ -81,7 +81,7 @@ public class Char {
     }
 
     public Integer getPvPKills() {
-	return pvPKills;
+	return pvpKills;
     }
 
     public Integer getPkKills() {

@@ -12,11 +12,11 @@ public class AccountService {
     @Autowired
     private AccountRepository repository;
 
-    public Account add(Account account) {
+    public Account create(Account account) {
 	return repository.save(account);
     }
 
-    public Account get(String login) {
+    public Account find(String login) {
 	return repository.findById(login).get();
     }
 
@@ -24,7 +24,7 @@ public class AccountService {
 	return repository.saveAndFlush(account);
     }
 
-    public Account getByEmail(String email) {
+    public Account findByEmail(String email) {
 	return repository.findByEmail(email);
     }
 

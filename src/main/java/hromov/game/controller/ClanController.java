@@ -20,13 +20,13 @@ import hromov.game.service.ClanService;
 public class ClanController {
 
     @Autowired
-    ClanService clanService;
+    private ClanService clanService;
 
     @Autowired
-    CharService charachterService;
+    private CharService charService;
 
     @Autowired
-    CastleService castleService;
+    private CastleService castleService;
 
     @GetMapping("/getClans")
     public List<ClanDto> getClans() {
@@ -34,7 +34,7 @@ public class ClanController {
 	List<ClanDto> clansDto = new ArrayList<>();
 
 	for (Clan clan : clans) {
-	    List<Char> clanMembers = charachterService.getCharByClanId(clan.getClanId());
+	    List<Char> clanMembers = charService.getAllByClanId(clan.getClanId());
 
 	    int memberslevelSum = 0;
 
@@ -46,11 +46,13 @@ public class ClanController {
 	    if (castleService.getById(clan.getCastleId()).getId() != 0)
 		castleName = castleService.getById(clan.getCastleId()).getName();
 	    else
-		castleName = "None";
+		castleName = "Нет";
 
-	    clansDto.add(new ClanDto(clan.getName(), clan.getLevel(),
-		    charachterService.getById(clan.getLeaderId()).getCharName(), castleName, clan.getReputation(),
-		    memberslevelSum / clanMembers.size(), clan.getAlyName()));
+	    String alyName = clan.getAlyName();
+
+	    clansDto.add(new ClanDto(clan.getName(), clan.getLevel(), charService.getById(clan.getLeaderId()).getName(),
+		    castleName, clan.getReputation(), memberslevelSum / clanMembers.size(),
+		    alyName == null ? "Нет" : alyName));
 	}
 
 	return clansDto;

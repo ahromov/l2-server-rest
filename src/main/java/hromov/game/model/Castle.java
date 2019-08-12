@@ -14,6 +14,15 @@ public class Castle {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "taxPercent")
+    private Integer taxPercent;
+
+    @Column(name = "treasury")
+    private Integer treasury;
+
+    @Column(name = "siegeDate")
+    private Long siegeDate;
+
     public Castle() {
 
     }
@@ -24,6 +33,18 @@ public class Castle {
 
     public String getName() {
 	return name;
+    }
+
+    public Integer getTaxPercent() {
+	return taxPercent;
+    }
+
+    public Integer getTreasury() {
+	return treasury;
+    }
+
+    public Long getSiegeDate() {
+	return siegeDate;
     }
 
 }

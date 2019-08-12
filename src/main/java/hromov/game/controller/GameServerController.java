@@ -31,13 +31,13 @@ public class GameServerController {
     }
 
     @Autowired
-    CharService characterService;
+    private CharService characterService;
 
     @Autowired
-    HeroService heroService;
+    private HeroService heroService;
 
     @Autowired
-    ClanService clanService;
+    private ClanService clanService;
 
     @GetMapping("/status")
     public GameServerDto getServerStatus() {

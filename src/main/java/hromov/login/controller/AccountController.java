@@ -68,10 +68,10 @@ public class AccountController {
 		}
 
 		try {
-		    accountService.get(login);
+		    accountService.find(login);
 		    return new AccountDto("Exists");
 		} catch (NoSuchElementException e) {
-		    accountService.add(new Account(login, encodedPassword, email));
+		    accountService.create(new Account(login, encodedPassword, email));
 		    logger.error(e.getMessage());
 		    if (sendRegistrationEmail(login, email, password))
 			return new AccountDto("Success", true);
@@ -87,7 +87,7 @@ public class AccountController {
     public AccountDto login(@RequestParam("login") String login, @RequestParam("password") String password) {
 	Account account = null;
 	try {
-	    account = accountService.get(login);
+	    account = accountService.find(login);
 
 	    MessageDigest md = null;
 	    try {
@@ -123,7 +123,7 @@ public class AccountController {
 	    Account account = null;
 
 	    try {
-		account = accountService.get(login);
+		account = accountService.find(login);
 
 		MessageDigest md = null;
 		try {
@@ -172,7 +172,7 @@ public class AccountController {
 	    Account account = null;
 
 	    try {
-		account = accountService.get(login);
+		account = accountService.find(login);
 	    } catch (NoSuchElementException e) {
 		logger.error(e.getMessage());
 		return new AccountDto("Not exists");

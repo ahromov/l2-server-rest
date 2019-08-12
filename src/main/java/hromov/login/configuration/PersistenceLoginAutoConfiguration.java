@@ -28,51 +28,18 @@ public class PersistenceLoginAutoConfiguration {
 	return DataSourceBuilder.create().build();
     }
 
-    /**
-     * Entity manager definition.
-     * 
-     * @param builder an EntityManagerFactoryBuilder.
-     * @return LocalContainerEntityManagerFactoryBean.
-     */
     @Primary
     @Bean(name = "loginEntityManager")
     public LocalContainerEntityManagerFactoryBean loginEntityManagerFactory(EntityManagerFactoryBuilder builder,
 	    @Qualifier("loginDataSource") DataSource dataSource) {
-	return builder.dataSource(dataSource).packages("hromov.login.model").persistenceUnit("l2jls")
-		.build();
+	return builder.dataSource(dataSource).packages("hromov.login.model").persistenceUnit("l2jls").build();
     }
 
-    /**
-     * @param entityManagerFactory
-     * @return
-     */
     @Primary
     @Bean(name = "loginTransactionManager")
     public PlatformTransactionManager loginTransactionManager(
 	    @Qualifier("loginEntityManager") EntityManagerFactory entityManagerFactory) {
 	return new JpaTransactionManager(entityManagerFactory);
     }
-
-//    @Primary
-//    @Bean(name = "accountDataSource")
-//    @ConfigurationProperties(prefix = "spring.datasource-login")
-//    public DataSource userDataSource() {
-//	return DataSourceBuilder.create().build();
-//    }
-//
-//    @Primary
-//    @Bean(name = "accountEntityManagerFactory")
-//    public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
-//	    @Qualifier("accountDataSource") DataSource dataSource) {
-//	return builder.dataSource(dataSource).packages("hromov.login.model").persistenceUnit("l2jls")
-//		.build();
-//    }
-//
-//    @Primary
-//    @Bean(name = "accountTransactionManager")
-//    public PlatformTransactionManager customerTransactionManager(
-//	    @Qualifier("customerEntityManagerFactory") EntityManagerFactory accountEntityManagerFactory) {
-//	return new JpaTransactionManager(accountEntityManagerFactory);
-//    }
 
 }

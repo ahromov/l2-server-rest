@@ -12,18 +12,22 @@ import hromov.game.repo.ClanRepository;
 public class ClanService {
 
     @Autowired
-    private ClanRepository clanRepository;
+    private ClanRepository repository;
 
     public Clan getById(Integer id) {
-	return clanRepository.getOne(id);
+	return repository.getOne(id);
     }
 
     public Long countClans() {
-	return clanRepository.countClans();
+	return repository.countClans();
     }
 
     public List<Clan> getClans() {
-	return clanRepository.findAll();
+	return repository.findAll();
+    }
+
+    public Clan getByCastleId(Integer id) {
+	return repository.getByCastleId(id);
     }
 
 }

@@ -9,10 +9,10 @@ import hromov.game.repo.HeroRepository;
 public class HeroService {
 
     @Autowired
-    private HeroRepository heroRepository;
+    private HeroRepository repository;
 
     public Long countHeroes() {
-	return heroRepository.countHeroes();
+	return repository.countHeroes();
     }
 
 }

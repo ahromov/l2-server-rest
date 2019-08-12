@@ -3,10 +3,8 @@ package hromov.login.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
-@Entity
-@Table(name = "gameservers")
+@Entity(name = "gameservers")
 public class GameServer {
 
     @Id

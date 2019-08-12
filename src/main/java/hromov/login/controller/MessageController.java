@@ -32,7 +32,7 @@ public class MessageController {
 
 	    if (sendMessage(name, email, message))
 		return new AccountDto("Success", true);
-	    
+
 	}
 
 	return new AccountDto("Invalid data");

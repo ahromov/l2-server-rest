@@ -21,7 +21,7 @@ public class Clan {
     private Integer leaderId;
 
     @Column(name = "hasCastle")
-    private Integer castleId;
+    private Integer hasCastle;
 
     @Column(name = "reputation_score")
     private Integer reputation;
@@ -49,7 +49,7 @@ public class Clan {
     }
 
     public Integer getCastleId() {
-	return castleId;
+	return hasCastle;
     }
 
     public Integer getReputation() {

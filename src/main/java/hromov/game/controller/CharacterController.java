@@ -22,7 +22,7 @@ import hromov.game.service.ClanService;
 public class CharacterController {
 
     @Autowired
-    CharService characterService;
+    CharService charService;
 
     @Autowired
     ClanService clanService;
@@ -140,7 +140,7 @@ public class CharacterController {
 
     @GetMapping("/getTopTen")
     public LinkedList<CharDto> getTop10chars() {
-	List<Char> chars = characterService.getTop10Chars();
+	List<Char> chars = charService.getTop10Chars();
 
 	Collections.sort(chars, Collections.reverseOrder(new Comparator<Char>() {
 	    @Override
@@ -154,10 +154,10 @@ public class CharacterController {
 	for (int i = 0; i < chars.size(); i++) {
 	    Char ch = chars.get(i);
 
-	    charsDto.add(new CharDto(ch.getCharName(), classesIds.get(ch.getClassId()),
-		    ch.getGenderId() == 0 ? "Муж" : "Жен",
-		    ch.getClanId() == 0 ? "None" : clanService.getById(ch.getClanId()).getName(),
-		    (ch.getOnlineTime() / 60) / 60, ch.getPvPKills(), ch.getPkKills()));
+	    charsDto.add(
+		    new CharDto(ch.getName(), classesIds.get(ch.getClassId()), ch.getGenderId() == 0 ? "Муж" : "Жен",
+			    ch.getClanId() == 0 ? "None" : clanService.getById(ch.getClanId()).getName(),
+			    (ch.getOnlineTime() / 60) / 60, ch.getPvPKills(), ch.getPkKills()));
 	}
 
 	return charsDto;

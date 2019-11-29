@@ -17,7 +17,7 @@ import hromov.game.model.Fort;
 import hromov.game.service.ClanService;
 import hromov.game.service.FortService;
 
-@CrossOrigin(origins = "https://93.170.116.143", allowedHeaders = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class FortController {
 

@@ -17,7 +17,7 @@ import hromov.game.service.CharService;
 import hromov.game.service.ClanService;
 import hromov.game.service.HeroService;
 
-@CrossOrigin(origins = "https://93.170.116.143", allowedHeaders = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class GameServerController {
 

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import hromov.login.dto.AccountDto;
 
-@CrossOrigin(origins = "https://93.170.116.143", allowedHeaders = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class MessageController {
 

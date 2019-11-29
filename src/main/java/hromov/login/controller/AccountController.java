@@ -33,7 +33,7 @@ import hromov.login.model.Account;
 import hromov.login.service.AccountService;
 import hromov.login.utils.PasswordGenerator;
 
-@CrossOrigin(origins = "https://93.170.116.143", allowedHeaders = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class AccountController {
 

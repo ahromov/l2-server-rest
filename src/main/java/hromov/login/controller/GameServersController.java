@@ -12,7 +12,7 @@ import hromov.login.dto.GameServersDto;
 import hromov.login.model.GameServer;
 import hromov.login.service.GameServerService;
 
-@CrossOrigin(origins = "https://93.170.116.143", allowedHeaders = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class GameServersController {
 

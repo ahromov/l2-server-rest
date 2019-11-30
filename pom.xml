@@ -9,11 +9,11 @@
 		<version>2.1.6.RELEASE</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>hromov</groupId>
+	<groupId>lajdev</groupId>
 	<artifactId>l2-server-webapp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>l2-server-webapp</name>
-	<description>Web app for L2 game server</description>
+	<description>Webapp for L2 game server</description>
 
 	<properties>
 		<java.version>1.8</java.version>

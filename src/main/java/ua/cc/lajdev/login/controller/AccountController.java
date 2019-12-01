@@ -1,4 +1,4 @@
-package hromov.login.controller;
+package ua.cc.lajdev.login.controller;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -27,11 +27,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import hromov.login.dto.AccountDto;
-import hromov.login.dto.CountAccountsDto;
-import hromov.login.model.Account;
-import hromov.login.service.AccountService;
-import hromov.login.utils.PasswordGenerator;
+import ua.cc.lajdev.login.dto.AccountDto;
+import ua.cc.lajdev.login.dto.CountAccountsDto;
+import ua.cc.lajdev.login.model.Account;
+import ua.cc.lajdev.login.service.AccountService;
+import ua.cc.lajdev.login.utils.PasswordGenerator;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController

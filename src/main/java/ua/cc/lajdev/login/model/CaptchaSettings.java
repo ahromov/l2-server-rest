@@ -1,4 +1,4 @@
-package hromov.login.model;
+package ua.cc.lajdev.login.model;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package hromov.game.configuration;
+package ua.cc.lajdev.game.configuration;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = "hromov.game.repo", entityManagerFactoryRef = "gameEntityManager", transactionManagerRef = "gameTransactionManager")
+@EnableJpaRepositories(basePackages = "ua.cc.lajdev.game.repo", entityManagerFactoryRef = "gameEntityManager", transactionManagerRef = "gameTransactionManager")
 public class PersistenceGameAutoConfiguration {
 
     @Bean(name = "gameDataSource")
@@ -33,7 +33,7 @@ public class PersistenceGameAutoConfiguration {
     @Bean(name = "gameEntityManager")
     public LocalContainerEntityManagerFactoryBean gameEntityManagerFactory(EntityManagerFactoryBuilder builder,
 	    @Qualifier("gameDataSource") DataSource dataSource) {
-	return builder.dataSource(dataSource).packages("hromov.game.model").persistenceUnit("l2jgs").build();
+	return builder.dataSource(dataSource).packages("ua.cc.lajdev.game.model").persistenceUnit("l2jgs").build();
     }
 
     @Bean(name = "gameTransactionManager")

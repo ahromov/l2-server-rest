@@ -1,4 +1,4 @@
-package hromov.login.dto;
+package ua.cc.lajdev.login.dto;
 
 import java.util.List;
 

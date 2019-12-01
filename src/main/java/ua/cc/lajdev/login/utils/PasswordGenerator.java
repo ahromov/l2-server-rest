@@ -1,4 +1,4 @@
-package hromov.login.utils;
+package ua.cc.lajdev.login.utils;
 
 import java.security.SecureRandom;
 import java.util.Arrays;

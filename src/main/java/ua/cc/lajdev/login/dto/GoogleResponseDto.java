@@ -1,4 +1,4 @@
-package hromov.login.dto;
+package ua.cc.lajdev.login.dto;
 
 import java.util.List;
 
@@ -93,6 +93,5 @@ public class GoogleResponseDto {
     public void setErrorCodes(List<String> errorCodes) {
 	this.errorCodes = errorCodes;
     }
-
 
 }

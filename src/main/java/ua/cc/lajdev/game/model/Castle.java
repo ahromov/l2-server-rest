@@ -1,4 +1,4 @@
-package hromov.game.model;
+package ua.cc.lajdev.game.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

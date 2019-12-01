@@ -1,10 +1,10 @@
-package hromov.game.repo;
+package ua.cc.lajdev.game.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import hromov.game.model.Clan;
+import ua.cc.lajdev.game.model.Clan;
 
 public interface ClanRepository extends JpaRepository<Clan, Integer> {
 

@@ -1,9 +1,9 @@
-package hromov.game.repo;
+package ua.cc.lajdev.game.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import hromov.game.model.Hero;
+import ua.cc.lajdev.game.model.Hero;
 
 public interface HeroRepository extends JpaRepository<Hero, Integer> {
 

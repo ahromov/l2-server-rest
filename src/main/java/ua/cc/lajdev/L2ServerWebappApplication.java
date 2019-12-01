@@ -1,4 +1,4 @@
-package hromov;
+package ua.cc.lajdev;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

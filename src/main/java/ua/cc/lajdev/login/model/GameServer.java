@@ -1,4 +1,4 @@
-package hromov.login.model;
+package ua.cc.lajdev.login.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

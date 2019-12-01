@@ -1,7 +1,7 @@
-package hromov.login.service;
+package ua.cc.lajdev.login.service;
 
-import hromov.login.dto.GoogleResponseDto;
-import hromov.login.service.exception.InvalidReCaptchaException;
+import ua.cc.lajdev.login.dto.GoogleResponseDto;
+import ua.cc.lajdev.login.service.exception.InvalidReCaptchaException;
 
 public interface ICaptchaService {
 

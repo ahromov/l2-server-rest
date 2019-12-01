@@ -1,4 +1,4 @@
-package hromov.login.controller;
+package ua.cc.lajdev.login.controller;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import hromov.login.dto.AccountDto;
+import ua.cc.lajdev.login.dto.AccountDto;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController

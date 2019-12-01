@@ -1,4 +1,4 @@
-package hromov.game.controller;
+package ua.cc.lajdev.game.controller;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -11,24 +11,21 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import hromov.game.dto.CharsDto;
-import hromov.game.dto.GameServerDto;
-import hromov.game.service.CharService;
-import hromov.game.service.ClanService;
-import hromov.game.service.HeroService;
+import ua.cc.lajdev.game.dto.CharsDto;
+import ua.cc.lajdev.game.dto.GameServerDto;
+import ua.cc.lajdev.game.model.GameServer;
+import ua.cc.lajdev.game.service.CharService;
+import ua.cc.lajdev.game.service.ClanService;
+import ua.cc.lajdev.game.service.HeroService;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class GameServerController {
 
     private static Logger logger = LoggerFactory.getLogger(GameServerController.class);
-    private static InetSocketAddress address;
-    private static Integer timeout;
 
-    static {
-	address = new InetSocketAddress("93.170.116.143", 7777);
-	timeout = 3000;
-    }
+    @Autowired
+    GameServer server;
 
     @Autowired
     private CharService characterService;
@@ -42,7 +39,7 @@ public class GameServerController {
     @GetMapping("/status")
     public GameServerDto getServerStatus() {
 	try (Socket socket = new Socket()) {
-	    socket.connect(address, timeout);
+	    socket.connect(new InetSocketAddress(server.getIp(), server.getPort()), 3000);
 	    return new GameServerDto("ON", characterService.countOnlineChars());
 	} catch (IOException e) {
 	    logger.error(e.getMessage());

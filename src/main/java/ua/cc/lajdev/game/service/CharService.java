@@ -1,12 +1,12 @@
-package hromov.game.service;
+package ua.cc.lajdev.game.service;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import hromov.game.model.Char;
-import hromov.game.repo.CharRepository;
+import ua.cc.lajdev.game.model.Char;
+import ua.cc.lajdev.game.repo.CharRepository;
 
 @Service
 public class CharService {

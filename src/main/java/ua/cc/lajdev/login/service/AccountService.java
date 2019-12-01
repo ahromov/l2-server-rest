@@ -1,10 +1,10 @@
-package hromov.login.service;
+package ua.cc.lajdev.login.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import hromov.login.model.Account;
-import hromov.login.repo.AccountRepository;
+import ua.cc.lajdev.login.model.Account;
+import ua.cc.lajdev.login.repo.AccountRepository;
 
 @Service
 public class AccountService {

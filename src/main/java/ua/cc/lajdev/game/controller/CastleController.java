@@ -1,4 +1,4 @@
-package hromov.game.controller;
+package ua.cc.lajdev.game.controller;
 
 import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import hromov.game.dto.CastleDto;
-import hromov.game.model.Castle;
-import hromov.game.model.Clan;
-import hromov.game.service.CastleService;
-import hromov.game.service.ClanService;
+import ua.cc.lajdev.game.dto.CastleDto;
+import ua.cc.lajdev.game.model.Castle;
+import ua.cc.lajdev.game.model.Clan;
+import ua.cc.lajdev.game.service.CastleService;
+import ua.cc.lajdev.game.service.ClanService;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController

@@ -1,4 +1,4 @@
-package hromov.game.dto;
+package ua.cc.lajdev.game.dto;
 
 public class FortDto {
 

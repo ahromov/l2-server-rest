@@ -1,4 +1,4 @@
-package hromov.login.service;
+package ua.cc.lajdev.login.service;
 
 import java.net.URI;
 import java.util.regex.Pattern;
@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestOperations;
 
-import hromov.login.dto.GoogleResponseDto;
-import hromov.login.model.CaptchaSettings;
-import hromov.login.service.exception.InvalidReCaptchaException;
+import ua.cc.lajdev.login.dto.GoogleResponseDto;
+import ua.cc.lajdev.login.model.CaptchaSettings;
+import ua.cc.lajdev.login.service.exception.InvalidReCaptchaException;
 
 @Service
 public class CaptchaService implements ICaptchaService {

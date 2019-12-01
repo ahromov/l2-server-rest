@@ -1,4 +1,4 @@
-package hromov.login.controller;
+package ua.cc.lajdev.login.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import hromov.login.dto.GameServersDto;
-import hromov.login.model.GameServer;
-import hromov.login.service.GameServerService;
+import ua.cc.lajdev.login.dto.GameServersDto;
+import ua.cc.lajdev.login.model.GameServer;
+import ua.cc.lajdev.login.service.GameServerService;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController

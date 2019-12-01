@@ -1,4 +1,4 @@
-package hromov.login.configuration;
+package ua.cc.lajdev.login.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package hromov.game.controller;
+package ua.cc.lajdev.game.controller;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import hromov.game.dto.CharDto;
-import hromov.game.model.Char;
-import hromov.game.service.CharService;
-import hromov.game.service.ClanService;
+import ua.cc.lajdev.game.model.Char;
+import ua.cc.lajdev.game.dto.CharDto;
+import ua.cc.lajdev.game.service.CharService;
+import ua.cc.lajdev.game.service.ClanService;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController

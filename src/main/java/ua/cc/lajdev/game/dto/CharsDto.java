@@ -1,6 +1,7 @@
-package hromov.game.dto;
+package ua.cc.lajdev.game.dto;
 
 public class CharsDto {
+
     public Long countAll;
     public Long countNobless;
     public Long countHeroes;

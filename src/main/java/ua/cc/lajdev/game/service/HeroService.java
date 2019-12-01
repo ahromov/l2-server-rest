@@ -1,9 +1,9 @@
-package hromov.game.service;
+package ua.cc.lajdev.game.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import hromov.game.repo.HeroRepository;
+import ua.cc.lajdev.game.repo.HeroRepository;
 
 @Service
 public class HeroService {

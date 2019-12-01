@@ -1,4 +1,4 @@
-package hromov.login.configuration;
+package ua.cc.lajdev.login.configuration;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = "hromov.login.repo", entityManagerFactoryRef = "loginEntityManager", transactionManagerRef = "loginTransactionManager")
+@EnableJpaRepositories(basePackages = "ua.cc.lajdev.login.repo", entityManagerFactoryRef = "loginEntityManager", transactionManagerRef = "loginTransactionManager")
 public class PersistenceLoginAutoConfiguration {
 
     @Primary
@@ -32,7 +32,7 @@ public class PersistenceLoginAutoConfiguration {
     @Bean(name = "loginEntityManager")
     public LocalContainerEntityManagerFactoryBean loginEntityManagerFactory(EntityManagerFactoryBuilder builder,
 	    @Qualifier("loginDataSource") DataSource dataSource) {
-	return builder.dataSource(dataSource).packages("hromov.login.model").persistenceUnit("l2jls").build();
+	return builder.dataSource(dataSource).packages("ua.cc.lajdev.login.model").persistenceUnit("l2jls").build();
     }
 
     @Primary

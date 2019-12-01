@@ -1,10 +1,10 @@
-package hromov.login.repo;
+package ua.cc.lajdev.login.repo;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import hromov.login.model.Account;
+import ua.cc.lajdev.login.model.Account;
 
 public interface AccountRepository extends JpaRepository<Account, String> {
 

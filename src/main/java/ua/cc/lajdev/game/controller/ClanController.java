@@ -1,4 +1,4 @@
-package hromov.game.controller;
+package ua.cc.lajdev.game.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import hromov.game.dto.ClanDto;
-import hromov.game.model.Char;
-import hromov.game.model.Clan;
-import hromov.game.service.CastleService;
-import hromov.game.service.CharService;
-import hromov.game.service.ClanService;
+import ua.cc.lajdev.game.dto.ClanDto;
+import ua.cc.lajdev.game.model.Char;
+import ua.cc.lajdev.game.model.Clan;
+import ua.cc.lajdev.game.service.CastleService;
+import ua.cc.lajdev.game.service.CharService;
+import ua.cc.lajdev.game.service.ClanService;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController

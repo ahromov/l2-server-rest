@@ -14,12 +14,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ua.cc.lajdev.login.dto.AccountDto;
+import ua.cc.lajdev.login.model.MailSettings;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class MessageController {
 
     private static Logger logger = LoggerFactory.getLogger(AccountController.class);
+
+    @Autowired
+    private MailSettings mailSettings;
 
     @Autowired
     private JavaMailSender javaMailSender;
@@ -29,10 +33,8 @@ public class MessageController {
 	    @RequestParam("message") String message, @RequestParam("answer") String answer) {
 	if ((!name.equals("") && !email.equals("") && !message.equals("") && !answer.equals(""))
 		|| (name != null && email != null && message != null && answer != null)) {
-
 	    if (sendMessage(name, email, message))
 		return new AccountDto("Success", true);
-
 	}
 
 	return new AccountDto("Invalid data");
@@ -44,7 +46,7 @@ public class MessageController {
 	MimeMessageHelper helper;
 	try {
 	    helper = new MimeMessageHelper(msg, true);
-	    helper.setTo("hromov.la2dev@gmail.com");
+	    helper.setTo(mailSettings.getUsername());
 	    helper.setReplyTo(email);
 	    helper.setSubject("Вопрос с сайта от " + name + "!");
 	    helper.setText(message, true);

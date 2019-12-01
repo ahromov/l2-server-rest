@@ -10,8 +10,8 @@ import ua.cc.lajdev.game.model.Char;
 
 public interface CharRepository extends JpaRepository<Char, Integer> {
 
-    @Query("SELECT COUNT(*) from characters where online = 1")
-    Integer countOnlineChars();
+    @Query("SELECT COUNT(*) from characters where online = 1 and accesslevel = 0")
+    Integer getOnlineNoneGmChars();
 
     @Query("SELECT COUNT(*) from characters where accesslevel = 0")
     Long countAllChars();

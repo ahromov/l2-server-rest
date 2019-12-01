@@ -18,8 +18,8 @@ public class CharService {
 	return repository.getOne(id);
     }
 
-    public Integer countOnlineChars() {
-	return repository.countOnlineChars();
+    public Integer getOnlineNoneGmChars() {
+	return repository.getOnlineNoneGmChars();
     }
 
     public Long countAllChars() {

@@ -3,6 +3,7 @@ package ua.cc.lajdev.game.controller;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,7 @@ public class GameServerController {
     public GameServerDto getServerStatus() {
 	try (Socket socket = new Socket()) {
 	    socket.connect(new InetSocketAddress(server.getIp(), server.getPort()), 3000);
-	    return new GameServerDto("ON", characterService.countOnlineChars());
+	    return new GameServerDto("ON", characterService.getOnlineNoneGmChars());
 	} catch (IOException e) {
 	    logger.error(e.getMessage());
 	    return new GameServerDto();

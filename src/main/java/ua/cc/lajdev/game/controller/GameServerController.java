@@ -3,7 +3,6 @@ package ua.cc.lajdev.game.controller;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,35 +22,35 @@ import ua.cc.lajdev.game.service.HeroService;
 @RestController
 public class GameServerController {
 
-    private static Logger logger = LoggerFactory.getLogger(GameServerController.class);
+	private static Logger logger = LoggerFactory.getLogger(GameServerController.class);
 
-    @Autowired
-    GameServer server;
+	@Autowired
+	GameServer server;
 
-    @Autowired
-    private CharService characterService;
+	@Autowired
+	private CharService characterService;
 
-    @Autowired
-    private HeroService heroService;
+	@Autowired
+	private HeroService heroService;
 
-    @Autowired
-    private ClanService clanService;
+	@Autowired
+	private ClanService clanService;
 
-    @GetMapping("/status")
-    public GameServerDto getServerStatus() {
-	try (Socket socket = new Socket()) {
-	    socket.connect(new InetSocketAddress(server.getIp(), server.getPort()), 3000);
-	    return new GameServerDto("ON", characterService.getOnlineNoneGmChars());
-	} catch (IOException e) {
-	    logger.error(e.getMessage());
-	    return new GameServerDto();
+	@GetMapping("/status")
+	public GameServerDto getServerStatus() {
+		try (Socket socket = new Socket()) {
+			socket.connect(new InetSocketAddress(server.getIp(), server.getPort()), 3000);
+			return new GameServerDto("ON", characterService.getOnlineNoneGmChars());
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			return new GameServerDto();
+		}
 	}
-    }
 
-    @GetMapping("/countChars")
-    public CharsDto countChars() {
-	return new CharsDto(characterService.countAllChars(), characterService.countNoblessChars(),
-		heroService.countHeroes(), characterService.countGmChars(), clanService.countClans());
-    }
+	@GetMapping("/countChars")
+	public CharsDto countChars() {
+		return new CharsDto(characterService.countAllChars(), characterService.countNoblessChars(),
+				heroService.countHeroes(), characterService.countGmChars(), clanService.countClans());
+	}
 
 }

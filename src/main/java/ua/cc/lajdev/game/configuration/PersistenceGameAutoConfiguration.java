@@ -24,22 +24,22 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories(basePackages = "ua.cc.lajdev.game.repo", entityManagerFactoryRef = "gameEntityManager", transactionManagerRef = "gameTransactionManager")
 public class PersistenceGameAutoConfiguration {
 
-    @Bean(name = "gameDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource-game")
-    public DataSource gameDataSource() {
-	return DataSourceBuilder.create().build();
-    }
+	@Bean(name = "gameDataSource")
+	@ConfigurationProperties(prefix = "spring.datasource-game")
+	public DataSource gameDataSource() {
+		return DataSourceBuilder.create().build();
+	}
 
-    @Bean(name = "gameEntityManager")
-    public LocalContainerEntityManagerFactoryBean gameEntityManagerFactory(EntityManagerFactoryBuilder builder,
-	    @Qualifier("gameDataSource") DataSource dataSource) {
-	return builder.dataSource(dataSource).packages("ua.cc.lajdev.game.model").persistenceUnit("l2jgs").build();
-    }
+	@Bean(name = "gameEntityManager")
+	public LocalContainerEntityManagerFactoryBean gameEntityManagerFactory(EntityManagerFactoryBuilder builder,
+			@Qualifier("gameDataSource") DataSource dataSource) {
+		return builder.dataSource(dataSource).packages("ua.cc.lajdev.game.model").persistenceUnit("l2jgs").build();
+	}
 
-    @Bean(name = "gameTransactionManager")
-    public PlatformTransactionManager gameTransactionManager(
-	    @Qualifier("gameEntityManager") EntityManagerFactory entityManagerFactory) {
-	return new JpaTransactionManager(entityManagerFactory);
-    }
+	@Bean(name = "gameTransactionManager")
+	public PlatformTransactionManager gameTransactionManager(
+			@Qualifier("gameEntityManager") EntityManagerFactory entityManagerFactory) {
+		return new JpaTransactionManager(entityManagerFactory);
+	}
 
 }

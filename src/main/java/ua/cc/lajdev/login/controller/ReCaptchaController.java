@@ -14,17 +14,17 @@ import ua.cc.lajdev.login.service.exception.InvalidReCaptchaException;
 @RestController
 public class ReCaptchaController {
 
-    @Autowired
-    CaptchaService recaptchaService;
+	@Autowired
+	CaptchaService recaptchaService;
 
-    @PostMapping("captcha/validate")
-    public GoogleResponseDto getGoogleResponse(@RequestParam("response") String response) {
-	try {
-	    return recaptchaService.processResponse(response);
-	} catch (InvalidReCaptchaException e) {
-	    e.printStackTrace();
+	@PostMapping("captcha/validate")
+	public GoogleResponseDto getGoogleResponse(@RequestParam("response") String response) {
+		try {
+			return recaptchaService.processResponse(response);
+		} catch (InvalidReCaptchaException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
-	return null;
-    }
 
 }

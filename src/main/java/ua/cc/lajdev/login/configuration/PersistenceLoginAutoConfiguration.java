@@ -21,25 +21,25 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories(basePackages = "ua.cc.lajdev.login.repo", entityManagerFactoryRef = "loginEntityManager", transactionManagerRef = "loginTransactionManager")
 public class PersistenceLoginAutoConfiguration {
 
-    @Primary
-    @Bean(name = "loginDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource-login")
-    public DataSource loginDataSource() {
-	return DataSourceBuilder.create().build();
-    }
+	@Primary
+	@Bean(name = "loginDataSource")
+	@ConfigurationProperties(prefix = "spring.datasource-login")
+	public DataSource loginDataSource() {
+		return DataSourceBuilder.create().build();
+	}
 
-    @Primary
-    @Bean(name = "loginEntityManager")
-    public LocalContainerEntityManagerFactoryBean loginEntityManagerFactory(EntityManagerFactoryBuilder builder,
-	    @Qualifier("loginDataSource") DataSource dataSource) {
-	return builder.dataSource(dataSource).packages("ua.cc.lajdev.login.model").persistenceUnit("l2jls").build();
-    }
+	@Primary
+	@Bean(name = "loginEntityManager")
+	public LocalContainerEntityManagerFactoryBean loginEntityManagerFactory(EntityManagerFactoryBuilder builder,
+			@Qualifier("loginDataSource") DataSource dataSource) {
+		return builder.dataSource(dataSource).packages("ua.cc.lajdev.login.model").persistenceUnit("l2jls").build();
+	}
 
-    @Primary
-    @Bean(name = "loginTransactionManager")
-    public PlatformTransactionManager loginTransactionManager(
-	    @Qualifier("loginEntityManager") EntityManagerFactory entityManagerFactory) {
-	return new JpaTransactionManager(entityManagerFactory);
-    }
+	@Primary
+	@Bean(name = "loginTransactionManager")
+	public PlatformTransactionManager loginTransactionManager(
+			@Qualifier("loginEntityManager") EntityManagerFactory entityManagerFactory) {
+		return new JpaTransactionManager(entityManagerFactory);
+	}
 
 }

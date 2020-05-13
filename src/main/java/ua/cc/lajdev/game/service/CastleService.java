@@ -11,15 +11,15 @@ import ua.cc.lajdev.game.repo.CastleRepository;
 @Service
 public class CastleService {
 
-    @Autowired
-    private CastleRepository repository;
+	@Autowired
+	private CastleRepository repository;
 
-    public Castle getById(Integer id) {
-	return repository.getOne(id);
-    }
+	public Castle getById(Integer id) {
+		return repository.findById(id).get();
+	}
 
-    public List<Castle> getAll() {
-	return repository.findAll();
-    }
+	public List<Castle> getAll() {
+		return repository.findAll();
+	}
 
 }

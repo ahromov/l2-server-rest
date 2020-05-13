@@ -7,10 +7,7 @@ import ua.cc.lajdev.game.model.Clan;
 
 public interface ClanRepository extends JpaRepository<Clan, Integer> {
 
-    @Query("SELECT COUNT(*) from clan_data")
-    Long countClans();
-
-//    @Query("SELECT b from clan_data b where b.hasCastle = :id")
-//    Clan getByCastleId(@Param("id") Integer id);
+	@Query("SELECT COUNT(*) from clan_data")
+	Long countClans();
 
 }

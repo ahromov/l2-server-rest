@@ -6,6 +6,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 @Entity(name = "fort")
 public class Fort {
 
@@ -19,11 +22,9 @@ public class Fort {
 	@Column(name = "siegeDate")
 	private Long siegeDate;
 
-//    @Column(name = "owner")
-//    private Integer owner;
-
 	@OneToOne
 	@JoinColumn(name = "owner", referencedColumnName = "clan_id")
+	@NotFound(action = NotFoundAction.IGNORE)
 	private Clan clan;
 
 	public Fort() {
@@ -49,9 +50,5 @@ public class Fort {
 	public void setClan(Clan clan) {
 		this.clan = clan;
 	}
-
-//    public Integer getOwner() {
-//		return owner;
-//	}
 
 }

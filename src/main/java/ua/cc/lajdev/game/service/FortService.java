@@ -11,11 +11,11 @@ import ua.cc.lajdev.game.repo.FortRepository;
 @Service
 public class FortService {
 
-    @Autowired
-    private FortRepository repository;
+	@Autowired
+	private FortRepository repository;
 
-    public List<Fort> getAll() {
-	return repository.findAll();
-    }
+	public List<Fort> getAll() {
+		return repository.findAll();
+	}
 
 }

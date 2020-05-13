@@ -27,9 +27,10 @@ public class CharacterController {
 	@Autowired
 	ClanService clanService;
 
-	private static Map<Integer, String> classesIds = new HashMap<>();
+	private static Map<Integer, String> classesIds;
 
-	static {
+	public CharacterController() {
+		classesIds = new HashMap<>();
 		classesIds.put(1, "Human Warrior");
 		classesIds.put(2, "Gladiator");
 		classesIds.put(3, "Warlord");

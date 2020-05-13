@@ -15,35 +15,35 @@ import ua.cc.lajdev.login.service.exception.InvalidReCaptchaException;
 @Service
 public class CaptchaService implements ICaptchaService {
 
-    @Autowired
-    private CaptchaSettings captchaSettings;
+	@Autowired
+	private CaptchaSettings captchaSettings;
 
-    @Autowired
-    private RestOperations restTemplate;
+	@Autowired
+	private RestOperations restTemplate;
 
-    private static Pattern RESPONSE_PATTERN = Pattern.compile("[A-Za-z0-9_-]+");
+	private static Pattern RESPONSE_PATTERN = Pattern.compile("[A-Za-z0-9_-]+");
 
-    @Override
-    public GoogleResponseDto processResponse(String response) throws InvalidReCaptchaException {
-	if (!responseSanityCheck(response)) {
-	    throw new InvalidReCaptchaException("Response contains invalid characters");
+	@Override
+	public GoogleResponseDto processResponse(String response) throws InvalidReCaptchaException {
+		if (!responseSanityCheck(response)) {
+			throw new InvalidReCaptchaException("Response contains invalid characters");
+		}
+
+		URI verifyUri = URI
+				.create(String.format("https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s",
+						captchaSettings.getSecret(), response));
+
+		GoogleResponseDto googleResponse = restTemplate.getForObject(verifyUri, GoogleResponseDto.class);
+
+		if (!googleResponse.isSuccess()) {
+			throw new InvalidReCaptchaException("reCaptcha was not successfully validated");
+		}
+
+		return googleResponse;
 	}
 
-	URI verifyUri = URI
-		.create(String.format("https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s",
-			captchaSettings.getSecret(), response));
-
-	GoogleResponseDto googleResponse = restTemplate.getForObject(verifyUri, GoogleResponseDto.class);
-
-	if (!googleResponse.isSuccess()) {
-	    throw new InvalidReCaptchaException("reCaptcha was not successfully validated");
+	private boolean responseSanityCheck(String response) {
+		return StringUtils.hasLength(response) && RESPONSE_PATTERN.matcher(response).matches();
 	}
-
-	return googleResponse;
-    }
-
-    private boolean responseSanityCheck(String response) {
-	return StringUtils.hasLength(response) && RESPONSE_PATTERN.matcher(response).matches();
-    }
 
 }

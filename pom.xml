@@ -10,9 +10,9 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>lajdev</groupId>
-	<artifactId>l2-server-web</artifactId>
+	<artifactId>l2-server-rest</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>l2-server-web</name>
+	<name>l2-server-rest</name>
 	<description>Webapp for L2 game server</description>
 
 	<properties>

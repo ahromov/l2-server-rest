@@ -42,24 +42,40 @@ public class Clan {
 		return id;
 	}
 
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Integer getLevel() {
 		return level;
 	}
 
+	public void setLevel(Integer level) {
+		this.level = level;
+	}
+
 	public Integer getLeaderId() {
 		return leaderId;
 	}
 
-	public void setCastle(Castle castle) {
-		this.castle = castle;
+	public void setLeaderId(Integer leaderId) {
+		this.leaderId = leaderId;
 	}
 
 	public Castle getCastle() {
 		return castle;
+	}
+
+	public void setCastle(Castle castle) {
+		this.castle = castle;
 	}
 
 	public Fort getFort() {
@@ -72,6 +88,10 @@ public class Clan {
 
 	public Integer getReputation() {
 		return reputation;
+	}
+
+	public void setReputation(Integer reputation) {
+		this.reputation = reputation;
 	}
 
 	public String getAlyName() {

@@ -11,35 +11,35 @@ import ua.cc.lajdev.game.repo.CharRepository;
 @Service
 public class CharService {
 
-    @Autowired
-    private CharRepository repository;
+	@Autowired
+	private CharRepository repository;
 
-    public Char getById(Integer id) {
-	return repository.getOne(id);
-    }
+	public Char getById(Integer id) {
+		return repository.findById(id).get();
+	}
 
-    public Integer getOnlineNoneGmChars() {
-	return repository.getOnlineNoneGmChars();
-    }
+	public Integer getOnlineNoneGmChars() {
+		return repository.getOnlineNoneGmChars();
+	}
 
-    public Long countAllChars() {
-	return repository.countAllChars();
-    }
+	public Long countAllChars() {
+		return repository.countAllChars();
+	}
 
-    public Long countNoblessChars() {
-	return repository.countNoblessChars();
-    }
+	public Long countNoblessChars() {
+		return repository.countNoblessChars();
+	}
 
-    public Long countGmChars() {
-	return repository.countGmChars();
-    }
+	public Long countGmChars() {
+		return repository.countGmChars();
+	}
 
-    public List<Char> getAllByClanId(Integer id) {
-	return repository.getAllByClanId(id);
-    }
+	public List<Char> getTop10Chars() {
+		return repository.getTop10Chars();
+	}
 
-    public List<Char> getTop10Chars() {
-	return repository.getTop10Chars();
-    }
+	public List<Char> getAll() {
+		return repository.findAll();
+	}
 
 }

@@ -14,6 +14,10 @@ public class FortService {
 	@Autowired
 	private FortRepository repository;
 
+	public Fort getById(Integer id) {
+		return repository.findById(id).get();
+	}
+
 	public List<Fort> getAll() {
 		return repository.findAll();
 	}

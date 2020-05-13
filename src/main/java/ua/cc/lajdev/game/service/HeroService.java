@@ -8,11 +8,11 @@ import ua.cc.lajdev.game.repo.HeroRepository;
 @Service
 public class HeroService {
 
-    @Autowired
-    private HeroRepository repository;
+	@Autowired
+	private HeroRepository repository;
 
-    public Long countHeroes() {
-	return repository.countHeroes();
-    }
+	public Long countHeroes() {
+		return repository.countHeroes();
+	}
 
 }

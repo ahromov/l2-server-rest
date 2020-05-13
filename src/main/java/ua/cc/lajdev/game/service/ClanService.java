@@ -15,7 +15,7 @@ public class ClanService {
 	private ClanRepository repository;
 
 	public Clan getById(Integer id) {
-		return repository.getOne(id);
+		return repository.findById(id).get();
 	}
 
 	public Long countClans() {
@@ -25,9 +25,5 @@ public class ClanService {
 	public List<Clan> getClans() {
 		return repository.findAll();
 	}
-
-//	public Clan getByCastleId(Integer id) {
-//		return repository.getByCastleId(id);
-//	}
 
 }

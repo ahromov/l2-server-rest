@@ -1,8 +1,11 @@
 package ua.cc.lajdev.login.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,18 +15,22 @@ import ua.cc.lajdev.login.service.exception.InvalidReCaptchaException;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
+@RequestMapping("reCaptcha")
 public class ReCaptchaController {
+
+	private static Logger logger = LoggerFactory.getLogger(ReCaptchaController.class);
 
 	@Autowired
 	CaptchaService recaptchaService;
 
-	@PostMapping("captcha/validate")
+	@PostMapping("validate")
 	public GoogleResponseDto getGoogleResponse(@RequestParam("response") String response) {
 		try {
 			return recaptchaService.processResponse(response);
 		} catch (InvalidReCaptchaException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
+
 		return null;
 	}
 

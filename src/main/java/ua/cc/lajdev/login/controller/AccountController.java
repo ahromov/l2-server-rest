@@ -1,17 +1,10 @@
 package ua.cc.lajdev.login.controller;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -24,17 +17,18 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import ua.cc.lajdev.login.dto.AccountDto;
-import ua.cc.lajdev.login.dto.CountAccountsDto;
 import ua.cc.lajdev.login.model.Account;
+import ua.cc.lajdev.login.model.MailSettings;
 import ua.cc.lajdev.login.service.AccountService;
 import ua.cc.lajdev.login.utils.PasswordGenerator;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
+@RequestMapping("accounts")
 public class AccountController {
 
 	private static Logger logger = LoggerFactory.getLogger(AccountController.class);
@@ -45,221 +39,233 @@ public class AccountController {
 	@Autowired
 	private JavaMailSender javaMailSender;
 
-	@PostMapping("/reg")
-	public AccountDto registration(@RequestParam("login") String login, @RequestParam("email") String email,
+	@Autowired
+	private MailSettings mailSettings;
+
+	@PostMapping("/create")
+	public Account registration(@RequestParam("login") String login, @RequestParam("email") String email,
 			@RequestParam("password") String password, @RequestParam("passwordSecond") String passwordSecond) {
-		if ((!login.equals("") && !email.equals("") && !password.equals("") && !passwordSecond.equals(""))
-				|| (login != null && email != null && password != null && passwordSecond != null)) {
+		Account account = null;
+
+		if ((!login.equals("") && !email.equals("") && !password.equals("") && !passwordSecond.equals(""))) {
+			account = accountService.findByEmail(email);
+
 			if (password.equals(passwordSecond)) {
-				MessageDigest md = null;
-				try {
-					md = MessageDigest.getInstance("SHA");
-				} catch (NoSuchAlgorithmException e) {
-					logger.error(e.getMessage(), e);
-				} catch (NullPointerException e) {
-					logger.error(e.getMessage(), e);
-				}
+				if (account != null) {
+					account.setStatus("Email exists");
 
-				String encodedPassword = null;
-				try {
-					encodedPassword = Base64.getEncoder().encodeToString(md.digest(password.getBytes("UTF-8")));
-				} catch (UnsupportedEncodingException e) {
-					logger.error(e.getMessage(), e);
-				}
+					return account;
+				} else {
+					String subject = "Welcome " + login + "!";
 
-				try {
-					accountService.find(login);
-					return new AccountDto("Exists");
-				} catch (NoSuchElementException e) {
-					accountService.create(new Account(login, encodedPassword, email));
-					logger.error(e.getMessage());
-					if (sendRegistrationEmail(login, email, password))
-						return new AccountDto("Success", true);
+					String message = "<h2>Your account data:</h2><br><p>Login: " + login + "<br>Password: " + password
+							+ "</p>";
+
+					try {
+						Account loginAcc = accountService.findByLogin(login);
+						loginAcc.setStatus("Login exists");
+
+						return loginAcc;
+					} catch (NoSuchElementException e) {
+						String encodedPassword = encodePassword(password);
+
+						if (sendMail(login, email, mailSettings.getUsername(), subject, message)) {
+							account = accountService.create(new Account(login, encodedPassword, email));
+							account.setStatus("Success");
+
+							logger.info("New account {" + email + "} created");
+						}
+					}
 				}
 			} else
-				return new AccountDto("No match");
+				account = new Account("No match");
 		}
 
-		return new AccountDto("Invalid data");
+		return account;
 	}
 
-	@PostMapping("/log")
-	public AccountDto login(@RequestParam("login") String login, @RequestParam("password") String password) {
+	@PostMapping("/login")
+	public Account login(@RequestParam("login") String login, @RequestParam("password") String password) {
 		Account account = null;
+
 		try {
-			account = accountService.find(login);
+			account = accountService.findByLogin(login);
 
-			MessageDigest md = null;
-			try {
-				md = MessageDigest.getInstance("SHA");
-			} catch (NoSuchAlgorithmException e) {
-				logger.error(e.getMessage(), e);
-			}
-
-			String encodedPassword = null;
-			try {
-				encodedPassword = Base64.getEncoder().encodeToString(md.digest(password.getBytes("UTF-8")));
-			} catch (UnsupportedEncodingException e) {
-				logger.error(e.getMessage(), e);
-			}
+			String encodedPassword = encodePassword(password);
 
 			if (account.getPassword().equals(encodedPassword)) {
-				return new AccountDto("Success");
-			} else
-				return new AccountDto("Incorrect password");
+				account = new Account(login, "Success");
+
+				return account;
+			} else {
+				account = new Account("Incorrect password");
+
+				return account;
+			}
 		} catch (NoSuchElementException e) {
-			logger.error(e.getMessage());
-			return new AccountDto("Not exists");
+			logger.error("Account with login {" + login + "} not found");
+
+			account = new Account("Not exists");
 		}
+
+		return account;
 	}
 
 	@PostMapping("/changePass")
-	public AccountDto changePassword(@RequestParam("login") String login,
-			@RequestParam("oldPassword") String oldPassword, @RequestParam("newFirstPassword") String newFirstPassword,
+	public Account changePassword(@RequestParam("login") String login, @RequestParam("oldPassword") String oldPassword,
+			@RequestParam("newFirstPassword") String newFirstPassword,
 			@RequestParam("newSecondPassword") String newSecondPassword) {
+		Account account = null;
+
 		if ((!login.equals("") && !oldPassword.equals("") && !newFirstPassword.equals("")
-				&& !newSecondPassword.equals(""))
-				|| (login != null && oldPassword != null && newFirstPassword != null && newSecondPassword != null)) {
-			Account account = null;
-
+				&& !newSecondPassword.equals(""))) {
 			try {
-				account = accountService.find(login);
+				account = accountService.findByLogin(login);
 
-				MessageDigest md = null;
-				try {
-					md = MessageDigest.getInstance("SHA");
-				} catch (NoSuchAlgorithmException e) {
-					logger.error(e.getMessage(), e);
-				}
+				String encodedOldPassword = encodePassword(oldPassword);
 
-				String encodedOldPassword = null;
-				try {
-					encodedOldPassword = Base64.getEncoder().encodeToString(md.digest(oldPassword.getBytes("UTF-8")));
-				} catch (UnsupportedEncodingException e) {
-					logger.error(e.getMessage(), e);
-				}
-
-				String encodedNewPassword = null;
-				try {
-					encodedNewPassword = Base64.getEncoder()
-							.encodeToString(md.digest(newFirstPassword.getBytes("UTF-8")));
-				} catch (UnsupportedEncodingException e) {
-					logger.error(e.getMessage(), e);
-				}
+				String encodedNewPassword = encodePassword(newFirstPassword);
 
 				if (account.getPassword().equals(encodedOldPassword)) {
 					if (newFirstPassword.equals(newSecondPassword)) {
 						account.setPassword(encodedNewPassword);
-						accountService.update(account);
-						return new AccountDto("Success");
+
+						account = accountService.update(account);
+						account.setStatus("Success");
+
+						return account;
 					} else {
-						return new AccountDto("No match");
+						account.setStatus("No match");
+
+						return account;
 					}
-				} else
-					return new AccountDto("Invalid pass");
+				} else {
+					account.setStatus("Invalid");
+
+					return account;
+				}
 			} catch (NoSuchElementException e) {
-				logger.error(e.getMessage());
-				return new AccountDto("Not exists");
+				logger.error("Account width login {" + login + "} not found");
+
+				account = new Account("Not exists");
+
+				return account;
 			}
-		} else {
-			return new AccountDto("Invalid data");
 		}
+
+		return account;
 	}
 
-	@PostMapping("/rem")
-	public AccountDto rememberPassword(@RequestParam("login") String login, @RequestParam("email") String email) {
-		if (!login.equals("") && !email.equals("")) {
-			Account account = null;
+	@PostMapping("/restorePass")
+	public Account rememberPassword(@RequestParam("login") String login, @RequestParam("email") String email) {
+		Account account = null;
 
+		if (!login.equals("") && !email.equals("")) {
 			try {
-				account = accountService.find(login);
+				account = accountService.findByEmail(email);
 			} catch (NoSuchElementException e) {
-				logger.error(e.getMessage());
-				return new AccountDto("Not exists");
+				logger.error("Account width login {" + login + "} not found");
+
+				account = new Account("Not exists");
+
+				return account;
 			}
 
 			if (account.getEmail().equals(email)) {
 				String newPassword = PasswordGenerator.generateRandomPassword(8);
 
-				MessageDigest md = null;
-				try {
-					md = MessageDigest.getInstance("SHA");
-				} catch (NoSuchAlgorithmException e) {
-					logger.error(e.getMessage(), e);
+				String encodedPassword = encodePassword(newPassword);
+
+				String subject = "Change password ... " + login + "!";
+
+				String messTemplate = "<h1>Password succesful changed!</h1><p>Your new password: " + newPassword;
+
+				if (sendMail(login, email, mailSettings.getUsername(), subject, messTemplate)) {
+					account.setPassword(encodedPassword);
+					account = accountService.update(account);
+					account.setStatus("Success");
+
+					return account;
 				}
+			} else {
+				account.setStatus("Invalid email");
 
-				String encodedPassword = null;
-				try {
-					encodedPassword = Base64.getEncoder().encodeToString(md.digest(newPassword.getBytes("UTF-8")));
-				} catch (UnsupportedEncodingException e) {
-					logger.error(e.getMessage(), e);
-				}
-
-				account.setPassword(encodedPassword);
-				accountService.update(account);
-				sendReminderEmail(login, email, newPassword);
-				return new AccountDto("Success", true);
-			} else
-				return new AccountDto("Invalid email");
-		}
-
-		return new AccountDto("Invalid data");
-	}
-
-	@GetMapping("/accCount")
-	public CountAccountsDto countAccounts() {
-		return new CountAccountsDto(accountService.countAccounts());
-	}
-
-	private boolean sendRegistrationEmail(String login, String email, String password) {
-		MimeMessage msg = javaMailSender.createMimeMessage();
-
-		MimeMessageHelper helper;
-		try {
-			helper = new MimeMessageHelper(msg, true);
-			helper.setFrom("hromov.la2dev@gmail.com");
-			helper.setTo(email);
-			helper.setSubject("Welcome " + login + "!");
-
-			String messageFile = "message.html";
-			List<String> list = new ArrayList<String>();
-			StringBuilder message = new StringBuilder();
-
-			try (Stream<String> stream = Files.lines(Paths.get(messageFile))) {
-				list = stream.collect(Collectors.toList());
-			} catch (IOException e) {
-				logger.error(e.getMessage());
+				return account;
 			}
 
-			list.forEach(s -> message.append(s.trim()));
-
-			message.append("<h2>Учетные данные для входа в игру:</h2><br><p>Логин: " + login + "<br>Пароль: " + password
-					+ "</p>");
-
-			helper.setText(message.toString(), true);
-		} catch (MessagingException e) {
-			logger.error(e.getMessage());
-			return false;
+			account.setStatus("Invalid data");
 		}
 
-		javaMailSender.send(msg);
-
-		return true;
+		return account;
 	}
 
-	private boolean sendReminderEmail(String login, String email, String password) {
+	@GetMapping("/countAll")
+	public Long countAccounts() {
+		return accountService.countAccounts();
+	}
+
+	@PostMapping("/sendMess")
+	public Account sendMessage(@RequestParam("email") String email, @RequestParam("message") String message,
+			@RequestParam("answer") String answer) {
+		Account account = null;
+
+		if ((!email.equals("") && !message.equals("") && !answer.equals(""))) {
+			try {
+				account = accountService.findByEmail(email);
+
+				String subject = "Question from site by " + account.getLogin() + "!";
+
+				if (sendMail(account.getLogin(), mailSettings.getUsername(), email, subject, message)) {
+					account.setStatus("Success");
+
+					return account;
+				}
+			} catch (NoSuchElementException e) {
+				logger.error("Cannot send message: account with email {" + account.getLogin() + "} not found");
+
+				return account;
+			}
+
+			account = new Account("Invalid data");
+		}
+
+		return account;
+	}
+
+	private String encodePassword(String password) {
+		MessageDigest md = null;
+
+		try {
+			md = MessageDigest.getInstance("SHA");
+		} catch (NoSuchAlgorithmException e) {
+			logger.error(e.getMessage(), e);
+		}
+
+		String encodedPassword = null;
+
+		try {
+			encodedPassword = Base64.getEncoder().encodeToString(md.digest(password.getBytes("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			logger.error(e.getMessage(), e);
+		}
+
+		return encodedPassword;
+	}
+
+	private boolean sendMail(String login, String email, String replyMail, String subject, String message) {
 		MimeMessage msg = javaMailSender.createMimeMessage();
 
 		MimeMessageHelper helper;
+
 		try {
 			helper = new MimeMessageHelper(msg, true);
-			helper.setFrom("hromov.la2dev@gmail.com");
 			helper.setTo(email);
-			helper.setSubject("Смена пароля... " + login + "!");
-			helper.setText("<h1>Пароль успешно изменен!</h1>" + "<p>Ваш новый пароль: " + password
-					+ "<br>Изменить его вы можете в личном кабинете.</p>", true);
+			helper.setReplyTo(replyMail);
+			helper.setSubject(subject);
+			helper.setText(message, true);
 		} catch (MessagingException e) {
 			logger.error(e.getMessage());
+
 			return false;
 		}
 

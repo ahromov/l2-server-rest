@@ -16,7 +16,7 @@ public class AccountService {
 		return repository.save(account);
 	}
 
-	public Account find(String login) {
+	public Account findByLogin(String login) {
 		return repository.findById(login).get();
 	}
 
@@ -29,7 +29,7 @@ public class AccountService {
 	}
 
 	public Long countAccounts() {
-		return repository.countAccounts();
+		return repository.countNotGmAccounts();
 	}
 
 }

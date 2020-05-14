@@ -36,6 +36,7 @@ public class Clan {
 	private String alyName;
 
 	public Clan() {
+
 	}
 
 	public Integer getId() {

@@ -7,11 +7,20 @@ import javax.persistence.Id;
 @Entity(name = "heroes")
 public class Hero {
 
-    @Id
-    @Column
-    private Integer charId;
+	@Id
+	@Column
+	private Integer charId;
 
-    public Hero() {
-    }
+	public Hero() {
+
+	}
+
+	public Integer getCharId() {
+		return charId;
+	}
+
+	public void setCharId(Integer charId) {
+		this.charId = charId;
+	}
 
 }

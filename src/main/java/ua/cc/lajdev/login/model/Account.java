@@ -3,6 +3,9 @@ package ua.cc.lajdev.login.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name = "accounts")
 public class Account {
@@ -12,12 +15,27 @@ public class Account {
 	private String login;
 
 	@Column
+	@JsonIgnore
 	private String password;
 
 	@Column
+	@JsonIgnore
 	private String email;
 
+	@Transient
+	public String status;
+
 	public Account() {
+
+	}
+
+	public Account(String status) {
+		this.status = status;
+	}
+
+	public Account(String login, String status) {
+		this.login = login;
+		this.status = status;
 	}
 
 	public Account(String login, String password, String email) {
@@ -34,6 +52,14 @@ public class Account {
 		this.login = login;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	public String getEmail() {
 		return email;
 	}
@@ -42,12 +68,12 @@ public class Account {
 		this.email = email;
 	}
 
-	public String getPassword() {
-		return password;
+	public String getStatus() {
+		return status;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }

@@ -184,6 +184,7 @@ public class Char {
 	}
 
 	public Char() {
+
 	}
 
 	public Integer getCharId() {

@@ -14,10 +14,6 @@ public class CharService {
 	@Autowired
 	private CharRepository repository;
 
-	public Char getById(Integer id) {
-		return repository.findById(id).get();
-	}
-
 	public Integer getOnlineNoneGmChars() {
 		return repository.getOnlineNoneGmChars();
 	}
@@ -36,10 +32,6 @@ public class CharService {
 
 	public List<Char> getTop10Chars() {
 		return repository.getTop10Chars();
-	}
-
-	public List<Char> getAll() {
-		return repository.findAll();
 	}
 
 }

@@ -11,11 +11,11 @@ import ua.cc.lajdev.login.repo.GameServerRepository;
 @Service
 public class GameServerService {
 
-    @Autowired
-    private GameServerRepository repository;
+	@Autowired
+	private GameServerRepository repository;
 
-    public List<GameServer> getAll() {
-	return repository.findAll();
-    }
+	public List<GameServer> getAll() {
+		return repository.findAll();
+	}
 
 }

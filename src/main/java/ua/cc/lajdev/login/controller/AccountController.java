@@ -140,16 +140,12 @@ public class AccountController {
 						return account;
 					}
 				} else {
-					account.setStatus("Invalid");
+					account.setStatus("Invalid pass");
 
 					return account;
 				}
 			} catch (NoSuchElementException e) {
-				logger.error("Account width login {" + login + "} not found");
-
-				account = new Account("Not exists");
-
-				return account;
+				logger.error("Cannot update password: account width login {" + login + "} not found");
 			}
 		}
 
@@ -161,40 +157,35 @@ public class AccountController {
 		Account account = null;
 
 		if (!login.equals("") && !email.equals("")) {
-			try {
-				account = accountService.findByEmail(email);
-			} catch (NoSuchElementException e) {
-				logger.error("Account width login {" + login + "} not found");
+			account = accountService.findByEmail(email);
 
-				account = new Account("Not exists");
+			if (account != null) {
+				if (account.getLogin().equals(login)) {
+					String newPassword = PasswordGenerator.generateRandomPassword(8);
 
-				return account;
-			}
+					String encodedPassword = encodePassword(newPassword);
 
-			if (account.getEmail().equals(email)) {
-				String newPassword = PasswordGenerator.generateRandomPassword(8);
+					String subject = "Change password ... " + login + "!";
 
-				String encodedPassword = encodePassword(newPassword);
+					String messTemplate = "<h1>Password succesful changed!</h1><p>Your new password: " + newPassword;
 
-				String subject = "Change password ... " + login + "!";
+					if (sendMail(login, email, mailSettings.getUsername(), subject, messTemplate)) {
+						account.setPassword(encodedPassword);
+						account = accountService.update(account);
+						account.setStatus("Success");
 
-				String messTemplate = "<h1>Password succesful changed!</h1><p>Your new password: " + newPassword;
-
-				if (sendMail(login, email, mailSettings.getUsername(), subject, messTemplate)) {
-					account.setPassword(encodedPassword);
-					account = accountService.update(account);
-					account.setStatus("Success");
-
-					return account;
+						return account;
+					}
+				} else {
+					return new Account("Invalid login"); // Must return new Account, beacause return correct login
 				}
 			} else {
-				account.setStatus("Invalid email");
+				logger.error("Cannot restore password: account with email {" + email + "} not found");
 
-				return account;
+				return new Account("Not exists");
 			}
-
-			account.setStatus("Invalid data");
-		}
+		} else
+			return new Account("Invalid data");
 
 		return account;
 	}
@@ -205,29 +196,31 @@ public class AccountController {
 	}
 
 	@PostMapping("/sendMess")
-	public Account sendMessage(@RequestParam("email") String email, @RequestParam("message") String message,
-			@RequestParam("answer") String answer) {
+	public Account sendMessage(@RequestParam("login") String login, @RequestParam("email") String email,
+			@RequestParam("message") String message) {
 		Account account = null;
 
-		if ((!email.equals("") && !message.equals("") && !answer.equals(""))) {
-			try {
-				account = accountService.findByEmail(email);
+		if ((!email.equals("") && !message.equals("") && !login.equals(""))) {
+			account = accountService.findByEmail(email);
 
-				String subject = "Question from site by " + account.getLogin() + "!";
+			if (account != null) {
+				if (account.getLogin().equals(login)) {
+					String subject = "Question from site by " + account.getLogin() + "!";
 
-				if (sendMail(account.getLogin(), mailSettings.getUsername(), email, subject, message)) {
-					account.setStatus("Success");
+					if (sendMail(account.getLogin(), mailSettings.getUsername(), email, subject, message)) {
+						account.setStatus("Success");
 
-					return account;
-				}
-			} catch (NoSuchElementException e) {
-				logger.error("Cannot send message: account with email {" + account.getLogin() + "} not found");
+						return account;
+					}
+				} else
+					return new Account("Invalid login");
+			} else {
+				logger.error("Cannot send message: account with email {" + email + "} not found");
 
-				return account;
+				return new Account("Not found");
 			}
-
-			account = new Account("Invalid data");
-		}
+		} else
+			return new Account("Invalid data");
 
 		return account;
 	}

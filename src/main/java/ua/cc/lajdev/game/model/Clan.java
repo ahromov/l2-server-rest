@@ -6,11 +6,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity(name = "clan_data")
 public class Clan {
 
 	@Id
 	@Column(name = "clan_id")
+	@JsonIgnore
 	private Integer id;
 
 	@Column(name = "clan_name")
@@ -19,8 +22,9 @@ public class Clan {
 	@Column(name = "clan_level")
 	private Integer level;
 
-	@Column(name = "leader_id")
-	private Integer leaderId;
+	@OneToOne
+	@JoinColumn(name = "leader_id", referencedColumnName = "charId")
+	private Char leader;
 
 	@OneToOne
 	@JoinColumn(name = "hasCastle", referencedColumnName = "id")
@@ -63,12 +67,12 @@ public class Clan {
 		this.level = level;
 	}
 
-	public Integer getLeaderId() {
-		return leaderId;
+	public Char getLeader() {
+		return leader;
 	}
 
-	public void setLeaderId(Integer leaderId) {
-		this.leaderId = leaderId;
+	public void setLeader(Char leader) {
+		this.leader = leader;
 	}
 
 	public Castle getCastle() {

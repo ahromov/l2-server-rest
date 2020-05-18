@@ -13,6 +13,10 @@ import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.InitialDirContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -286,13 +290,8 @@ public class AccountController {
 
 			emailAddr.validate();
 
-			try {
-				checkDomain(email);
-			} catch (UnknownHostException e) {
-				logger.error("Unknow mailhost address");
-
+			if (isMxRecords(email) == false)
 				return false;
-			}
 		} catch (AddressException ex) {
 			logger.error("Incorrect email address");
 
@@ -302,10 +301,28 @@ public class AccountController {
 		return true;
 	}
 
-	private boolean checkDomain(String email) throws UnknownHostException {
-		String mailDomain = email.substring(email.indexOf("@") + 1);
+	private boolean isMxRecords(String email) {
+		String domainName = email.substring(email.indexOf("@") + 1);
 
-		InetAddress.getByName(mailDomain);
+		InitialDirContext iDirC = null;
+
+		Attributes attributes = null;
+
+		try {
+			iDirC = new InitialDirContext();
+
+			attributes = iDirC.getAttributes("dns:/" + domainName, new String[] { "MX" });
+		} catch (NamingException e) {
+			logger.error("Cannot get MX records");
+
+			return false;
+		}
+
+		Attribute attributeMX = attributes.get("MX");
+
+		if (attributeMX == null) {
+			return false;
+		}
 
 		return true;
 	}

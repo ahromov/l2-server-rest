@@ -1,17 +1,23 @@
 package ua.cc.lajdev.login.controller;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.NoSuchElementException;
 
 import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -69,12 +75,15 @@ public class AccountController {
 					} catch (NoSuchElementException e) {
 						String encodedPassword = encodePassword(password);
 
-						if (sendMail(login, email, mailSettings.getUsername(), subject, message)) {
-							account = accountService.create(new Account(login, encodedPassword, email));
-							account.setStatus("Success");
+						if (isCorrectEmailAddress(email)) {
+							if (sendMail(login, email, mailSettings.getUsername(), subject, message)) {
+								account = accountService.create(new Account(login, encodedPassword, email));
+								account.setStatus("Success");
 
-							logger.info("New account {" + email + "} created");
-						}
+								logger.info("New account {" + email + "} created");
+							}
+						} else
+							return new Account("Invalid email");
 					}
 				}
 			} else
@@ -256,13 +265,47 @@ public class AccountController {
 			helper.setReplyTo(replyMail);
 			helper.setSubject(subject);
 			helper.setText(message, true);
+
+			javaMailSender.send(msg);
 		} catch (MessagingException e) {
+			logger.error(e.getMessage());
+
+			return false;
+		} catch (MailException e) {
 			logger.error(e.getMessage());
 
 			return false;
 		}
 
-		javaMailSender.send(msg);
+		return true;
+	}
+
+	private boolean isCorrectEmailAddress(String email) {
+		try {
+			InternetAddress emailAddr = new InternetAddress(email);
+
+			emailAddr.validate();
+
+			try {
+				checkDomain(email);
+			} catch (UnknownHostException e) {
+				logger.error("Unknow mailhost address");
+
+				return false;
+			}
+		} catch (AddressException ex) {
+			logger.error("Incorrect email address");
+
+			return false;
+		}
+
+		return true;
+	}
+
+	private boolean checkDomain(String email) throws UnknownHostException {
+		String mailDomain = email.substring(email.indexOf("@") + 1);
+
+		InetAddress.getByName(mailDomain);
 
 		return true;
 	}

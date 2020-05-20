@@ -26,7 +26,7 @@ public class PersistenceSiteAutoConfiguration {
 
 	@Bean(name = "siteDataSource")
 	@ConfigurationProperties(prefix = "spring.datasource-site")
-	public DataSource gameDataSource() {
+	public DataSource siteDataSource() {
 		return DataSourceBuilder.create().build();
 	}
 

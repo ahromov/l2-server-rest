@@ -22,6 +22,10 @@ public class NewsService {
 		return repository.findById(id).get();
 	}
 
+	public List<Long> getNewsIds() {
+		return repository.getNewsIds();
+	}
+
 	public List<News> getAll() {
 		return repository.findAll();
 	}

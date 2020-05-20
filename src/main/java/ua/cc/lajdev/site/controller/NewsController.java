@@ -1,8 +1,10 @@
 package ua.cc.lajdev.site.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -55,12 +57,45 @@ public class NewsController {
 		return newsService.getById(id);
 	}
 
-	@GetMapping("/get/all")
-	public List<News> getAll() {
+	@GetMapping("/get/newsIds")
+	public List<Long> getNewsIds() {
+		List<Long> sortedIds = new ArrayList<>();
+		List<Long> allIds = newsService.getNewsIds();
+
+		for (int i = 0; i < allIds.size(); i += 3) {
+			sortedIds.add(allIds.get(i));
+		}
+
+		return sortedIds;
+	}
+
+	@GetMapping("/get/nextNews/{firstNewsId}")
+	public List<News> nextNews(@PathVariable("firstNewsId") Long firstNewsId) {
+		long id = firstNewsId;
+
+		List<News> allNews = newsService.getAll();
+
+		List<News> sortedNews = new ArrayList<>();
+
+		for (int i = 0; i < 3; i++) {
+			for (Iterator<News> iterator = allNews.iterator(); iterator.hasNext();) {
+				News news = (News) iterator.next();
+				if (news.getId() == id) {
+					sortedNews.add(news);
+					id--;
+				}
+			}
+		}
+
+		return sortedNews;
+	}
+
+	@GetMapping("/get/lastThree")
+	public List<News> getLastThree() {
 		List<News> list = newsService.getAll();
 		Collections.reverse(list);
 
-		return list;
+		return list.subList(0, 3);
 	}
 
 }

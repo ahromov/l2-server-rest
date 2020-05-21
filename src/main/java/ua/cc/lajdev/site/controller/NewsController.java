@@ -1,15 +1,16 @@
 package ua.cc.lajdev.site.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,37 +58,18 @@ public class NewsController {
 		return newsService.getById(id);
 	}
 
-	@GetMapping("/get/newsIds")
-	public List<Long> getNewsIds() {
-		List<Long> sortedIds = new ArrayList<>();
-		List<Long> allIds = newsService.getNewsIds();
+	@GetMapping("/get/pages")
+	public Integer getNewsIds() {
+		Pageable pageParam = PageRequest.of(0, 3);
 
-		for (int i = 0; i < allIds.size(); i += 3) {
-			sortedIds.add(allIds.get(i));
-		}
-
-		return sortedIds;
+		return newsService.getNextPage(pageParam).getTotalPages();
 	}
 
-	@GetMapping("/get/nextNews/{firstNewsId}")
-	public List<News> nextNews(@PathVariable("firstNewsId") Long firstNewsId) {
-		long id = firstNewsId;
+	@GetMapping("/get/pages/{pageNumber}")
+	public List<News> nextNews(@PathVariable("pageNumber") Integer pageNumber) {
+		Pageable pageWithThreeNews = PageRequest.of(pageNumber, 3, Sort.by("id").descending());
 
-		List<News> allNews = newsService.getAll();
-
-		List<News> sortedNews = new ArrayList<>();
-
-		for (int i = 0; i < 3; i++) {
-			for (Iterator<News> iterator = allNews.iterator(); iterator.hasNext();) {
-				News news = (News) iterator.next();
-				if (news.getId() == id) {
-					sortedNews.add(news);
-					id--;
-				}
-			}
-		}
-
-		return sortedNews;
+		return newsService.getNextPage(pageWithThreeNews).getContent();
 	}
 
 	@GetMapping("/get/lastThree")

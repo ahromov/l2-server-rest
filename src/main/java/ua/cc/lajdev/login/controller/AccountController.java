@@ -24,10 +24,11 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import ua.cc.lajdev.login.dto.UserDto;
 import ua.cc.lajdev.login.model.Account;
 import ua.cc.lajdev.login.model.MailSettings;
 import ua.cc.lajdev.login.service.AccountService;
@@ -50,38 +51,38 @@ public class AccountController {
 	private MailSettings mailSettings;
 
 	@PostMapping("/create")
-	public Account registration(@RequestParam("login") String login, @RequestParam("email") String email,
-			@RequestParam("password") String password, @RequestParam("passwordSecond") String passwordSecond) {
+	public Account registration(@RequestBody UserDto user) {
 		Account account = null;
 
-		if ((!login.equals("") && !email.equals("") && !password.equals("") && !passwordSecond.equals(""))) {
-			account = accountService.findByEmail(email);
+		if ((!user.login.equals("") && !user.email.equals("") && !user.password.equals("")
+				&& !user.passwordSecond.equals(""))) {
+			account = accountService.findByEmail(user.email);
 
-			if (password.equals(passwordSecond)) {
+			if (user.password.equals(user.passwordSecond)) {
 				if (account != null) {
 					account.setStatus("Email exists");
 
 					return account;
 				} else {
-					String subject = "Welcome " + login + "!";
+					String subject = "Welcome " + user.login + "!";
 
-					String message = "<h2>Your account data:</h2><br><p>Login: " + login + "<br>Password: " + password
-							+ "</p>";
+					String message = "<h2>Your account data:</h2><br><p>Login: " + user.login + "<br>Password: "
+							+ user.password + "</p>";
 
 					try {
-						Account loginAcc = accountService.findByLogin(login);
+						Account loginAcc = accountService.findByLogin(user.login);
 						loginAcc.setStatus("Login exists");
 
 						return loginAcc;
 					} catch (NoSuchElementException e) {
-						String encodedPassword = encodePassword(password);
+						String encodedPassword = encodePassword(user.password);
 
-						if (isCorrectEmailAddress(email)) {
-							if (sendMail(login, email, mailSettings.getUsername(), subject, message)) {
-								account = accountService.create(new Account(login, encodedPassword, email));
+						if (isCorrectEmailAddress(user.email)) {
+							if (sendMail(user.login, user.email, mailSettings.getUsername(), subject, message)) {
+								account = accountService.create(new Account(user.login, encodedPassword, user.email));
 								account.setStatus("Success");
 
-								logger.info("New account {" + email + "} created");
+								logger.info("New account {" + user.email + "} created");
 							}
 						} else
 							return new Account("Invalid email");
@@ -94,24 +95,25 @@ public class AccountController {
 		return account;
 	}
 
-	@PostMapping("/login")
-	public Account login(@RequestParam("login") String login, @RequestParam("password") String password) {
+	@PostMapping(path = "/login")
+	public Account login(@RequestBody UserDto login) {
 		Account account = null;
 
 		try {
-			account = accountService.findByLogin(login);
+			account = accountService.findByLogin(login.login);
 
-			String encodedPassword = encodePassword(password);
+			String encodedPassword = encodePassword(login.password);
 
 			if (account.getPassword().equals(encodedPassword)) {
-				account = new Account(login, "Success");
+				account.setStatus("Success");
 
 				return account;
 			} else {
-				account = new Account("Incorrect password");
+				account.setStatus("Incorrect password");
 
 				return account;
 			}
+
 		} catch (NoSuchElementException e) {
 			logger.error("Account with login {" + login + "} not found");
 
@@ -122,24 +124,21 @@ public class AccountController {
 	}
 
 	@PostMapping("/changePass")
-	public Account changePassword(@RequestParam("login") String login, @RequestParam("oldPassword") String oldPassword,
-			@RequestParam("newFirstPassword") String newFirstPassword,
-			@RequestParam("newSecondPassword") String newSecondPassword) {
+	public Account changePassword(@RequestBody UserDto user) {
 		Account account = null;
 
-		if ((!login.equals("") && !oldPassword.equals("") && !newFirstPassword.equals("")
-				&& !newSecondPassword.equals(""))) {
+		if ((!user.login.equals("") && !user.oldPassword.equals("") && !user.newFirstPassword.equals("")
+				&& !user.newSecondPassword.equals(""))) {
 			try {
-				account = accountService.findByLogin(login);
+				account = accountService.findByLogin(user.login);
 
-				String encodedOldPassword = encodePassword(oldPassword);
+				String encodedOldPassword = encodePassword(user.oldPassword);
 
-				String encodedNewPassword = encodePassword(newFirstPassword);
+				String encodedNewPassword = encodePassword(user.newFirstPassword);
 
 				if (account.getPassword().equals(encodedOldPassword)) {
-					if (newFirstPassword.equals(newSecondPassword)) {
+					if (user.newFirstPassword.equals(user.newSecondPassword)) {
 						account.setPassword(encodedNewPassword);
-
 						account = accountService.update(account);
 						account.setStatus("Success");
 
@@ -155,7 +154,7 @@ public class AccountController {
 					return account;
 				}
 			} catch (NoSuchElementException e) {
-				logger.error("Cannot update password: account width login {" + login + "} not found");
+				logger.error("Cannot update password: account width login {" + user.login + "} not found");
 			}
 		}
 
@@ -163,23 +162,23 @@ public class AccountController {
 	}
 
 	@PostMapping("/restorePass")
-	public Account rememberPassword(@RequestParam("login") String login, @RequestParam("email") String email) {
+	public Account rememberPassword(@RequestBody UserDto user) {
 		Account account = null;
 
-		if (!login.equals("") && !email.equals("")) {
-			account = accountService.findByEmail(email);
+		if (!user.login.equals("") && !user.email.equals("")) {
+			account = accountService.findByEmail(user.email);
 
 			if (account != null) {
-				if (account.getLogin().equals(login)) {
+				if (account.getLogin().equals(user.login)) {
 					String newPassword = PasswordGenerator.generateRandomPassword(8);
 
 					String encodedPassword = encodePassword(newPassword);
 
-					String subject = "Change password ... " + login + "!";
+					String subject = "Change password ... " + user.login + "!";
 
 					String messTemplate = "<h1>Password succesful changed!</h1><p>Your new password: " + newPassword;
 
-					if (sendMail(login, email, mailSettings.getUsername(), subject, messTemplate)) {
+					if (sendMail(user.login, user.email, mailSettings.getUsername(), subject, messTemplate)) {
 						account.setPassword(encodedPassword);
 						account = accountService.update(account);
 						account.setStatus("Success");
@@ -190,7 +189,7 @@ public class AccountController {
 					return new Account("Invalid login"); // Must return new Account, beacause return correct login
 				}
 			} else {
-				logger.error("Cannot restore password: account with email {" + email + "} not found");
+				logger.error("Cannot restore password: account with email {" + user.email + "} not found");
 
 				return new Account("Not exists");
 			}
@@ -206,18 +205,17 @@ public class AccountController {
 	}
 
 	@PostMapping("/sendMess")
-	public Account sendMessage(@RequestParam("login") String login, @RequestParam("email") String email,
-			@RequestParam("message") String message) {
+	public Account sendMessage(@RequestBody UserDto user) {
 		Account account = null;
 
-		if ((!email.equals("") && !message.equals("") && !login.equals(""))) {
-			account = accountService.findByEmail(email);
+		if ((!user.email.equals("") && !user.message.equals("") && !user.login.equals(""))) {
+			account = accountService.findByEmail(user.email);
 
 			if (account != null) {
-				if (account.getLogin().equals(login)) {
+				if (account.getLogin().equals(user.login)) {
 					String subject = "Question from site by " + account.getLogin() + "!";
 
-					if (sendMail(account.getLogin(), mailSettings.getUsername(), email, subject, message)) {
+					if (sendMail(account.getLogin(), mailSettings.getUsername(), user.email, subject, user.message)) {
 						account.setStatus("Success");
 
 						return account;
@@ -225,7 +223,7 @@ public class AccountController {
 				} else
 					return new Account("Invalid login");
 			} else {
-				logger.error("Cannot send message: account with email {" + email + "} not found");
+				logger.error("Cannot send message: account with email {" + user.email + "} not found");
 
 				return new Account("Not found");
 			}

@@ -5,11 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ua.cc.lajdev.login.dto.GoogleResponseDto;
+import ua.cc.lajdev.login.dto.GoogleTokenDto;
 import ua.cc.lajdev.login.service.CaptchaService;
 import ua.cc.lajdev.login.service.exception.InvalidReCaptchaException;
 
@@ -24,9 +25,9 @@ public class ReCaptchaController {
 	CaptchaService recaptchaService;
 
 	@PostMapping("validate")
-	public GoogleResponseDto getGoogleResponse(@RequestParam("response") String response) {
+	public GoogleResponseDto getGoogleResponse(@RequestBody GoogleTokenDto token) {
 		try {
-			return recaptchaService.processResponse(response);
+			return recaptchaService.processResponse(token.response);
 		} catch (InvalidReCaptchaException e) {
 			logger.error(e.getMessage());
 		}

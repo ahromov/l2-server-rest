@@ -225,7 +225,7 @@ public class AccountController {
 			} else {
 				logger.error("Cannot send message: account with email {" + user.email + "} not found");
 
-				return new Account("Not found");
+				return new Account("Email not found");
 			}
 		} else
 			return new Account("Invalid data");

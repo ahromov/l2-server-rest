@@ -8,35 +8,35 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "phpbb_users")
-public class Poster {
+@Table(name = "phpbb_icons")
+public class Icon {
 
 	@Id
-	@Column(name = "user_id")
+	@Column(name = "icons_id")
 	@JsonIgnore
 	private Integer id;
 
-	@Column
-	private String username;
+	@Column(name = "icons_url")
+	private String url;
 
-	public Poster() {
+	public Icon() {
 
 	}
 
-	public Integer getUserId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setUserId(Integer id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getUrl() {
+		return url;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 }

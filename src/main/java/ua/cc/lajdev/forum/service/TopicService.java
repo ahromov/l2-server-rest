@@ -5,16 +5,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import ua.cc.lajdev.forum.model.Post;
-import ua.cc.lajdev.forum.repo.PostRepository;
+import ua.cc.lajdev.forum.model.Topic;
+import ua.cc.lajdev.forum.repo.TopicRepository;
 
 @Service
-public class PostService {
+public class TopicService {
 
 	@Autowired
-	private PostRepository repository;
+	private TopicRepository repository;
 
-	public Page<Post> getNextPage(Pageable pageable) {
+	public Page<Topic> getNextPage(Pageable pageable) {
 		return repository.findAll(pageable);
 	}
 

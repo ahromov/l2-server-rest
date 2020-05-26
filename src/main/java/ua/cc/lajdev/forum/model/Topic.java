@@ -1,11 +1,16 @@
 package ua.cc.lajdev.forum.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 @Entity
 @Table(name = "phpbb_topics")
@@ -20,16 +25,14 @@ public class Topic {
 
 	@OneToOne
 	@JoinColumn(name = "icon_id", referencedColumnName = "icons_id")
+	@NotFound(action = NotFoundAction.IGNORE)
 	private Icon icon;
 
 	@Column(name = "topic_last_poster_name")
 	private String posterName;
 
-	@Column(name = "topic_time")
-	private Long createDate;
-
-	@Column(name = "topic_last_post_time")
-	private Long lastPostedDate;
+	@Column(name = "current_date")
+	private Date lastPostedDate;
 
 	@Column(name = "topic_title")
 	private String title;
@@ -70,19 +73,11 @@ public class Topic {
 		this.posterName = posterName;
 	}
 
-	public Long getCreateDate() {
-		return createDate;
-	}
-
-	public void setCreateDate(Long createDate) {
-		this.createDate = createDate;
-	}
-
-	public Long getLastPostedDate() {
+	public Date getLastPostedDate() {
 		return lastPostedDate;
 	}
 
-	public void setLastPostedDate(Long lastPostedDate) {
+	public void setLastPostedDate(Date lastPostedDate) {
 		this.lastPostedDate = lastPostedDate;
 	}
 

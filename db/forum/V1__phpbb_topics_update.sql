@@ -1,0 +1,2 @@
+ALTER TABLE `phpbb_topics`
+	ADD COLUMN `current_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP() AFTER `topic_posts_softdeleted`;

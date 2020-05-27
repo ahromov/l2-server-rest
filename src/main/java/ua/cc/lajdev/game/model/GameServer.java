@@ -17,6 +17,7 @@ public class GameServer {
 
 	private String status;
 	private Integer onlineCounter;
+	private String ratesConfigFile;
 
 	public GameServer() {
 	}
@@ -51,6 +52,14 @@ public class GameServer {
 
 	public void setOnlineCounter(Integer onlineCounter) {
 		this.onlineCounter = onlineCounter;
+	}
+
+	public String getRatesConfigFile() {
+		return ratesConfigFile;
+	}
+
+	public void setRatesConfigFile(String configFile) {
+		this.ratesConfigFile = configFile;
 	}
 
 }

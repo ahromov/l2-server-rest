@@ -9,14 +9,16 @@
 		<version>2.1.6.RELEASE</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>lajdev</groupId>
+	<groupId>ua.cc.lajdev</groupId>
 	<artifactId>l2-server-rest</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>l2-server-rest</name>
 	<description>Webapp for L2 game server</description>
 
 	<properties>
 		<java.version>1.8</java.version>
+		<maven-assembly-plugin.version>3.2.0</maven-assembly-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -64,11 +66,71 @@
 			<plugin>
 				<groupId>org.flywaydb</groupId>
 				<artifactId>flyway-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>l2site</id>
+						<phase>install</phase>
+						<goals>
+							<goal>migrate</goal>
+						</goals>
+						<inherited>false</inherited>
+						<configuration>
+							<url>
+								jdbc:mysql://192.168.0.1:3306/?serverTimezone=Europe/Kiev
+							</url>
+							<user>root</user>
+							<password>toor</password>
+							<schemas>
+								<schema>l2site</schema>
+							</schemas>
+							<locations>
+								<location>db/migration/l2site</location>
+							</locations>
+							<baselineOnMigrate>true</baselineOnMigrate>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>mysql</groupId>
+						<artifactId>mysql-connector-java</artifactId>
+						<version>5.1.49</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${maven-assembly-plugin.version}</version><!-- $NO-MVN-MAN-VER$ -->
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<finalName>${project.artifactId}-${project.version}</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+							<descriptors>
+								<descriptor>src/main/assembly/zip.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+					<exclude>**/application.properties</exclude>
+				</excludes>
+			</resource>
+		</resources>
 	</build>
 </project>

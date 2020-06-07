@@ -12,11 +12,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import ua.cc.lajdev.site.service.CustomUserDetailsService;
+import ua.cc.lajdev.site.service.impl.UserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity
-@ComponentScan(basePackageClasses = CustomUserDetailsService.class)
+@ComponentScan(basePackageClasses = UserDetailsServiceImpl.class)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -29,10 +29,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/hello").access("hasRole('ROLE_ADMIN')").anyRequest().permitAll().and()
-				.formLogin().loginPage("/login").loginProcessingUrl("/j_spring_security_check")
-				.usernameParameter("j_username").passwordParameter("j_password").and().logout()
-				.logoutSuccessUrl("/login?logout").and().exceptionHandling().accessDeniedPage("/403").and().csrf();
+		http.authorizeRequests().antMatchers("/hello").hasAuthority("ADMIN").anyRequest().permitAll().and().formLogin()
+				.loginPage("/login").loginProcessingUrl("/j_spring_security_check").usernameParameter("j_username")
+				.passwordParameter("j_password").and().logout().logoutSuccessUrl("/login?logout").and()
+				.exceptionHandling().accessDeniedPage("/403").and().csrf();
 	}
 
 	@Bean(name = "passwordEncoder")

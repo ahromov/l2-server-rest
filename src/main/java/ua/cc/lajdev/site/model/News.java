@@ -23,7 +23,7 @@ public class News {
 	private String title;
 
 	@Column
-	private String description;
+	private String text;
 
 	@Column
 	private Date date;
@@ -41,7 +41,7 @@ public class News {
 
 	public News(String title, String text, Date date, byte[] bs) {
 		this.title = title;
-		this.description = text;
+		this.text = text;
 		this.date = date;
 		this.image = bs;
 	}
@@ -63,11 +63,11 @@ public class News {
 	}
 
 	public String getText() {
-		return description;
+		return text;
 	}
 
 	public void setText(String text) {
-		this.description = text;
+		this.text = text;
 	}
 
 	public Date getDate() {

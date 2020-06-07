@@ -1,4 +1,4 @@
-package ua.cc.lajdev.site.service;
+package ua.cc.lajdev.site.service.impl;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import ua.cc.lajdev.site.repo.UserRolesRepository;
 import ua.cc.lajdev.site.service.security.CustomUserDetails;
 
 @Service("customUserDetailsService")
-public class CustomUserDetailsService implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Autowired
 	private UserRepository userRepository;
@@ -30,7 +30,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 			throw new UsernameNotFoundException("No user present with username: " + username);
 		} else {
 			List<String> userRoles = userRolesRepository.findRoleByUserName(username);
-			
+
 			return new CustomUserDetails(user, userRoles);
 		}
 	}

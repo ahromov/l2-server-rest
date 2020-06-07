@@ -2,16 +2,18 @@ var newsForm = document.querySelector('#newsForm');
 var newsImage = document.querySelector('#newsImage');
 var newsUploadError = document.querySelector('#newsUploadError');
 var newsUploadSuccess = document.querySelector('#newsUploadSuccess');
+var hostName = '127.0.0.1';
+var hostPort = '8080';
 
 function addNews() {
 	let formData = new FormData(newsForm);
 
 	let xhr = new XMLHttpRequest();
-	xhr.open("POST", "/news/add");
+	xhr.open("POST", "http://" + hostName + ":" + hostPort + "/news/add");
 
 	xhr.send(formData);
 
-	xhr.onload = function() {
+	xhr.onload = function () {
 		console.log(xhr.responseText);
 
 		var response = JSON.parse(xhr.responseText);
@@ -24,12 +26,12 @@ function addNews() {
 		} else {
 			newsUploadSuccess.style.display = "none";
 			newsUploadError.innerHTML = (response && response.status)
-					|| "Some Error Occurred";
+				|| "Some Error Occurred";
 		}
 	}
 }
 
-newsForm.addEventListener('submit', function(event) {
+newsForm.addEventListener('submit', function (event) {
 	var files = newsImage.files;
 
 	if (files.length === 0) {

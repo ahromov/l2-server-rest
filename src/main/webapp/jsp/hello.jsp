@@ -16,10 +16,6 @@
 		<h1>
 			Hello <b><c:out value="${pageContext.request.remoteUser}"></c:out></b>
 		</h1>
-		<form action="/logout" method="post">
-			<input type="submit" class="button red big" value="Sign Out" /> <input
-				type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-		</form>
 
 		<div>
 			<div>
@@ -31,7 +27,7 @@
 							name="title" required /> <br> <label>Text: </label>
 						<textarea id="newsText" name="text" required /></textarea>
 						<br> <input id="newsImage" type="file" name="image" required />
-						<button type="submit">Add</button>
+						<button class="button green" type="submit">Add</button>
 					</form>
 
 					<div>
@@ -42,8 +38,12 @@
 			</div>
 		</div>
 
-		<script src="js/main.js"></script>
+		<form action="/logout" method="post">
+			<input type="submit" class="button red big" value="Sign Out" /> <input
+				type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+		</form>
 	</div>
 
+	<script src="js/main.js"></script>
 </body>
 </html>

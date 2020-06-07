@@ -23,14 +23,11 @@
 	</files>
 	<fileSets>
 		<fileSet>
-			<directory>src/main/resources/</directory>
+			<!-- <directory>src/main/resources/</directory> -->
 			<includes>
 				<include>application.properties</include>
 			</includes>
 			<outputDirectory>.</outputDirectory>
 		</fileSet>
 	</fileSets>
-	<!-- <dependencySets> <dependencySet> <outputDirectory>libs</outputDirectory> 
-		<excludes> <exclude>${project.groupId}:${project.artifactId}:jar:*</exclude> 
-		</excludes> </dependencySet> </dependencySets> -->
 </assembly>

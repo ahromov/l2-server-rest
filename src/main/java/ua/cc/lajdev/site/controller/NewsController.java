@@ -1,6 +1,7 @@
 package ua.cc.lajdev.site.controller;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -15,11 +16,11 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
+import ua.cc.lajdev.site.dto.NewsDto;
 import ua.cc.lajdev.site.model.News;
 import ua.cc.lajdev.site.service.NewsService;
 
@@ -28,25 +29,27 @@ import ua.cc.lajdev.site.service.NewsService;
 @RequestMapping("news")
 public class NewsController {
 
-	private static Logger logger = LoggerFactory.getLogger(NewsController.class);
+//	private static Logger logger = LoggerFactory.getLogger(NewsController.class);
 
 	@Autowired
 	private NewsService newsService;
 
 	@PostMapping("/add")
-	public News addNew(@RequestParam("title") String title, @RequestParam("text") String text,
-			@RequestParam("image") MultipartFile image) {
+	/*
+	 * public News addNew(@RequestParam("title") String title, @RequestParam("text")
+	 * String text,
+	 * 
+	 * @RequestParam("image") MultipartFile image)
+	 */
+	public News addNew(@RequestBody NewsDto dto) {
 		News news = null;
 
-		byte[] imContent = null;
-
 		try {
-			imContent = image.getBytes();
+			news = newsService.create(new News(dto.title, dto.text, new Date(), dto.file.getBytes()));
 		} catch (IOException e) {
-			logger.error(e.getMessage());
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		news = newsService.create(new News(title, text, new Date(), imContent));
 
 		news.setStatus("Success");
 

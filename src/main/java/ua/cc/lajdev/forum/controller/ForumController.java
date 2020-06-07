@@ -24,9 +24,9 @@ public class ForumController {
 
 	@GetMapping("/get/topics/last5")
 	public List<Topic> nextNews() {
-		Pageable pageWithThreeNews = PageRequest.of(0, 5, Sort.by("lastPostedDate").descending());
+		Pageable pageWithThreeNews = PageRequest.of(0, 5, Sort.by("topicLastPostTime").descending());
 
-		return topicService.getNextPage(pageWithThreeNews).getContent();
+		return topicService.getPage(pageWithThreeNews).getContent();
 	}
 
 }

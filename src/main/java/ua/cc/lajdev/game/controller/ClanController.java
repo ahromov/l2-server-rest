@@ -21,7 +21,7 @@ public class ClanController {
 
 	@GetMapping("/count/all")
 	public Long countAllClans() {
-		return clanService.countClans();
+		return clanService.countAll();
 	}
 
 	@GetMapping("/get/all")

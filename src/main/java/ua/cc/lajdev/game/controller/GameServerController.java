@@ -13,7 +13,6 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +22,6 @@ import ua.cc.lajdev.game.model.GameServer;
 import ua.cc.lajdev.game.model.Rates;
 import ua.cc.lajdev.game.service.CharService;
 
-@ConfigurationProperties(prefix = "l2jgame.server")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("gs")
@@ -43,7 +41,7 @@ public class GameServerController {
 			socket.connect(new InetSocketAddress(server.getIp(), server.getPort()), 3000);
 
 			server.setStatus("ON");
-			server.setOnlineCounter(characterService.getOnlineNoneGmChars());
+			server.setOnlineCounter(characterService.getOnlineNoGm());
 
 			return server;
 		} catch (IOException e) {

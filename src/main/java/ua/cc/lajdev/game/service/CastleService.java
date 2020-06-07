@@ -2,20 +2,10 @@ package ua.cc.lajdev.game.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import ua.cc.lajdev.game.model.Castle;
-import ua.cc.lajdev.game.repo.CastleRepository;
 
-@Service
-public class CastleService {
+public interface CastleService {
 
-	@Autowired
-	private CastleRepository repository;
-
-	public List<Castle> getAll() {
-		return repository.findAll();
-	}
+	public List<Castle> getAll();
 
 }

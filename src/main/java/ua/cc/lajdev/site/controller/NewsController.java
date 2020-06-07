@@ -62,14 +62,14 @@ public class NewsController {
 	public Integer getNewsIds() {
 		Pageable pageParam = PageRequest.of(0, 3);
 
-		return newsService.getNextPage(pageParam).getTotalPages();
+		return newsService.getPage(pageParam).getTotalPages();
 	}
 
 	@GetMapping("/get/pages/{pageNumber}")
 	public List<News> nextNews(@PathVariable("pageNumber") Integer pageNumber) {
 		Pageable pageWithThreeNews = PageRequest.of(pageNumber, 3, Sort.by("date").descending());
 
-		return newsService.getNextPage(pageWithThreeNews).getContent();
+		return newsService.getPage(pageWithThreeNews).getContent();
 	}
 
 	@GetMapping("/get/lastThree")

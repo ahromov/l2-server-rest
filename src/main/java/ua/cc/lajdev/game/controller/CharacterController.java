@@ -32,13 +32,13 @@ public class CharacterController {
 
 	@GetMapping("/count/byType")
 	public CharsDto countChars() {
-		return new CharsDto(charService.countAllChars(), charService.countNoblessChars(), heroService.countHeroes(),
-				charService.countGmChars());
+		return new CharsDto(charService.countAll(), charService.countNobless(), heroService.countHeroes(),
+				charService.countGms());
 	}
 
 	@GetMapping("/get/top10")
 	public List<Char> getTop10chars() {
-		List<Char> chars = charService.getTop10Chars();
+		List<Char> chars = charService.getTop10();
 
 		Collections.sort(chars, Collections.reverseOrder(new Comparator<Char>() {
 			@Override

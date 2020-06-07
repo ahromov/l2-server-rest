@@ -2,36 +2,18 @@ package ua.cc.lajdev.game.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import ua.cc.lajdev.game.model.Char;
-import ua.cc.lajdev.game.repo.CharRepository;
 
-@Service
-public class CharService {
+public interface CharService {
 
-	@Autowired
-	private CharRepository repository;
+	public Integer getOnlineNoGm();
 
-	public Integer getOnlineNoneGmChars() {
-		return repository.getOnlineNoneGmChars();
-	}
+	public Long countAll();
 
-	public Long countAllChars() {
-		return repository.countAllChars();
-	}
+	public Long countNobless();
 
-	public Long countNoblessChars() {
-		return repository.countNoblessChars();
-	}
+	public Long countGms();
 
-	public Long countGmChars() {
-		return repository.countGmChars();
-	}
-
-	public List<Char> getTop10Chars() {
-		return repository.getTop10Chars();
-	}
+	public List<Char> getTop10();
 
 }

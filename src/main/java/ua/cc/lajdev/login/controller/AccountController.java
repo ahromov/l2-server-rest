@@ -201,7 +201,7 @@ public class AccountController {
 
 	@GetMapping("/countAll")
 	public Long countAccounts() {
-		return accountService.countAccounts();
+		return accountService.countAll();
 	}
 
 	@PostMapping("/sendMess")

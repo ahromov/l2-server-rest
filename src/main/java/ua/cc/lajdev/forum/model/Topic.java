@@ -7,10 +7,14 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "phpbb_topics")
@@ -23,7 +27,7 @@ public class Topic {
 	@Column(name = "forum_id")
 	private Integer forumId;
 
-	@OneToOne
+	@OneToOne /* (optional = false) */
 	@JoinColumn(name = "icon_id", referencedColumnName = "icons_id")
 	@NotFound(action = NotFoundAction.IGNORE)
 	private Icon icon;
@@ -31,7 +35,11 @@ public class Topic {
 	@Column(name = "topic_last_poster_name")
 	private String posterName;
 
-	@Column(name = "current_date")
+	@Column(name = "topic_last_post_time")
+	@JsonIgnore
+	private Long topicLastPostTime;
+
+	@Transient
 	private Date lastPostedDate;
 
 	@Column(name = "topic_title")
@@ -73,12 +81,21 @@ public class Topic {
 		this.posterName = posterName;
 	}
 
+	public Long getTopicLastPostTime() {
+		return topicLastPostTime;
+	}
+
+	public void setTopicLastPostTime(Long topicLastPostTime) {
+		this.topicLastPostTime = topicLastPostTime;
+	}
+
 	public Date getLastPostedDate() {
 		return lastPostedDate;
 	}
 
-	public void setLastPostedDate(Date lastPostedDate) {
-		this.lastPostedDate = lastPostedDate;
+	@PostLoad
+	public void setLastPostedDate() {
+		this.lastPostedDate = new Date(this.topicLastPostTime * 1000);
 	}
 
 	public String getTitle() {

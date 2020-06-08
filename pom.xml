@@ -12,7 +12,7 @@
 	<groupId>ua.cc.lajdev</groupId>
 	<artifactId>l2-server-rest</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 	<name>l2-server-rest</name>
 	<description>Webapp for L2 game server</description>
 
@@ -23,6 +23,16 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<!-- <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-devtools</artifactId> 
+			<scope>runtime</scope> </dependency> <dependency> <groupId>org.springframework.boot</groupId> 
+			<artifactId>spring-boot-starter-tomcat</artifactId> <scope>provided</scope> 
+			</dependency> -->
+
+		<dependency>
 			<groupId>org.apache.tomcat.embed</groupId>
 			<artifactId>tomcat-embed-jasper</artifactId>
 			<scope>provided</scope>
@@ -31,11 +41,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
 		<dependency>
@@ -92,7 +97,7 @@
 						<inherited>false</inherited>
 						<configuration>
 							<url>
-								jdbc:mysql://127.0.0.1:3306/?serverTimezone=Europe/Kiev
+								jdbc:mysql://192.168.0.1:3306/?serverTimezone=Europe/Kiev
 							</url>
 							<user>root</user>
 							<password>toor</password>
@@ -139,5 +144,17 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<resources>
+			<!-- <resource>
+				<directory>src/main/webapp</directory>
+			</resource> -->
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<excludes>
+					<exclude>db/**</exclude>
+				</excludes>
+			</resource>
+		</resources>
 	</build>
 </project>

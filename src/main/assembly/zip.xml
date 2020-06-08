@@ -9,7 +9,7 @@
 	</formats>
 	<files>
 		<file>
-			<source>${project.build.directory}/${project.artifactId}-${project.version}.jar</source>
+			<source>${project.build.directory}/${project.artifactId}-${project.version}.war</source>
 			<outputDirectory>.</outputDirectory>
 		</file>
 		<file>
@@ -23,7 +23,6 @@
 	</files>
 	<fileSets>
 		<fileSet>
-			<!-- <directory>src/main/resources/</directory> -->
 			<includes>
 				<include>application.properties</include>
 			</includes>

@@ -38,15 +38,11 @@ public class NewsController {
 			@RequestParam("image") MultipartFile image) {
 		News news = null;
 
-		byte[] imContent = null;
-
 		try {
-			imContent = image.getBytes();
+			news = newsService.create(new News(title, text, new Date(), image.getBytes()));
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
-
-		news = newsService.create(new News(title, text, new Date(), imContent));
 
 		news.setStatus("Success");
 

@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS `news` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `title` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `text` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `image` blob NOT NULL,
   PRIMARY KEY (`id`),

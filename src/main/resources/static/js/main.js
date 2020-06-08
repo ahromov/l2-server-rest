@@ -11,7 +11,7 @@ function addNews() {
 
 	xhr.send(formData);
 
-	xhr.onload = function() {
+	xhr.onload = function () {
 		console.log(xhr.responseText);
 
 		var response = JSON.parse(xhr.responseText);
@@ -24,12 +24,12 @@ function addNews() {
 		} else {
 			newsUploadSuccess.style.display = "none";
 			newsUploadError.innerHTML = (response && response.status)
-					|| "Some Error Occurred";
+				|| "Some Error Occurred";
 		}
 	}
 }
 
-newsForm.addEventListener('submit', function(event) {
+newsForm.addEventListener('submit', function (event) {
 	var files = newsImage.files;
 
 	if (files.length === 0) {

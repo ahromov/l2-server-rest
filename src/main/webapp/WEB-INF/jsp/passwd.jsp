@@ -20,15 +20,16 @@
 		<div>
 			<div>
 				<div>
-					<h3>Add news to site</h3>
+					<h3>Change password</h3>
 
-					<form id="newsForm" name="newsForm">
-						<label>Title: </label><input id="newsTitle" type="text"
-							name="title" required /> <br> <label>Text: </label>
-						<textarea id="newsText" name="text" required /></textarea>
-						<br> <input id="newsImage" type="file" name="image" required />
-						<button class="button green" type="submit">Add</button>
-						<a href="/passwd">Change password</a>
+					<form id="changePassword" name="changePassword">
+						<label>Login: </label><input id="username" type="text"
+							name="username" required /> <br> <label>New
+							password: </label><input id="newPassword" type="password"
+							name="newPassword" required /> <br> <label>Repeat
+							password: </label><input id="secondNewPassword" type="password"
+							name="secondNewPassword" required /> <br>
+						<button class="button green" type="submit">Change</button>
 					</form>
 
 					<div>
@@ -38,13 +39,8 @@
 				</div>
 			</div>
 		</div>
-
-		<form action="/logout" method="post">
-			<input type="submit" class="button red big" value="Sign Out" /> <input
-				type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-		</form>
 	</div>
 
-	<script src="js/main.js"></script>
+	<script src="js/passwd.js"></script>
 </body>
 </html>

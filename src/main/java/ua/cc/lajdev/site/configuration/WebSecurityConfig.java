@@ -32,7 +32,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().antMatchers("/hello").access("hasRole('ROLE_ADMIN')").anyRequest().permitAll().and()
 				.formLogin().loginPage("/login").loginProcessingUrl("/j_spring_security_check")
 				.usernameParameter("j_username").passwordParameter("j_password").and().logout()
-				.logoutSuccessUrl("/login?logout").and().exceptionHandling().accessDeniedPage("/403").and().csrf();
+				.logoutSuccessUrl("/login?logout").and().exceptionHandling().accessDeniedPage("/403").and().csrf()
+				.disable();
 	}
 
 	@Bean(name = "passwordEncoder")

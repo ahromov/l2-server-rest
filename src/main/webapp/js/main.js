@@ -3,33 +3,30 @@ var newsImage = document.querySelector('#newsImage');
 var newsUploadError = document.querySelector('#newsUploadError');
 var newsUploadSuccess = document.querySelector('#newsUploadSuccess');
 
-async function send(method, url, data) {
-	return await fetch(url, {
-		method: method,
-		headers: {
-			'Content-Type': 'multipart/form-data'
-		},
-		// body: JSON.stringify(data)
-		body: data
-	});
-}
-
 function addNews() {
 	let formData = new FormData(newsForm);
 
-	send("POST", "/news/add", formData).then(response => response.json())
-		.then((_result) => {
-			if (_result.status == 'Success') {
-				newsForm.style.display = "none";
-				newsUploadError.style.display = "none";
-				newsUploadSuccess.innerHTML = `<p>${_result.id} <br> ${_result.title} <br> ${_result.text} <br> ${new Date(_result.date).toLocaleDateString()} <br> ${new Date(_result.date).toLocaleTimeString()} <br> <img style='width: 50px; margin-bottom: 20px' src='data:image/png;base64,${response.image}'> <br> ${response.status}</p> `;
-				newsUploadSuccess.style.display = "block";
-			} else {
-				newsUploadSuccess.style.display = "none";
-				newsUploadError.innerHTML = (_result.status)
-					|| "Some Error Occurred";
-			}
-		})
+	let xhr = new XMLHttpRequest();
+	xhr.open("POST", "/news/add");
+
+	xhr.send(formData);
+
+	xhr.onload = function () {
+		console.log(xhr.responseText);
+
+		var response = JSON.parse(xhr.responseText);
+
+		if (xhr.status == 200) {
+			newsForm.style.display = "none";
+			newsUploadError.style.display = "none";
+			newsUploadSuccess.innerHTML = `<p>${response.id} <br> ${response.title} <br> ${response.text} <br> ${new Date(response.date).toLocaleDateString()} <br> ${new Date(response.date).toLocaleTimeString()} <br> <img style='width: 50px; margin-bottom: 20px' src='data:image/png;base64,${response.image}'> <br> ${response.status}</p> `;
+			newsUploadSuccess.style.display = "block";
+		} else {
+			newsUploadSuccess.style.display = "none";
+			newsUploadError.innerHTML = (response && response.status)
+				|| "Some Error Occurred";
+		}
+	}
 }
 
 newsForm.addEventListener('submit', function (event) {

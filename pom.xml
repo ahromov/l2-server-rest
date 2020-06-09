@@ -14,7 +14,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>l2-server-rest</name>
-	<description>Rest services for L2 game, login servers and forum</description>
+	<description>Rest services for L2 game, login servers, site and forum</description>
 
 	<properties>
 		<java.version>1.8</java.version>

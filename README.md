@@ -14,5 +14,4 @@ The following guides illustrate how to use some features concretely:
 * [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
 * [Building REST services with Spring](https://spring.io/guides/tutorials/bookmarks/)
 
-### Instalation
-* [For initialization l2site DB, run in console: mvn clean flyway:migrate -Dflyway.configFile=fw.properties]
+

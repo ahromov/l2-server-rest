@@ -30,6 +30,7 @@
 							password: </label><input id="secondNewPassword" type="password"
 							name="secondNewPassword" required /> <br>
 						<button class="button green" type="submit">Change</button>
+						<a href="/home">Back to home</a>
 					</form>
 
 					<div>

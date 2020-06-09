@@ -9,7 +9,7 @@
 	</formats>
 	<files>
 		<file>
-			<source>${project.build.directory}/${project.artifactId}-${project.version}.war</source>
+			<source>${project.build.directory}/l2rest.war</source>
 			<outputDirectory>.</outputDirectory>
 		</file>
 		<file>
@@ -20,13 +20,9 @@
 			<source>sh/freebsd/l2rest</source>
 			<outputDirectory>.</outputDirectory>
 		</file>
-	</files>
-	<fileSets>
-		<fileSet>
-			<includes>
-				<include>application.properties</include>
-			</includes>
+		<file>
+			<source>application.properties</source>
 			<outputDirectory>.</outputDirectory>
-		</fileSet>
-	</fileSets>
+		</file>
+	</files>
 </assembly>

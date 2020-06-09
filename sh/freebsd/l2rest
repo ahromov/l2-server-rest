@@ -3,14 +3,25 @@
 # PROVIDE: goprogram
 # REQUIRE: networking
 # KEYWORD: 
- 
 . /etc/rc.subr
  
+# Change the settings below for your needs:
+# program name
 name="l2rest"
+
+goprogram_folder_name="l2-server-rest"
+
+# variable for rc.conf
 rcvar="l2rest_enable"
-folder="/home/andrew/l2-server-rest-0.0.1-SNAPSHOT"
+
+# user rights, with program will work 
 goprogram_user="andrew"
-pidfile="/var/run/${name}.pid"
+
+# path to the program working folder
+folder="/usr/home/${goprogram_user}/${goprogram_folder_name}"
+
+# program PID file path
+goprogram_pidfile="/var/run/${name}.pid"
  
 start_cmd="goprogram_start"
 stop_cmd="goprogram_stop"
@@ -19,13 +30,13 @@ status_cmd="goprogram_status"
 goprogram_start() {
 	echo "${name} starting ..."
 	cd ${folder}
-	./RestServer_loop.sh ${pidfile} "${goprogram_user}" 
+	./RestServer_loop.sh ${goprogram_user} ${goprogram_pidfile} 
 }
 
 goprogram_stop() {
-        if [ -e "${pidfile}" ]; then
-                kill -s TERM `cat ${pidfile}`
-		rm ${pidfile}
+        if [ -e "${goprogram_pidfile}" ]; then
+                kill -s TERM `cat ${goprogram_pidfile}`
+		rm ${goprogram_pidfile}
 		echo "${name} stopped ..."
         else
                 echo "${name} is not running"
@@ -34,8 +45,8 @@ goprogram_stop() {
 }
 
 goprogram_status() {
-        if [ -e "${pidfile}" ]; then
-                echo "${name} is running as pid `cat ${pidfile}`"
+        if [ -e "${goprogram_pidfile}" ]; then
+                echo "${name} is running as pid `cat ${goprogram_pidfile}`"
         else
                 echo "${name} is not running"
         fi

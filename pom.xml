@@ -18,7 +18,6 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<maven-assembly-plugin.version>3.2.0</maven-assembly-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -26,11 +25,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
-		<!-- <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-devtools</artifactId> 
-			<scope>runtime</scope> </dependency> <dependency> <groupId>org.springframework.boot</groupId> 
-			<artifactId>spring-boot-starter-tomcat</artifactId> <scope>provided</scope> 
-			</dependency> -->
 
 		<dependency>
 			<groupId>org.apache.tomcat.embed</groupId>
@@ -94,39 +88,29 @@
 						<goals>
 							<goal>migrate</goal>
 						</goals>
-						<inherited>false</inherited>
 						<configuration>
-							<url>
-								jdbc:mysql://192.168.0.1:3306/?serverTimezone=Europe/Kiev
-							</url>
+							<url>jdbc:mysql://127.0.0.1:3306/?serverTimezone=Europe/Kiev</url>
 							<user>root</user>
 							<password>toor</password>
 							<schemas>
 								<schema>l2site</schema>
 							</schemas>
-							<locations>
-								<location>db/migration/l2site</location>
-							</locations>
 							<baselineOnMigrate>true</baselineOnMigrate>
+							<dependencies>
+								<dependency>
+									<groupId>mysql</groupId>
+									<artifactId>mysql-connector-java</artifactId>
+									<version>5.1.49</version>
+								</dependency>
+							</dependencies>
 						</configuration>
 					</execution>
 				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>mysql</groupId>
-						<artifactId>mysql-connector-java</artifactId>
-						<version>5.1.49</version>
-					</dependency>
-				</dependencies>
 			</plugin>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>${maven-assembly-plugin.version}</version><!-- $NO-MVN-MAN-VER$ -->
 				<executions>
 					<execution>
 						<phase>install</phase>
@@ -143,11 +127,13 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
 		</plugins>
 		<resources>
-			<!-- <resource>
-				<directory>src/main/webapp</directory>
-			</resource> -->
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>

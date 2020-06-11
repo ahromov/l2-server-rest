@@ -52,7 +52,7 @@ public class GameServerController {
 				try {
 					checkStatus(serverStatus);
 
-					sleep(3000);
+					sleep(10000);
 				} catch (InterruptedException e) {
 					logger.error(e.getMessage());
 				}
@@ -62,8 +62,6 @@ public class GameServerController {
 
 	@GetMapping("/get/status")
 	public Status getServerStatus() {
-		checkStatus(serverStatus);
-
 		return serverStatus;
 	}
 

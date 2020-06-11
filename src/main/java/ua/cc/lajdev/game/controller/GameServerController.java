@@ -44,20 +44,13 @@ public class GameServerController {
 	@Autowired
 	private RatesConfigDto config;
 
-	private StatusWorking mc = null;
+	private StatusChecker mc = null;
 
-	private class StatusWorking extends Thread {
+	private class StatusChecker extends Thread {
 		public void run() {
 			while (true) {
 				try {
-					try (Socket socket = new Socket()) {
-						socket.connect(new InetSocketAddress(serverStatus.getIp(), serverStatus.getPort()), 3000);
-
-						serverStatus.setStatus("ON");
-						serverStatus.setOnlineCounter(characterService.getOnlineNoGm());
-					} catch (IOException e) {
-						serverStatus.setStatus("OFF");
-					}
+					checkStatus(serverStatus);
 
 					sleep(3000);
 				} catch (InterruptedException e) {
@@ -67,9 +60,28 @@ public class GameServerController {
 		}
 	}
 
+	@GetMapping("/get/status")
+	public Status getServerStatus() {
+		checkStatus(serverStatus);
+
+		return serverStatus;
+	}
+
+	private void checkStatus(Status status) {
+		try (Socket socket = new Socket()) {
+			socket.connect(new InetSocketAddress(serverStatus.getIp(), serverStatus.getPort()), 3000);
+
+			serverStatus.setStatus("ON");
+			serverStatus.setOnlineCounter(characterService.getOnlineNoGm());
+		} catch (IOException e) {
+			serverStatus.setStatus("OFF");
+			logger.error(e.getMessage());
+		}
+	}
+
 	@PostConstruct
 	private void start() {
-		mc = new StatusWorking();
+		mc = new StatusChecker();
 		mc.start();
 	}
 

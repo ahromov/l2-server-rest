@@ -10,16 +10,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ua.cc.lajdev.game.model.GameServer;
+import ua.cc.lajdev.game.dto.RatesConfigDto;
 import ua.cc.lajdev.game.model.Rates;
+import ua.cc.lajdev.game.model.Status;
 import ua.cc.lajdev.game.service.CharService;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -30,28 +36,52 @@ public class GameServerController {
 	private static Logger logger = LoggerFactory.getLogger(GameServerController.class);
 
 	@Autowired
-	private GameServer server;
+	private Status serverStatus;
 
 	@Autowired
 	private CharService characterService;
 
-	@GetMapping("/get/status")
-	public GameServer getServerStatus() {
-		try (Socket socket = new Socket()) {
-			socket.connect(new InetSocketAddress(server.getIp(), server.getPort()), 3000);
+	@Autowired
+	private RatesConfigDto config;
 
-			server.setStatus("ON");
-			server.setOnlineCounter(characterService.getOnlineNoGm());
+	private StatusWorking mc = null;
 
-			return server;
-		} catch (IOException e) {
-			server.setStatus("OFF");
-			server.setOnlineCounter(0);
+	private class StatusWorking extends Thread {
+		public void run() {
+			while (true) {
+				try {
+					try (Socket socket = new Socket()) {
+						socket.connect(new InetSocketAddress(serverStatus.getIp(), serverStatus.getPort()), 3000);
 
-			logger.error(e.getMessage());
+						serverStatus.setStatus("ON");
+						serverStatus.setOnlineCounter(characterService.getOnlineNoGm());
+					} catch (IOException e) {
+						serverStatus.setStatus("OFF");
+					}
 
-			return server;
+					sleep(3000);
+				} catch (InterruptedException e) {
+					logger.error(e.getMessage());
+				}
+			}
 		}
+	}
+
+	@PostConstruct
+	private void start() {
+		mc = new StatusWorking();
+		mc.start();
+	}
+
+	@MessageMapping("/ping")
+	@SendTo("/topic/greetings")
+	public Status greeting() throws Exception {
+		return serverStatus;
+	}
+
+	@PreDestroy
+	void stop() {
+		mc.interrupt();
 	}
 
 	@GetMapping("/get/rates")
@@ -59,7 +89,7 @@ public class GameServerController {
 		InputStream isr = null;
 
 		try {
-			isr = new FileInputStream(server.getRatesConfigFile());
+			isr = new FileInputStream(config.getRatesConfigFile());
 		} catch (FileNotFoundException e) {
 			logger.error("Rates properties file not found");
 		}

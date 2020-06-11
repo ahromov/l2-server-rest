@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Component
 @ConfigurationProperties(prefix = "l2jgame.server")
-public class GameServer {
+public class Status {
 
 	@JsonIgnore
 	private String ip;
@@ -16,10 +16,10 @@ public class GameServer {
 	private Integer port;
 
 	private String status;
-	private Integer onlineCounter;
-	private String ratesConfigFile;
+	private Integer onlineCounter = 0;
 
-	public GameServer() {
+	public Status() {
+
 	}
 
 	public String getIp() {
@@ -52,14 +52,6 @@ public class GameServer {
 
 	public void setOnlineCounter(Integer onlineCounter) {
 		this.onlineCounter = onlineCounter;
-	}
-
-	public String getRatesConfigFile() {
-		return ratesConfigFile;
-	}
-
-	public void setRatesConfigFile(String configFile) {
-		this.ratesConfigFile = configFile;
 	}
 
 }

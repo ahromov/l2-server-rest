@@ -10,14 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,24 +39,10 @@ public class GameServerController {
 	@Autowired
 	private RatesConfigDto config;
 
-	private StatusChecker mc = null;
-
-	private class StatusChecker extends Thread {
-		public void run() {
-			while (true) {
-				try {
-					checkStatus(serverStatus);
-
-					sleep(10000);
-				} catch (InterruptedException e) {
-					logger.error(e.getMessage());
-				}
-			}
-		}
-	}
-
 	@GetMapping("/get/status")
 	public Status getServerStatus() {
+		checkStatus(serverStatus);
+
 		return serverStatus;
 	}
 
@@ -75,23 +56,6 @@ public class GameServerController {
 			serverStatus.setStatus("OFF");
 			logger.error(e.getMessage());
 		}
-	}
-
-	@PostConstruct
-	private void start() {
-		mc = new StatusChecker();
-		mc.start();
-	}
-
-	@MessageMapping("/ping")
-	@SendTo("/topic/greetings")
-	public Status greeting() throws Exception {
-		return serverStatus;
-	}
-
-	@PreDestroy
-	void stop() {
-		mc.interrupt();
 	}
 
 	@GetMapping("/get/rates")

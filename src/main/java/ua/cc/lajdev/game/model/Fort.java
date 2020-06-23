@@ -5,9 +5,13 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.PostLoad;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name = "fort")
 public class Fort {
@@ -25,7 +29,11 @@ public class Fort {
 	@OneToOne
 	@JoinColumn(name = "owner", referencedColumnName = "clan_id")
 	@NotFound(action = NotFoundAction.IGNORE)
+	@JsonIgnore
 	private Clan clan;
+
+	@Transient
+	private String clanName = "None";
 
 	public Fort() {
 
@@ -49,6 +57,20 @@ public class Fort {
 
 	public void setClan(Clan clan) {
 		this.clan = clan;
+	}
+
+	public String getClanName() {
+		return clanName;
+	}
+
+	public void setClanName(String clanName) {
+		this.clanName = clanName;
+	}
+
+	@PostLoad
+	void initFields() {
+		if (clan != null)
+			this.clanName = clan.getName();
 	}
 
 }

@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PostLoad;
 import javax.persistence.Transient;
@@ -35,10 +36,20 @@ public class Char {
 	@Column(name = "level")
 	private Integer level;
 
-	@OneToOne
-	@JoinColumn(name = "clanid", referencedColumnName = "clan_id")
-	@NotFound(action = NotFoundAction.IGNORE)
+//	@OneToOne
+//	@JoinColumn(name = "clanid", referencedColumnName = "clan_id")
+//	@NotFound(action = NotFoundAction.IGNORE)
+//	@JsonIgnore
+//	private Clan clan;
+	
+	@ManyToOne
+	@JoinColumn(name="clanid", nullable=false)
+//	@NotFound(action = NotFoundAction.IGNORE)
+	@JsonIgnore
 	private Clan clan;
+
+	@Transient
+	private String clanName = "None";
 
 	@Column
 	private Integer online;
@@ -227,6 +238,14 @@ public class Char {
 		this.clan = clan;
 	}
 
+	public String getClanName() {
+		return clanName;
+	}
+
+	public void setClanName(String clanName) {
+		this.clanName = clanName;
+	}
+
 	public Integer getOnline() {
 		return online;
 	}
@@ -374,6 +393,9 @@ public class Char {
 	public void initFields() {
 		this.className = classes.get(this.classId);
 		this.gender = genders.get(this.genderId);
+
+		if (clan != null)
+			this.clanName = clan.getName();
 	}
 
 }

@@ -187,7 +187,7 @@ public class Clan {
 		if (castle != null)
 			this.fortName = fort.getName();
 
-		if (chars != null)
+		if (this.chars != null && this.chars.size() > 0)
 			midCharsLevel = getMidCharsLevel(this.chars);
 	}
 

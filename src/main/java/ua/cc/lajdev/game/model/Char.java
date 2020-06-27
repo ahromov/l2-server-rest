@@ -1,5 +1,6 @@
 package ua.cc.lajdev.game.model;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,10 +42,10 @@ public class Char {
 //	@NotFound(action = NotFoundAction.IGNORE)
 //	@JsonIgnore
 //	private Clan clan;
-	
+
 	@ManyToOne
-	@JoinColumn(name="clanid", nullable=false)
-//	@NotFound(action = NotFoundAction.IGNORE)
+	@JoinColumn(name = "clanid", nullable = true)
+	@NotFound(action = NotFoundAction.IGNORE)
 	@JsonIgnore
 	private Clan clan;
 
@@ -392,6 +393,7 @@ public class Char {
 	@PostLoad
 	public void initFields() {
 		this.className = classes.get(this.classId);
+
 		this.gender = genders.get(this.genderId);
 
 		if (clan != null)

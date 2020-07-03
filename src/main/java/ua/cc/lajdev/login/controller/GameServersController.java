@@ -21,9 +21,7 @@ public class GameServersController {
 
 	@GetMapping("/getServers")
 	List<GameServer> getAllRegistered() {
-		List<GameServer> registeredServers = service.getAll();
-
-		return registeredServers;
+		return service.getAll();
 	}
 
 }

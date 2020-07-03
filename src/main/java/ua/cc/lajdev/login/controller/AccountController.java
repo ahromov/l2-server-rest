@@ -199,9 +199,9 @@ public class AccountController {
 		return account;
 	}
 
-	@GetMapping("/countAll")
-	public Long countAccounts() {
-		return accountService.countAll();
+	@GetMapping("/count/all")
+	public Integer countAccounts() {
+		return accountService.countNoGmAccounts();
 	}
 
 	@PostMapping("/sendMess")

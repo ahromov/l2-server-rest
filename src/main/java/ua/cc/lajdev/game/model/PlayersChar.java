@@ -1,6 +1,5 @@
 package ua.cc.lajdev.game.model;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,8 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.PostLoad;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.NotFound;
@@ -19,9 +18,10 @@ import org.springframework.context.annotation.Scope;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity(name = "characters")
+@Entity
+@Table(name = "characters")
 @Scope("prototype")
-public class Char {
+public class PlayersChar {
 
 	@Id
 	@JsonIgnore
@@ -37,14 +37,8 @@ public class Char {
 	@Column(name = "level")
 	private Integer level;
 
-//	@OneToOne
-//	@JoinColumn(name = "clanid", referencedColumnName = "clan_id")
-//	@NotFound(action = NotFoundAction.IGNORE)
-//	@JsonIgnore
-//	private Clan clan;
-
-	@ManyToOne
-	@JoinColumn(name = "clanid", nullable = true)
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "clanid")
 	@NotFound(action = NotFoundAction.IGNORE)
 	@JsonIgnore
 	private Clan clan;
@@ -53,6 +47,7 @@ public class Char {
 	private String clanName = "None";
 
 	@Column
+	@JsonIgnore
 	private Integer online;
 
 	@JsonIgnore
@@ -69,7 +64,7 @@ public class Char {
 	@Transient
 	private String gender;
 
-	@Column(name = "onlinetime")
+	@Column(name = "onlinetime", nullable = true)
 	private Integer onlineTime;
 
 	@Column(name = "pvpkills")
@@ -78,11 +73,18 @@ public class Char {
 	@Column(name = "pkkills")
 	private Integer pkKills;
 
+	@Column
+	private Integer accesslevel;
+
+	@Column
+	private Integer nobless;
+
 	private static Map<Integer, String> classes;
 	private static Map<Integer, String> genders;
 
 	static {
 		classes = new HashMap<>();
+		classes.put(0, "Newbie");
 		classes.put(1, "Human Warrior");
 		classes.put(2, "Gladiator");
 		classes.put(3, "Warlord");
@@ -195,7 +197,7 @@ public class Char {
 		genders.put(1, "Female");
 	}
 
-	public Char() {
+	public PlayersChar() {
 
 	}
 
@@ -236,7 +238,8 @@ public class Char {
 	}
 
 	public void setClan(Clan clan) {
-		this.clan = clan;
+		if (clan.getId() != 0)
+			this.clan = clan;
 	}
 
 	public String getClanName() {
@@ -311,6 +314,22 @@ public class Char {
 		this.pkKills = pkKills;
 	}
 
+	public Integer getAccesslevel() {
+		return accesslevel;
+	}
+
+	public void setAccesslevel(Integer accesslevel) {
+		this.accesslevel = accesslevel;
+	}
+
+	public Integer getNobless() {
+		return nobless;
+	}
+
+	public void setNobless(Integer nobless) {
+		this.nobless = nobless;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -336,7 +355,7 @@ public class Char {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Char other = (Char) obj;
+		PlayersChar other = (PlayersChar) obj;
 		if (accountName == null) {
 			if (other.accountName != null)
 				return false;
@@ -396,7 +415,7 @@ public class Char {
 
 		this.gender = genders.get(this.genderId);
 
-		if (clan != null)
+		if (this.clan != null)
 			this.clanName = clan.getName();
 	}
 

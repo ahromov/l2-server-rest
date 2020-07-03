@@ -4,27 +4,30 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PostLoad;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+import org.springframework.context.annotation.Scope;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javassist.bytecode.annotation.CharMemberValue;
-
-@Entity(name = "clan_data")
+@Entity
+@Table(name = "clan_data")
+@Scope("prototype")
 public class Clan {
 
 	@Id
 	@Column(name = "clan_id")
 	@JsonIgnore
-	private Integer id;
+	private Long id;
 
 	@Column(name = "clan_name")
 	private String name;
@@ -35,7 +38,7 @@ public class Clan {
 	@OneToOne
 	@JoinColumn(name = "leader_id", referencedColumnName = "charId")
 	@JsonIgnore
-	private Char leader;
+	private PlayersChar leader;
 
 	@Transient
 	private String leaderName;
@@ -65,19 +68,19 @@ public class Clan {
 	@Transient
 	private Integer midCharsLevel;
 
-	@OneToMany(mappedBy = "clan")
+	@OneToMany(mappedBy = "clan", fetch = FetchType.EAGER)
 	@JsonIgnore
-	private List<Char> chars;
+	private List<PlayersChar> chars;
 
 	public Clan() {
 
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -97,11 +100,11 @@ public class Clan {
 		this.level = level;
 	}
 
-	public Char getLeader() {
+	public PlayersChar getLeader() {
 		return leader;
 	}
 
-	public void setLeader(Char leader) {
+	public void setLeader(PlayersChar leader) {
 		this.leader = leader;
 	}
 
@@ -169,11 +172,11 @@ public class Clan {
 		this.midCharsLevel = midCharsLevel;
 	}
 
-	public List<Char> getChars() {
+	public List<PlayersChar> getChars() {
 		return chars;
 	}
 
-	public void setChars(List<Char> chars) {
+	public void setChars(List<PlayersChar> chars) {
 		this.chars = chars;
 	}
 
@@ -187,18 +190,18 @@ public class Clan {
 		if (castle != null)
 			this.fortName = fort.getName();
 
-		if (this.chars != null && this.chars.size() > 0)
-			midCharsLevel = getMidCharsLevel(this.chars);
+		this.midCharsLevel = calculateMidCharsLevel();
 	}
 
-	private Integer getMidCharsLevel(List<Char> chars) {
+	private Integer calculateMidCharsLevel() {
 		int midLevel = 0;
 
-		for (Char c : chars) {
-			midLevel += c.getLevel();
+		for (PlayersChar c : this.chars) {
+			if (c.getLevel() != null)
+				midLevel += c.getLevel();
 		}
 
-		return midLevel = midLevel / chars.size();
+		return midLevel = midLevel / this.chars.size();
 	}
 
 }

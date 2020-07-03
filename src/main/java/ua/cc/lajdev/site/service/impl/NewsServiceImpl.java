@@ -3,8 +3,9 @@ package ua.cc.lajdev.site.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import ua.cc.lajdev.site.model.News;
@@ -28,13 +29,22 @@ public class NewsServiceImpl implements NewsService {
 	}
 
 	@Override
-	public Page<News> getPage(Pageable pageable) {
-		return repository.findAll(pageable);
+	public List<News> getNewsPage(Integer number) {
+		Pageable pageWithThreeNews = PageRequest.of(number, 3, Sort.by("date").descending());
+
+		return repository.findAll(pageWithThreeNews).getContent();
 	}
 
 	@Override
 	public List<News> getAll() {
 		return repository.findAll();
+	}
+
+	@Override
+	public Integer countAllPage() {
+		Pageable pageParam = PageRequest.of(0, 3);
+
+		return repository.findAll(pageParam).getTotalPages();
 	}
 
 }

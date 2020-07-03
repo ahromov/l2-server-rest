@@ -3,11 +3,16 @@ package ua.cc.lajdev.login.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.springframework.context.annotation.Scope;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity(name = "accounts")
+@Entity
+@Table(name = "accounts")
+@Scope("prototype")
 public class Account {
 
 	@Id
@@ -23,7 +28,11 @@ public class Account {
 	private String email;
 
 	@Transient
-	public String status;
+	private String status;
+
+	@Column(nullable = true)
+	@JsonIgnore
+	private Integer accessLevel;
 
 	public Account() {
 
@@ -74,6 +83,14 @@ public class Account {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public Integer getAccessLevel() {
+		return accessLevel;
+	}
+
+	public void setAccessLevel(Integer accessLevel) {
+		this.accessLevel = accessLevel;
 	}
 
 }

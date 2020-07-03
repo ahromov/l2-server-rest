@@ -24,7 +24,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public Account update(Account account) {
-		return repository.saveAndFlush(account);
+		return repository.save(account);
 	}
 
 	@Override
@@ -33,8 +33,8 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public Long countAll() {
-		return repository.countNotGmAccounts();
+	public Integer countNoGmAccounts() {
+		return repository.countNoGmAccounts();
 	}
 
 }

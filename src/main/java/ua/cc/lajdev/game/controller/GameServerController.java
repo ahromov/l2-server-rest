@@ -4,8 +4,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -19,9 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ua.cc.lajdev.game.dto.RatesConfigDto;
+import ua.cc.lajdev.game.dto.StatusDto;
 import ua.cc.lajdev.game.model.Rates;
-import ua.cc.lajdev.game.model.Status;
 import ua.cc.lajdev.game.service.CharService;
+import ua.cc.lajdev.game.service.ServerStatusService;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
@@ -31,7 +30,7 @@ public class GameServerController {
 	private static Logger logger = LoggerFactory.getLogger(GameServerController.class);
 
 	@Autowired
-	private Status serverStatus;
+	private ServerStatusService statusService;
 
 	@Autowired
 	private CharService characterService;
@@ -40,22 +39,20 @@ public class GameServerController {
 	private RatesConfigDto config;
 
 	@GetMapping("/get/status")
-	public Status getServerStatus() {
-		checkStatus(serverStatus);
+	public StatusDto getServerStatus() {
+		StatusDto status = new StatusDto();
 
-		return serverStatus;
-	}
+		if (statusService.checkStatus()) {
+			status.setStatus("ON");
+			status.setOnlineCounter(characterService.getOnlineNoGm());
 
-	private void checkStatus(Status status) {
-		try (Socket socket = new Socket()) {
-			socket.connect(new InetSocketAddress(serverStatus.getIp(), serverStatus.getPort()), 3000);
-
-			serverStatus.setStatus("ON");
-			serverStatus.setOnlineCounter(characterService.getOnlineNoGm());
-		} catch (IOException e) {
-			serverStatus.setStatus("OFF");
-			logger.error(e.getMessage());
+			return status;
 		}
+
+		status.setStatus("OFF");
+
+		return status;
+
 	}
 
 	@GetMapping("/get/rates")

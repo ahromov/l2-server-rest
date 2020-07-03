@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Component
 @ConfigurationProperties(prefix = "l2jgame.server")
-public class Status {
+public class ServerSettings {
 
 	@JsonIgnore
 	private String ip;
@@ -15,10 +15,7 @@ public class Status {
 	@JsonIgnore
 	private Integer port;
 
-	private String status;
-	private Integer onlineCounter = 0;
-
-	public Status() {
+	public ServerSettings() {
 
 	}
 
@@ -36,22 +33,6 @@ public class Status {
 
 	public void setPort(Integer port) {
 		this.port = port;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public Integer getOnlineCounter() {
-		return onlineCounter;
-	}
-
-	public void setOnlineCounter(Integer onlineCounter) {
-		this.onlineCounter = onlineCounter;
 	}
 
 }

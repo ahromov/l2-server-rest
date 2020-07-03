@@ -41,7 +41,6 @@ public class GameServerController {
 		status.setStatus("OFF");
 
 		return status;
-
 	}
 
 	@GetMapping("/get/rates")

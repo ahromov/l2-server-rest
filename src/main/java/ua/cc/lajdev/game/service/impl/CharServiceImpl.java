@@ -43,8 +43,8 @@ public class CharServiceImpl implements CharService {
 	public List<PlayersChar> getTop10() {
 		Pageable pageWithThreeNews = PageRequest.of(0, 10, Sort.by("onlineTime").descending());
 
-		return repository.findAll(pageWithThreeNews).getContent().stream().filter(x -> x.getAccesslevel() == 0)
-				.collect(Collectors.toList());
+		return repository.findAll(pageWithThreeNews).getContent().stream()
+				.filter(x -> x.getAccesslevel() == 0 && x.getNobless() == 1).collect(Collectors.toList());
 	}
 
 }

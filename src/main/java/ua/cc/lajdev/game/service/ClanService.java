@@ -10,4 +10,6 @@ public interface ClanService {
 
 	public List<Clan> getAll();
 
+	public Long countAllAllys();
+
 }

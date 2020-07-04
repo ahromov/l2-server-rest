@@ -25,4 +25,9 @@ public class ClanServiceImpl implements ClanService {
 		return repository.findAll();
 	}
 
+	@Override
+	public Long countAllAllys() {
+		return repository.countAllAllys();
+	}
+
 }

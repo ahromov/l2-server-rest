@@ -10,4 +10,7 @@ public interface ClanRepository extends JpaRepository<Clan, Long> {
 	@Query("SELECT COUNT(c) from Clan c")
 	Long countClans();
 
+	@Query("SELECT COUNT(c) from Clan c where c.allyId > 0")
+	Long countAllAllys();
+
 }

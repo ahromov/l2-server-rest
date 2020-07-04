@@ -65,6 +65,10 @@ public class Clan {
 	@Column(name = "ally_name")
 	private String alyName;
 
+	@Column(name = "ally_id")
+	@JsonIgnore
+	private Integer allyId;
+
 	@Transient
 	private Integer midCharsLevel;
 
@@ -162,6 +166,14 @@ public class Clan {
 
 	public void setAlyName(String alyName) {
 		this.alyName = alyName;
+	}
+
+	public Integer getAllyId() {
+		return allyId;
+	}
+
+	public void setAllyId(Integer allyId) {
+		this.allyId = allyId;
 	}
 
 	public Integer getMidCharsLevel() {

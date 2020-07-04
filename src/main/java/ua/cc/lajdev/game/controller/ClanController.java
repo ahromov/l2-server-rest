@@ -23,6 +23,11 @@ public class ClanController {
 	public Long countAllClans() {
 		return clanService.countAll();
 	}
+	
+	@GetMapping("/count/allAllys")
+	public Long countAllAllys() {
+		return clanService.countAllAllys();
+	}
 
 	@GetMapping("/get/all")
 	public List<Clan> getAll() {

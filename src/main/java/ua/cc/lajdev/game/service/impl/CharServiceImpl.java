@@ -26,7 +26,7 @@ public class CharServiceImpl implements CharService {
 
 	@Override
 	public Long countAll() {
-		return repository.countAllNoGmChars();
+		return repository.countAllChars();
 	}
 
 	@Override

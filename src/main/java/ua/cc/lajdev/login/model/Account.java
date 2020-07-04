@@ -30,10 +30,6 @@ public class Account {
 	@Transient
 	private String status;
 
-	@Column(nullable = true)
-	@JsonIgnore
-	private Integer accessLevel;
-
 	public Account() {
 
 	}
@@ -83,14 +79,6 @@ public class Account {
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	public Integer getAccessLevel() {
-		return accessLevel;
-	}
-
-	public void setAccessLevel(Integer accessLevel) {
-		this.accessLevel = accessLevel;
 	}
 
 }

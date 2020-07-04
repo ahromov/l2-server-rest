@@ -1,26 +1,10 @@
 package ua.cc.lajdev.login.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 import java.util.NoSuchElementException;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.InitialDirContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailException;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,8 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ua.cc.lajdev.login.dto.UserDto;
 import ua.cc.lajdev.login.model.Account;
-import ua.cc.lajdev.login.model.MailSettings;
 import ua.cc.lajdev.login.service.AccountService;
+import ua.cc.lajdev.login.service.MailService;
+import ua.cc.lajdev.login.service.PasswordEncoderService;
+import ua.cc.lajdev.login.service.impl.mail.ChangePasswordTemplate;
+import ua.cc.lajdev.login.service.impl.mail.CreateAccountTemplate;
+import ua.cc.lajdev.login.service.impl.mail.MailMessageTemplate;
 import ua.cc.lajdev.login.utils.PasswordGenerator;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -45,10 +33,10 @@ public class AccountController {
 	private AccountService accountService;
 
 	@Autowired
-	private JavaMailSender javaMailSender;
+	private PasswordEncoderService encoderService;
 
 	@Autowired
-	private MailSettings mailSettings;
+	private MailService mailService;
 
 	@PostMapping("/create")
 	public Account registration(@RequestBody UserDto user) {
@@ -64,21 +52,16 @@ public class AccountController {
 
 					return account;
 				} else {
-					String subject = "Welcome " + user.login + "!";
-
-					String message = "<h2>Your account data:</h2><br><p>Login: " + user.login + "<br>Password: "
-							+ user.password + "</p>";
-
 					try {
 						Account loginAcc = accountService.findByLogin(user.login);
 						loginAcc.setStatus("Login exists");
 
 						return loginAcc;
 					} catch (NoSuchElementException e) {
-						String encodedPassword = encodePassword(user.password);
+						String encodedPassword = encoderService.encodePassword(user.password);
 
-						if (isCorrectEmailAddress(user.email)) {
-							if (sendMail(user.login, user.email, mailSettings.getUsername(), subject, message)) {
+						if (mailService.isCorrectEmailAddress(user.email)) {
+							if (mailService.sendMail(user, new CreateAccountTemplate(user))) {
 								account = accountService.create(new Account(user.login, encodedPassword, user.email));
 								account.setStatus("Success");
 
@@ -102,7 +85,7 @@ public class AccountController {
 		try {
 			account = accountService.findByLogin(login.login);
 
-			String encodedPassword = encodePassword(login.password);
+			String encodedPassword = encoderService.encodePassword(login.password);
 
 			if (account.getPassword().equals(encodedPassword)) {
 				account.setStatus("Success");
@@ -132,9 +115,9 @@ public class AccountController {
 			try {
 				account = accountService.findByLogin(user.login);
 
-				String encodedOldPassword = encodePassword(user.oldPassword);
+				String encodedOldPassword = encoderService.encodePassword(user.oldPassword);
 
-				String encodedNewPassword = encodePassword(user.newFirstPassword);
+				String encodedNewPassword = encoderService.encodePassword(user.newFirstPassword);
 
 				if (account.getPassword().equals(encodedOldPassword)) {
 					if (user.newFirstPassword.equals(user.newSecondPassword)) {
@@ -170,15 +153,11 @@ public class AccountController {
 
 			if (account != null) {
 				if (account.getLogin().equals(user.login)) {
-					String newPassword = PasswordGenerator.generateRandomPassword(8);
+					user.password = PasswordGenerator.generateRandomPassword(8);
 
-					String encodedPassword = encodePassword(newPassword);
+					String encodedPassword = encoderService.encodePassword(user.password);
 
-					String subject = "Change password ... " + user.login + "!";
-
-					String messTemplate = "<h1>Password succesful changed!</h1><p>Your new password: " + newPassword;
-
-					if (sendMail(user.login, user.email, mailSettings.getUsername(), subject, messTemplate)) {
+					if (mailService.sendMail(user, new ChangePasswordTemplate(user))) {
 						account.setPassword(encodedPassword);
 						account = accountService.update(account);
 						account.setStatus("Success");
@@ -186,7 +165,7 @@ public class AccountController {
 						return account;
 					}
 				} else {
-					return new Account("Invalid login"); // Must return new Account, beacause return correct login
+					return new Account("Invalid login"); // Must return new Account instance, beacause it will return correct login
 				}
 			} else {
 				logger.error("Cannot restore password: account with email {" + user.email + "} not found");
@@ -213,9 +192,9 @@ public class AccountController {
 
 			if (account != null) {
 				if (account.getLogin().equals(user.login)) {
-					String subject = "Question from site by " + account.getLogin() + "!";
+					user.login = account.getLogin();
 
-					if (sendMail(account.getLogin(), mailSettings.getUsername(), user.email, subject, user.message)) {
+					if (mailService.sendMail(user, new MailMessageTemplate(user))) {
 						account.setStatus("Success");
 
 						return account;
@@ -231,95 +210,6 @@ public class AccountController {
 			return new Account("Invalid data");
 
 		return account;
-	}
-
-	private String encodePassword(String password) {
-		MessageDigest md = null;
-
-		try {
-			md = MessageDigest.getInstance("SHA");
-		} catch (NoSuchAlgorithmException e) {
-			logger.error(e.getMessage(), e);
-		}
-
-		String encodedPassword = null;
-
-		try {
-			encodedPassword = Base64.getEncoder().encodeToString(md.digest(password.getBytes("UTF-8")));
-		} catch (UnsupportedEncodingException e) {
-			logger.error(e.getMessage(), e);
-		}
-
-		return encodedPassword;
-	}
-
-	private boolean sendMail(String login, String email, String replyMail, String subject, String message) {
-		MimeMessage msg = javaMailSender.createMimeMessage();
-
-		MimeMessageHelper helper;
-
-		try {
-			helper = new MimeMessageHelper(msg, true);
-			helper.setTo(email);
-			helper.setReplyTo(replyMail);
-			helper.setSubject(subject);
-			helper.setText(message, true);
-
-			javaMailSender.send(msg);
-		} catch (MessagingException e) {
-			logger.error(e.getMessage());
-
-			return false;
-		} catch (MailException e) {
-			logger.error(e.getMessage());
-
-			return false;
-		}
-
-		return true;
-	}
-
-	private boolean isCorrectEmailAddress(String email) {
-		try {
-			InternetAddress emailAddr = new InternetAddress(email);
-
-			emailAddr.validate();
-
-			if (isMxRecords(email) == false)
-				return false;
-		} catch (AddressException ex) {
-			logger.error("Incorrect email address");
-
-			return false;
-		}
-
-		return true;
-	}
-
-	private boolean isMxRecords(String email) {
-		String domainName = email.substring(email.indexOf("@") + 1);
-
-		InitialDirContext iDirC = null;
-
-		Attributes attributes = null;
-
-		try {
-			iDirC = new InitialDirContext();
-
-			attributes = iDirC.getAttributes("dns:/" + domainName, new String[] { "MX" });
-		} catch (NamingException e) {
-			logger.error("Cannot get MX records");
-
-			return false;
-		}
-
-		Attribute attributeMX = attributes.get("MX");
-
-		if (attributeMX == null) {
-			return false;
-		}
-
-		return true;
 	}
 
 }

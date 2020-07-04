@@ -11,7 +11,7 @@ public interface AccountRepository extends CrudRepository<Account, String> {
 
 	Account findByEmail(String email);
 
-	@Query("select count(a) from Account a where a.accessLevel = 0")
+	@Query("select count(a) from Account a")
 	Integer countNoGmAccounts();
 
 }

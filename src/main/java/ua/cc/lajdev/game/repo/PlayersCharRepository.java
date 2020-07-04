@@ -10,8 +10,8 @@ public interface PlayersCharRepository extends JpaRepository<PlayersChar, Intege
 	@Query("SELECT COUNT(c) from  PlayersChar c where c.online = 1 and c.accesslevel = 0")
 	Integer countOnlineNoGmChars();
 
-	@Query("SELECT COUNT(c) from  PlayersChar c where c.accesslevel = 0")
-	Long countAllNoGmChars();
+	@Query("SELECT COUNT(c) from  PlayersChar c")
+	Long countAllChars();
 
 	@Query("SELECT COUNT(c) from  PlayersChar c where c.nobless = 1 and c.accesslevel = 0")
 	Long countNoblessNoGmChars();

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ua.cc.lajdev.game.dto.CharsDto;
 import ua.cc.lajdev.game.model.PlayersChar;
 import ua.cc.lajdev.game.service.CharService;
-import ua.cc.lajdev.game.service.ClanService;
 import ua.cc.lajdev.game.service.HeroService;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -21,9 +20,6 @@ public class CharacterController {
 
 	@Autowired
 	CharService charService;
-
-	@Autowired
-	ClanService clanService;
 
 	@Autowired
 	private HeroService heroService;

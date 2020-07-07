@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import ua.cc.lajdev.game.model.PlayersChar;
 
-public interface PlayersCharRepository extends JpaRepository<PlayersChar, Integer> {
+public interface PlayersCharRepository extends JpaRepository<PlayersChar, Long> {
 
 	@Query("SELECT COUNT(c) from  PlayersChar c where c.online = 1 and c.accesslevel = 0")
 	Integer countOnlineNoGmChars();

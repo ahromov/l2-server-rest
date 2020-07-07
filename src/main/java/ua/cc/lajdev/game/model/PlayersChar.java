@@ -25,7 +25,7 @@ public class PlayersChar {
 
 	@Id
 	@JsonIgnore
-	private Integer charId;
+	private Long charId;
 
 	@JsonIgnore
 	@Column(name = "account_name")
@@ -37,7 +37,7 @@ public class PlayersChar {
 	@Column(name = "level")
 	private Integer level;
 
-	@ManyToOne(optional = false)
+	@ManyToOne
 	@JoinColumn(name = "clanid")
 	@NotFound(action = NotFoundAction.IGNORE)
 	@JsonIgnore
@@ -201,11 +201,11 @@ public class PlayersChar {
 
 	}
 
-	public Integer getCharId() {
+	public Long getCharId() {
 		return charId;
 	}
 
-	public void setCharId(Integer charId) {
+	public void setCharId(Long charId) {
 		this.charId = charId;
 	}
 
@@ -334,12 +334,12 @@ public class PlayersChar {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((accountName == null) ? 0 : accountName.hashCode());
-		result = prime * result + ((charId == null) ? 0 : charId.hashCode());
 		result = prime * result + ((charName == null) ? 0 : charName.hashCode());
+		result = prime * result + ((clanName == null) ? 0 : clanName.hashCode());
 		result = prime * result + ((className == null) ? 0 : className.hashCode());
 		result = prime * result + ((gender == null) ? 0 : gender.hashCode());
 		result = prime * result + ((level == null) ? 0 : level.hashCode());
+		result = prime * result + ((nobless == null) ? 0 : nobless.hashCode());
 		result = prime * result + ((online == null) ? 0 : online.hashCode());
 		result = prime * result + ((onlineTime == null) ? 0 : onlineTime.hashCode());
 		result = prime * result + ((pkKills == null) ? 0 : pkKills.hashCode());
@@ -356,20 +356,15 @@ public class PlayersChar {
 		if (getClass() != obj.getClass())
 			return false;
 		PlayersChar other = (PlayersChar) obj;
-		if (accountName == null) {
-			if (other.accountName != null)
-				return false;
-		} else if (!accountName.equals(other.accountName))
-			return false;
-		if (charId == null) {
-			if (other.charId != null)
-				return false;
-		} else if (!charId.equals(other.charId))
-			return false;
 		if (charName == null) {
 			if (other.charName != null)
 				return false;
 		} else if (!charName.equals(other.charName))
+			return false;
+		if (clanName == null) {
+			if (other.clanName != null)
+				return false;
+		} else if (!clanName.equals(other.clanName))
 			return false;
 		if (className == null) {
 			if (other.className != null)
@@ -385,6 +380,11 @@ public class PlayersChar {
 			if (other.level != null)
 				return false;
 		} else if (!level.equals(other.level))
+			return false;
+		if (nobless == null) {
+			if (other.nobless != null)
+				return false;
+		} else if (!nobless.equals(other.nobless))
 			return false;
 		if (online == null) {
 			if (other.online != null)

@@ -1,10 +1,10 @@
 package ua.cc.lajdev.game.model;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -72,9 +72,9 @@ public class Clan {
 	@Transient
 	private Integer midCharsLevel;
 
-	@OneToMany(mappedBy = "clan", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "clan")
 	@JsonIgnore
-	private List<PlayersChar> chars;
+	private Set<PlayersChar> chars = new HashSet<PlayersChar>();
 
 	public Clan() {
 
@@ -184,11 +184,12 @@ public class Clan {
 		this.midCharsLevel = midCharsLevel;
 	}
 
-	public List<PlayersChar> getChars() {
+	public Set<PlayersChar> getChars() {
 		return chars;
 	}
 
-	public void setChars(List<PlayersChar> chars) {
+	@SuppressWarnings("unused")
+	private void setChars(Set<PlayersChar> chars) {
 		this.chars = chars;
 	}
 
@@ -197,12 +198,13 @@ public class Clan {
 		this.leaderName = leader.getCharName();
 
 		if (fort != null)
-			this.castleName = castle.getName();
-
-		if (castle != null)
 			this.fortName = fort.getName();
 
-		this.midCharsLevel = calculateMidCharsLevel();
+		if (castle != null)
+			this.castleName = castle.getName();
+
+		if (this.chars.size() > 0)
+			this.midCharsLevel = calculateMidCharsLevel();
 	}
 
 	private Integer calculateMidCharsLevel() {

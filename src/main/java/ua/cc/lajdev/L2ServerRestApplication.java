@@ -6,15 +6,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing
-public class L2ServerWebappApplication {
-
-	/*
-	 * protected SpringApplicationBuilder configure(SpringApplicationBuilder
-	 * application) { return application.sources(L2ServerWebappApplication.class); }
-	 */
+public class L2ServerRestApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(L2ServerWebappApplication.class, args);
+		SpringApplication.run(L2ServerRestApplication.class, args);
 	}
 
 }

@@ -13,8 +13,6 @@ import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
 import org.springframework.context.annotation.Scope;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -43,19 +41,6 @@ public class Clan {
 	@Transient
 	private String leaderName;
 
-	@OneToOne
-	@JoinColumn(name = "hasCastle", referencedColumnName = "id")
-	@NotFound(action = NotFoundAction.IGNORE)
-	@JsonIgnore
-	private Castle castle;
-
-	@Transient
-	private String castleName = "None";
-
-	@OneToOne(mappedBy = "clan")
-	@JsonIgnore
-	private Fort fort;
-
 	@Transient
 	private String fortName = "None";
 
@@ -75,6 +60,18 @@ public class Clan {
 	@OneToMany(mappedBy = "clan")
 	@JsonIgnore
 	private Set<PlayersChar> chars = new HashSet<PlayersChar>();
+
+	@OneToOne
+	@JoinColumn(name = "hasCastle", referencedColumnName = "id")
+	@JsonIgnore
+	private Castle castle;
+
+	@Transient
+	private String castleName = "None";
+
+	@OneToOne(mappedBy = "clan")
+	@JsonIgnore
+	private Fort fort;
 
 	public Clan() {
 

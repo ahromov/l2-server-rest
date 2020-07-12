@@ -15,10 +15,14 @@ import ua.cc.lajdev.game.service.ServerStatusService;
 @Service
 public class ServerStatusServiceImpl implements ServerStatusService {
 
-	private static Logger logger = LoggerFactory.getLogger(ServerStatusServiceImpl.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(ServerStatusServiceImpl.class);
+
+	private final ServerSettings settings;
 
 	@Autowired
-	private ServerSettings settings;
+	public ServerStatusServiceImpl(ServerSettings settings) {
+		this.settings = settings;
+	}
 
 	@Override
 	public boolean checkStatus() {
@@ -27,7 +31,7 @@ public class ServerStatusServiceImpl implements ServerStatusService {
 
 			return true;
 		} catch (IOException e) {
-			logger.error(e.getMessage());
+			LOGGER.error("Connection to the server was dropped ...");
 		}
 
 		return false;

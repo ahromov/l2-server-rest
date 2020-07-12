@@ -19,8 +19,12 @@ import ua.cc.lajdev.site.service.impl.UserDetailsServiceImpl;
 @ComponentScan(basePackageClasses = UserDetailsServiceImpl.class)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+	private final UserDetailsService userDetailsService;
+
 	@Autowired
-	private UserDetailsService userDetailsService;
+	public WebSecurityConfig(UserDetailsService userDetailsService) {
+		this.userDetailsService = userDetailsService;
+	}
 
 	@Autowired
 	public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {

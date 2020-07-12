@@ -24,10 +24,14 @@ import ua.cc.lajdev.site.service.NewsService;
 @RequestMapping("news")
 public class NewsController {
 
-	private static Logger logger = LoggerFactory.getLogger(NewsController.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(NewsController.class);
+
+	private final NewsService newsService;
 
 	@Autowired
-	private NewsService newsService;
+	public NewsController(NewsService newsService) {
+		this.newsService = newsService;
+	}
 
 	@PostMapping("/add")
 	public News addNew(@RequestParam("title") String title, @RequestParam("text") String text,
@@ -37,7 +41,7 @@ public class NewsController {
 		try {
 			news = newsService.create(new News(title, text, new Date(), image.getBytes()));
 		} catch (IOException e) {
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 		}
 
 		news.setStatus("Success");

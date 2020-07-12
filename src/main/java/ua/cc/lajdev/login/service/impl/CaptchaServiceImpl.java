@@ -19,21 +19,24 @@ import ua.cc.lajdev.login.service.exception.InvalidReCaptchaException;
 @Service
 public class CaptchaServiceImpl implements CaptchaService {
 
-	private static Logger logger = LoggerFactory.getLogger(ReCaptchaController.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(ReCaptchaController.class);
 	private static Pattern RESPONSE_PATTERN = Pattern.compile("[A-Za-z0-9_-]+");
 
-	@Autowired
-	private CaptchaSettings captchaSettings;
+	private final CaptchaSettings captchaSettings;
+	private final RestOperations restTemplate;
 
 	@Autowired
-	private RestOperations restTemplate;
+	public CaptchaServiceImpl(CaptchaSettings captchaSettings, RestOperations restTemplate) {
+		this.captchaSettings = captchaSettings;
+		this.restTemplate = restTemplate;
+	}
 
 	@Override
 	public GoogleResponseDto processResponse(String response) {
 		try {
 			responseSanityCheck(response);
 		} catch (InvalidReCaptchaException e) {
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 		}
 
 		URI verifyUri = URI
@@ -45,7 +48,7 @@ public class CaptchaServiceImpl implements CaptchaService {
 		try {
 			isResponseSuccesss(googleResponse);
 		} catch (InvalidReCaptchaException e) {
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 		}
 
 		return googleResponse;

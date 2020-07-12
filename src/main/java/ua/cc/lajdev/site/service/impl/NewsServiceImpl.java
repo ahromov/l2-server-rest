@@ -15,8 +15,12 @@ import ua.cc.lajdev.site.service.NewsService;
 @Service
 public class NewsServiceImpl implements NewsService {
 
+	private final NewsRepository repository;
+
 	@Autowired
-	private NewsRepository repository;
+	public NewsServiceImpl(NewsRepository repository) {
+		this.repository = repository;
+	}
 
 	@Override
 	public News create(News news) {

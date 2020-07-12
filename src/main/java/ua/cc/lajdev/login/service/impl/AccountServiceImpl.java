@@ -10,8 +10,12 @@ import ua.cc.lajdev.login.service.AccountService;
 @Service
 public class AccountServiceImpl implements AccountService {
 
+	private final AccountRepository repository;
+
 	@Autowired
-	private AccountRepository repository;
+	public AccountServiceImpl(AccountRepository repository) {
+		this.repository = repository;
+	}
 
 	public Account create(Account account) {
 		return repository.save(account);

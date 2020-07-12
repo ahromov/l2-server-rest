@@ -6,7 +6,7 @@ public class MailMessageTemplate extends MessageTemplate {
 
 	public MailMessageTemplate(UserDto user) {
 		this.subject = "Question from site by " + user.login + "!";
-		this.boby = user.message;
+		this.body = user.message;
 	}
 
 }

@@ -12,8 +12,12 @@ import ua.cc.lajdev.game.service.FortService;
 @Service
 public class FortServiceImpl implements FortService {
 
+	private final FortRepository repository;
+
 	@Autowired
-	private FortRepository repository;
+	public FortServiceImpl(FortRepository repository) {
+		this.repository = repository;
+	}
 
 	@Override
 	public List<Fort> getAll() {

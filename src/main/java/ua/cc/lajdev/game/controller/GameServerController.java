@@ -18,14 +18,17 @@ import ua.cc.lajdev.game.service.ServerStatusService;
 @RequestMapping("gs")
 public class GameServerController {
 
-	@Autowired
-	private ServerStatusService statusService;
+	private final ServerStatusService statusService;
+	private final CharService characterService;
+	private final RatesService rateService;
 
 	@Autowired
-	private CharService characterService;
-
-	@Autowired
-	private RatesService rateService;
+	public GameServerController(ServerStatusService statusService, CharService characterService,
+			RatesService rateService) {
+		this.statusService = statusService;
+		this.characterService = characterService;
+		this.rateService = rateService;
+	}
 
 	@GetMapping("/get/status")
 	public StatusDto getServerStatus() {

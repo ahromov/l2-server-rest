@@ -12,8 +12,12 @@ import ua.cc.lajdev.game.service.CastleService;
 @Service
 public class CastleServiceImpl implements CastleService {
 
+	private final CastleRepository repository;
+
 	@Autowired
-	private CastleRepository repository;
+	public CastleServiceImpl(CastleRepository repository) {
+		this.repository = repository;
+	}
 
 	@Override
 	public List<Castle> getAll() {

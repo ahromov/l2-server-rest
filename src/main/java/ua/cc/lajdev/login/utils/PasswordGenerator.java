@@ -25,7 +25,6 @@ public class PasswordGenerator {
 
 		StringBuilder sb = new StringBuilder(length);
 		for (int i = 0; i < length; i++) {
-
 			int rndCharAt = random.nextInt(PASSWORD_ALLOW.length());
 			char rndChar = PASSWORD_ALLOW.charAt(rndCharAt);
 
@@ -38,6 +37,7 @@ public class PasswordGenerator {
 	public static String shuffleString(String string) {
 		List<String> letters = Arrays.asList(string.split(""));
 		Collections.shuffle(letters);
+
 		return letters.stream().collect(Collectors.joining());
 	}
 

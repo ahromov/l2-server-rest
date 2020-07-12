@@ -16,8 +16,12 @@ import ua.cc.lajdev.forum.service.TopicService;
 @RequestMapping("forums")
 public class ForumController {
 
+	private final TopicService topicService;
+
 	@Autowired
-	private TopicService topicService;
+	public ForumController(TopicService topicService) {
+		this.topicService = topicService;
+	}
 
 	@GetMapping("/get/topics/last5")
 	public List<Topic> getTopics() {

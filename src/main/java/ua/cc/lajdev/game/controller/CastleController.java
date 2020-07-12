@@ -16,8 +16,12 @@ import ua.cc.lajdev.game.service.CastleService;
 @RequestMapping("castles")
 public class CastleController {
 
+	private final CastleService castleService;
+
 	@Autowired
-	private CastleService castleService;
+	public CastleController(CastleService castleService) {
+		this.castleService = castleService;
+	}
 
 	@GetMapping("/get/all")
 	public List<Castle> getCastles() {

@@ -14,7 +14,7 @@ import ua.cc.lajdev.login.service.PasswordEncoderService;
 @Service
 public class PasswordEncoderServiceImpl implements PasswordEncoderService {
 	
-	private static Logger logger = LoggerFactory.getLogger(PasswordEncoderServiceImpl.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(PasswordEncoderServiceImpl.class);
 
 	public String encodePassword(String password) {
 		MessageDigest md = null;
@@ -22,7 +22,7 @@ public class PasswordEncoderServiceImpl implements PasswordEncoderService {
 		try {
 			md = MessageDigest.getInstance("SHA");
 		} catch (NoSuchAlgorithmException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 
 		String encodedPassword = null;
@@ -30,7 +30,7 @@ public class PasswordEncoderServiceImpl implements PasswordEncoderService {
 		try {
 			encodedPassword = Base64.getEncoder().encodeToString(md.digest(password.getBytes("UTF-8")));
 		} catch (UnsupportedEncodingException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 		}
 
 		return encodedPassword;

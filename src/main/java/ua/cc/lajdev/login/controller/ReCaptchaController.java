@@ -16,8 +16,12 @@ import ua.cc.lajdev.login.service.CaptchaService;
 @RequestMapping("reCaptcha")
 public class ReCaptchaController {
 
+	private final CaptchaService recaptchaService;
+
 	@Autowired
-	CaptchaService recaptchaService;
+	public ReCaptchaController(CaptchaService recaptchaService) {
+		this.recaptchaService = recaptchaService;
+	}
 
 	@PostMapping("validate")
 	public GoogleResponseDto getGoogleResponse(@RequestBody GoogleTokenDto token) {

@@ -27,16 +27,19 @@ import ua.cc.lajdev.login.utils.PasswordGenerator;
 @RequestMapping("accounts")
 public class AccountController {
 
-	private static Logger logger = LoggerFactory.getLogger(AccountController.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
+
+	private final AccountService accountService;
+	private final PasswordEncoderService encoderService;
+	private final MailService mailService;
 
 	@Autowired
-	private AccountService accountService;
-
-	@Autowired
-	private PasswordEncoderService encoderService;
-
-	@Autowired
-	private MailService mailService;
+	public AccountController(AccountService accountService, PasswordEncoderService encoderService,
+			MailService mailService) {
+		this.accountService = accountService;
+		this.encoderService = encoderService;
+		this.mailService = mailService;
+	}
 
 	@PostMapping("/create")
 	public Account registration(@RequestBody UserDto user) {
@@ -65,7 +68,7 @@ public class AccountController {
 								account = accountService.create(new Account(user.login, encodedPassword, user.email));
 								account.setStatus("Success");
 
-								logger.info("New account {" + user.email + "} created");
+								LOGGER.info("New account {" + user.email + "} created");
 							}
 						} else
 							return new Account("Invalid email");
@@ -98,7 +101,7 @@ public class AccountController {
 			}
 
 		} catch (NoSuchElementException e) {
-			logger.error("Account with login {" + login + "} not found");
+			LOGGER.error("Account with login {" + login + "} not found");
 
 			account = new Account("Not exists");
 		}
@@ -137,7 +140,7 @@ public class AccountController {
 					return account;
 				}
 			} catch (NoSuchElementException e) {
-				logger.error("Cannot update password: account width login {" + user.login + "} not found");
+				LOGGER.error("Cannot update password: account width login {" + user.login + "} not found");
 			}
 		}
 
@@ -168,7 +171,7 @@ public class AccountController {
 					return new Account("Invalid login"); // Must return new Account instance, beacause it will return correct login
 				}
 			} else {
-				logger.error("Cannot restore password: account with email {" + user.email + "} not found");
+				LOGGER.error("Cannot restore password: account with email {" + user.email + "} not found");
 
 				return new Account("Not exists");
 			}
@@ -202,7 +205,7 @@ public class AccountController {
 				} else
 					return new Account("Invalid login");
 			} else {
-				logger.error("Cannot send message: account with email {" + user.email + "} not found");
+				LOGGER.error("Cannot send message: account with email {" + user.email + "} not found");
 
 				return new Account("Email not found");
 			}

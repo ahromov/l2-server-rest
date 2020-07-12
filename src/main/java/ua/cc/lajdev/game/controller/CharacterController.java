@@ -18,11 +18,14 @@ import ua.cc.lajdev.game.service.HeroService;
 @RequestMapping("characters")
 public class CharacterController {
 
-	@Autowired
-	CharService charService;
+	private final CharService charService;
+	private final HeroService heroService;
 
 	@Autowired
-	private HeroService heroService;
+	public CharacterController(CharService charService, HeroService heroService) {
+		this.charService = charService;
+		this.heroService = heroService;
+	}
 
 	@GetMapping("/count/byType")
 	public CharsDto countChars() {

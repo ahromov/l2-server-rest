@@ -25,13 +25,16 @@ import ua.cc.lajdev.login.service.impl.mail.MessageTemplate;
 @Service
 public class MailServiceImpl implements MailService {
 
-	private static Logger logger = LoggerFactory.getLogger(MailServiceImpl.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(MailServiceImpl.class);
+
+	private final JavaMailSender mailSender;
+	private final MailSettings mailSettings;
 
 	@Autowired
-	private JavaMailSender mailSender;
-
-	@Autowired
-	private MailSettings mailSettings;
+	public MailServiceImpl(JavaMailSender mailSender, MailSettings mailSettings) {
+		this.mailSender = mailSender;
+		this.mailSettings = mailSettings;
+	}
 
 	public boolean isCorrectEmailAddress(String email) {
 		try {
@@ -42,7 +45,7 @@ public class MailServiceImpl implements MailService {
 			if (isMxRecords(email) == false)
 				return false;
 		} catch (AddressException ex) {
-			logger.error("Incorrect email address");
+			LOGGER.error("Incorrect email address");
 
 			return false;
 		}
@@ -64,11 +67,11 @@ public class MailServiceImpl implements MailService {
 
 			mailSender.send(msg);
 		} catch (MessagingException e) {
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 
 			return false;
 		} catch (MailException e) {
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 
 			return false;
 		}
@@ -88,7 +91,7 @@ public class MailServiceImpl implements MailService {
 
 			attributes = iDirC.getAttributes("dns:/" + domainName, new String[] { "MX" });
 		} catch (NamingException e) {
-			logger.error("Cannot get MX records");
+			LOGGER.error("Cannot get MX records");
 
 			return false;
 		}

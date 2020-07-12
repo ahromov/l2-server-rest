@@ -20,10 +20,14 @@ import ua.cc.lajdev.game.service.RatesService;
 @Service
 public class RatesServiceImpl implements RatesService {
 
-	private static Logger logger = LoggerFactory.getLogger(RatesServiceImpl.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(RatesServiceImpl.class);
+
+	private final RatesConfigDto config;
 
 	@Autowired
-	private RatesConfigDto config;
+	public RatesServiceImpl(RatesConfigDto config) {
+		this.config = config;
+	}
 
 	public Map<String, String> getRates() {
 		InputStream isr = null;
@@ -31,14 +35,14 @@ public class RatesServiceImpl implements RatesService {
 		try {
 			isr = new FileInputStream(config.getRatesConfigFile());
 		} catch (FileNotFoundException e) {
-			logger.error("Rates properties file not found");
+			LOGGER.error("Rates properties file not found");
 		}
 
 		Properties props = new Properties();
 		try {
 			props.load(isr);
 		} catch (IOException e) {
-			logger.error("Cannot load properties from stream");
+			LOGGER.error("Cannot load properties from stream");
 		}
 
 		Map<String, String> rates = new HashMap<>();

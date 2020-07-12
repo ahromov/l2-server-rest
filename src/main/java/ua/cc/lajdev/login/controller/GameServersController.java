@@ -16,8 +16,12 @@ import ua.cc.lajdev.login.service.GameServerService;
 @RequestMapping("ls")
 public class GameServersController {
 
+	private final GameServerService service;
+
 	@Autowired
-	GameServerService service;
+	public GameServersController(GameServerService service) {
+		this.service = service;
+	}
 
 	@GetMapping("/getServers")
 	List<GameServer> getAllRegistered() {

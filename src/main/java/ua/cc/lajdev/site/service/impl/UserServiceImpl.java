@@ -11,11 +11,14 @@ import ua.cc.lajdev.site.service.UserService;
 @Service
 public class UserServiceImpl implements UserService {
 
-	@Autowired
-	PasswordEncoder passwordEncoder;
+	private final PasswordEncoder passwordEncoder;
+	private final UserRepository repository;
 
 	@Autowired
-	UserRepository repository;
+	public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository repository) {
+		this.passwordEncoder = passwordEncoder;
+		this.repository = repository;
+	}
 
 	@Override
 	public User findByUserName(String username) {

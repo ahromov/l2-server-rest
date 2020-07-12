@@ -15,8 +15,12 @@ import ua.cc.lajdev.forum.service.TopicService;
 @Service
 public class TopicServiceImpl implements TopicService {
 
+	private final TopicRepository repository;
+
 	@Autowired
-	private TopicRepository repository;
+	public TopicServiceImpl(TopicRepository repository) {
+		this.repository = repository;
+	}
 
 	@Override
 	public List<Topic> getTopics() {

@@ -16,8 +16,12 @@ import ua.cc.lajdev.game.service.CharService;
 @Service
 public class CharServiceImpl implements CharService {
 
+	private final PlayersCharRepository repository;
+
 	@Autowired
-	private PlayersCharRepository repository;
+	public CharServiceImpl(PlayersCharRepository repository) {
+		this.repository = repository;
+	}
 
 	@Override
 	public Integer getOnlineNoGm() {

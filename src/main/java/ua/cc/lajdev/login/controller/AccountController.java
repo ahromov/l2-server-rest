@@ -17,8 +17,8 @@ import ua.cc.lajdev.login.model.Account;
 import ua.cc.lajdev.login.service.AccountService;
 import ua.cc.lajdev.login.service.MailService;
 import ua.cc.lajdev.login.service.PasswordEncoderService;
-import ua.cc.lajdev.login.service.impl.mail.MailChangePasswordTemplate;
-import ua.cc.lajdev.login.service.impl.mail.MailCreateAccountTemplate;
+import ua.cc.lajdev.login.service.impl.mail.MailPasswordTemplate;
+import ua.cc.lajdev.login.service.impl.mail.MailAccountTemplate;
 import ua.cc.lajdev.login.service.impl.mail.MailTemplate;
 import ua.cc.lajdev.login.utils.PasswordGenerator;
 
@@ -53,7 +53,7 @@ public class AccountController {
 						account = Optional.of(accountService.create(new Account(user.login,
 								encoderService.encodePassword(user.password), user.email, "Success")));
 
-						mailService.sendMail(user, new MailCreateAccountTemplate(user));
+						mailService.sendMail(user, new MailAccountTemplate(user));
 
 						return account.get();
 					} else
@@ -147,7 +147,7 @@ public class AccountController {
 					accountService.update(account);
 					account.get().setStatus("Success");
 
-					mailService.sendMail(user, new MailChangePasswordTemplate(user));
+					mailService.sendMail(user, new MailPasswordTemplate(user));
 
 					return account.get();
 				} else {

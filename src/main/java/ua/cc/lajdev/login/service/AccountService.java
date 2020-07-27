@@ -6,14 +6,10 @@ import ua.cc.lajdev.login.model.Account;
 
 public interface AccountService {
 
-	public Account create(Account account);
-
-	public Optional<Account> findByLogin(String login);
-
-	public Account update(Optional<Account> account);
-
-	public Optional<Account> findByEmail(String email);
-
-	public Integer countNoGmAccounts();
+	Account create(Account account);
+	Optional<Account> findByLogin(String login);
+	Account update(Optional<Account> account);
+	Optional<Account> findByEmail(String email);
+	Integer countNoGmAccounts();
 
 }

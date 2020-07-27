@@ -205,14 +205,8 @@ public class Clan {
 	}
 
 	private Integer calculateMidCharsLevel() {
-		int midLevel = 0;
-
-		for (PlayersChar c : this.chars) {
-			if (c.getLevel() != null)
-				midLevel += c.getLevel();
-		}
-
-		return midLevel = midLevel / this.chars.size();
+		return this.chars.stream().filter((x) -> x.getLevel() != null).mapToInt((x) -> x.getLevel())
+				.reduce(Math::addExact).getAsInt() / this.chars.size();
 	}
 
 }

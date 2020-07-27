@@ -1,6 +1,5 @@
 package ua.cc.lajdev.login.controller;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.slf4j.Logger;

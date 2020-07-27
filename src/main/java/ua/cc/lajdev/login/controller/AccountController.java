@@ -105,7 +105,7 @@ public class AccountController {
 				&& !user.newSecondPassword.equals(""))) {
 			Optional<Account> account = accountService.findByLogin(user.login);
 
-			try {
+			if (account.isPresent()) {
 				String encodedOldPassword = encoderService.encodePassword(user.oldPassword);
 
 				String encodedNewPassword = encoderService.encodePassword(user.newFirstPassword);
@@ -127,8 +127,6 @@ public class AccountController {
 
 					return account.get();
 				}
-			} catch (NoSuchElementException e) {
-				LOGGER.error("Cannot update password: account width login {" + user.login + "} not found");
 			}
 		}
 
@@ -157,8 +155,6 @@ public class AccountController {
 					return new Account("Invalid login");
 				}
 			} else {
-				LOGGER.error("Cannot restore password: account with email {" + user.email + "} not found");
-
 				return new Account("Not exists");
 			}
 		} else
@@ -187,8 +183,6 @@ public class AccountController {
 				} else
 					return new Account("Invalid login");
 			} else {
-				LOGGER.error("Cannot send message: account with email {" + user.email + "} not found");
-
 				return new Account("Email not found");
 			}
 		} else

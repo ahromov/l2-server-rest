@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import ua.cc.lajdev.login.dto.UserDto;
 import ua.cc.lajdev.login.model.MailSettings;
 import ua.cc.lajdev.login.service.MailService;
-import ua.cc.lajdev.login.service.impl.mail.MessageTemplate;
+import ua.cc.lajdev.login.service.impl.mail.Template;
 
 @Service
 public class MailServiceImpl implements MailService {
@@ -53,7 +53,7 @@ public class MailServiceImpl implements MailService {
 		return true;
 	}
 
-	public void sendMail(UserDto user, MessageTemplate template) {
+	public void sendMail(UserDto user, Template template) {
 		MimeMessage msg = mailSender.createMimeMessage();
 
 		MimeMessageHelper helper;

@@ -19,7 +19,7 @@ import ua.cc.lajdev.login.service.MailService;
 import ua.cc.lajdev.login.service.PasswordEncoderService;
 import ua.cc.lajdev.login.service.impl.mail.ChangePasswordTemplate;
 import ua.cc.lajdev.login.service.impl.mail.CreateAccountTemplate;
-import ua.cc.lajdev.login.service.impl.mail.MailMessageTemplate;
+import ua.cc.lajdev.login.service.impl.mail.MailTemplate;
 import ua.cc.lajdev.login.utils.PasswordGenerator;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -176,7 +176,7 @@ public class AccountController {
 
 					account.get().setStatus("Success");
 
-					mailService.sendMail(user, new MailMessageTemplate(user));
+					mailService.sendMail(user, new MailTemplate(user));
 
 					return account.get();
 				} else

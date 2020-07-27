@@ -39,14 +39,18 @@ public class Account {
 	}
 
 	public Account(String login, String status) {
+		this(status);
 		this.login = login;
-		this.status = status;
 	}
 
 	public Account(String login, String password, String email) {
-		this.login = login;
-		this.password = password;
+		this(login, password);
 		this.email = email;
+	}
+
+	public Account(String login, String password, String email, String status) {
+		this(login, password, email);
+		this.status = status;
 	}
 
 	public String getLogin() {

@@ -53,7 +53,7 @@ public class MailServiceImpl implements MailService {
 		return true;
 	}
 
-	public boolean sendMail(UserDto user, MessageTemplate template) {
+	public void sendMail(UserDto user, MessageTemplate template) {
 		MimeMessage msg = mailSender.createMimeMessage();
 
 		MimeMessageHelper helper;
@@ -68,15 +68,9 @@ public class MailServiceImpl implements MailService {
 			mailSender.send(msg);
 		} catch (MessagingException e) {
 			LOGGER.error(e.getMessage());
-
-			return false;
 		} catch (MailException e) {
 			LOGGER.error(e.getMessage());
-
-			return false;
 		}
-
-		return true;
 	}
 
 	private boolean isMxRecords(String email) {

@@ -7,6 +7,6 @@ public interface MailService {
 
 	boolean isCorrectEmailAddress(String email);
 
-	boolean sendMail(UserDto user, MessageTemplate template);
+	void sendMail(UserDto user, MessageTemplate template);
 
 }

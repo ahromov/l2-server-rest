@@ -1,6 +1,7 @@
 package ua.cc.lajdev.login.controller;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,132 +44,117 @@ public class AccountController {
 
 	@PostMapping("/create")
 	public Account registration(@RequestBody UserDto user) {
-		Account account = null;
-
 		if ((!user.login.equals("") && !user.email.equals("") && !user.password.equals("")
 				&& !user.passwordSecond.equals(""))) {
-			account = accountService.findByEmail(user.email);
+			Optional<Account> account = accountService.findByLogin(user.login);
 
-			if (user.password.equals(user.passwordSecond)) {
-				if (account != null) {
-					account.setStatus("Email exists");
+			if (!account.isPresent()) {
+				if (user.password.equals(user.passwordSecond)) {
+					if (mailService.isCorrectEmailAddress(user.email)) {
+						account = Optional.of(accountService.create(new Account(user.login,
+								encoderService.encodePassword(user.password), user.email, "Success")));
 
-					return account;
+						mailService.sendMail(user, new CreateAccountTemplate(user));
+
+						return account.get();
+					} else
+						return new Account("Invalid email");
 				} else {
-					try {
-						Account loginAcc = accountService.findByLogin(user.login);
-						loginAcc.setStatus("Login exists");
-
-						return loginAcc;
-					} catch (NoSuchElementException e) {
-						String encodedPassword = encoderService.encodePassword(user.password);
-
-						if (mailService.isCorrectEmailAddress(user.email)) {
-							if (mailService.sendMail(user, new CreateAccountTemplate(user))) {
-								account = accountService.create(new Account(user.login, encodedPassword, user.email));
-								account.setStatus("Success");
-
-								LOGGER.info("New account {" + user.email + "} created");
-							}
-						} else
-							return new Account("Invalid email");
-					}
+					return new Account("No match");
 				}
-			} else
-				account = new Account("No match");
+			} else {
+				account.get().setStatus("Login exists");
+
+				return account.get();
+			}
 		}
 
-		return account;
+		return new Account("Invalid data");
 	}
 
 	@PostMapping(path = "/login")
 	public Account login(@RequestBody UserDto login) {
-		Account account = null;
+		if (login.login != null && login.password != null) {
+			Optional<Account> account = accountService.findByLogin(login.login);
 
-		try {
-			account = accountService.findByLogin(login.login);
+			if (account.isPresent()) {
+				String encodedPassword = encoderService.encodePassword(login.password);
 
-			String encodedPassword = encoderService.encodePassword(login.password);
+				if (account.get().getPassword().equals(encodedPassword)) {
+					account.get().setStatus("Success");
 
-			if (account.getPassword().equals(encodedPassword)) {
-				account.setStatus("Success");
+					return account.get();
+				} else {
+					account.get().setStatus("Incorrect password");
 
-				return account;
+					return account.get();
+				}
 			} else {
-				account.setStatus("Incorrect password");
+				LOGGER.error("Account with login {" + login + "} not found");
 
-				return account;
+				return new Account("Not exists");
 			}
-
-		} catch (NoSuchElementException e) {
-			LOGGER.error("Account with login {" + login + "} not found");
-
-			account = new Account("Not exists");
 		}
 
-		return account;
+		return new Account("Invalid data");
 	}
 
 	@PostMapping("/changePass")
 	public Account changePassword(@RequestBody UserDto user) {
-		Account account = null;
-
 		if ((!user.login.equals("") && !user.oldPassword.equals("") && !user.newFirstPassword.equals("")
 				&& !user.newSecondPassword.equals(""))) {
-			try {
-				account = accountService.findByLogin(user.login);
+			Optional<Account> account = accountService.findByLogin(user.login);
 
+			try {
 				String encodedOldPassword = encoderService.encodePassword(user.oldPassword);
 
 				String encodedNewPassword = encoderService.encodePassword(user.newFirstPassword);
 
-				if (account.getPassword().equals(encodedOldPassword)) {
+				if (account.get().getPassword().equals(encodedOldPassword)) {
 					if (user.newFirstPassword.equals(user.newSecondPassword)) {
-						account.setPassword(encodedNewPassword);
-						account = accountService.update(account);
-						account.setStatus("Success");
+						account.get().setPassword(encodedNewPassword);
+						accountService.update(account);
+						account.get().setStatus("Success");
 
-						return account;
+						return account.get();
 					} else {
-						account.setStatus("No match");
+						account.get().setStatus("No match");
 
-						return account;
+						return account.get();
 					}
 				} else {
-					account.setStatus("Invalid pass");
+					account.get().setStatus("Invalid pass");
 
-					return account;
+					return account.get();
 				}
 			} catch (NoSuchElementException e) {
 				LOGGER.error("Cannot update password: account width login {" + user.login + "} not found");
 			}
 		}
 
-		return account;
+		return new Account("Invalid data");
 	}
 
 	@PostMapping("/restorePass")
 	public Account rememberPassword(@RequestBody UserDto user) {
-		Account account = null;
-
 		if (!user.login.equals("") && !user.email.equals("")) {
-			account = accountService.findByEmail(user.email);
+			Optional<Account> account = accountService.findByLogin(user.login);
 
-			if (account != null) {
-				if (account.getLogin().equals(user.login)) {
+			if (account.isPresent()) {
+				if (account.get().getLogin().equals(user.login)) {
 					user.password = PasswordGenerator.generateRandomPassword(8);
 
 					String encodedPassword = encoderService.encodePassword(user.password);
 
-					if (mailService.sendMail(user, new ChangePasswordTemplate(user))) {
-						account.setPassword(encodedPassword);
-						account = accountService.update(account);
-						account.setStatus("Success");
+					account.get().setPassword(encodedPassword);
+					accountService.update(account);
+					account.get().setStatus("Success");
 
-						return account;
-					}
+					mailService.sendMail(user, new ChangePasswordTemplate(user));
+
+					return account.get();
 				} else {
-					return new Account("Invalid login"); // Must return new Account instance, beacause it will return correct login
+					return new Account("Invalid login");
 				}
 			} else {
 				LOGGER.error("Cannot restore password: account with email {" + user.email + "} not found");
@@ -177,8 +163,6 @@ public class AccountController {
 			}
 		} else
 			return new Account("Invalid data");
-
-		return account;
 	}
 
 	@GetMapping("/count/all")
@@ -188,20 +172,18 @@ public class AccountController {
 
 	@PostMapping("/sendMess")
 	public Account sendMessage(@RequestBody UserDto user) {
-		Account account = null;
-
 		if ((!user.email.equals("") && !user.message.equals("") && !user.login.equals(""))) {
-			account = accountService.findByEmail(user.email);
+			Optional<Account> account = accountService.findByLogin(user.login);
 
-			if (account != null) {
-				if (account.getLogin().equals(user.login)) {
-					user.login = account.getLogin();
+			if (account.isPresent()) {
+				if (account.get().getLogin().equals(user.login)) {
+					user.login = account.get().getLogin();
 
-					if (mailService.sendMail(user, new MailMessageTemplate(user))) {
-						account.setStatus("Success");
+					account.get().setStatus("Success");
 
-						return account;
-					}
+					mailService.sendMail(user, new MailMessageTemplate(user));
+
+					return account.get();
 				} else
 					return new Account("Invalid login");
 			} else {
@@ -211,8 +193,6 @@ public class AccountController {
 			}
 		} else
 			return new Account("Invalid data");
-
-		return account;
 	}
 
 }

@@ -48,19 +48,7 @@ public class AccountController {
 			Optional<Account> account = accountService.findByLogin(user.login);
 
 			if (!account.isPresent()) {
-				if (user.password.equals(user.passwordSecond)) {
-					if (mailService.isCorrectEmailAddress(user.email)) {
-						account = Optional.of(accountService.create(new Account(user.login,
-								encoderService.encodePassword(user.password), user.email, "Success")));
-
-						mailService.sendMail(user, new MailAccountTemplate(user));
-
-						return account.get();
-					} else
-						return new Account("Invalid email");
-				} else {
-					return new Account("No match");
-				}
+				return getAccountIffPasswordsEquals(user, account);
 			} else {
 				account.get().setStatus("Login exists");
 
@@ -71,23 +59,33 @@ public class AccountController {
 		return new Account("Invalid data");
 	}
 
+	private Account getAccountIffPasswordsEquals(UserDto user, Optional<Account> account) {
+		if (user.password.equals(user.passwordSecond)) {
+			return getNewAccountAndSendMailIfEmailCorrect(user, account);
+		} else {
+			return new Account("No match");
+		}
+	}
+
+	private Account getNewAccountAndSendMailIfEmailCorrect(UserDto user, Optional<Account> account) {
+		if (mailService.isCorrectEmailAddress(user.email)) {
+			account = Optional.of(accountService.create(
+					new Account(user.login, encoderService.encodePassword(user.password), user.email, "Success")));
+
+			mailService.sendMail(user, new MailAccountTemplate(user));
+
+			return account.get();
+		} else
+			return new Account("Invalid email");
+	}
+
 	@PostMapping(path = "/login")
 	public Account login(@RequestBody UserDto login) {
 		if (login.login != null && login.password != null) {
 			Optional<Account> account = accountService.findByLogin(login.login);
 
 			if (account.isPresent()) {
-				String encodedPassword = encoderService.encodePassword(login.password);
-
-				if (account.get().getPassword().equals(encodedPassword)) {
-					account.get().setStatus("Success");
-
-					return account.get();
-				} else {
-					account.get().setStatus("Incorrect password");
-
-					return account.get();
-				}
+				return getAccountIfPasswordIsValid(login, account);
 			} else {
 				LOGGER.error("Account with login {" + login + "} not found");
 
@@ -96,6 +94,20 @@ public class AccountController {
 		}
 
 		return new Account("Invalid data");
+	}
+
+	private Account getAccountIfPasswordIsValid(UserDto login, Optional<Account> account) {
+		String encodedPassword = encoderService.encodePassword(login.password);
+
+		if (account.get().getPassword().equals(encodedPassword)) {
+			account.get().setStatus("Success");
+
+			return account.get();
+		} else {
+			account.get().setStatus("Incorrect password");
+
+			return account.get();
+		}
 	}
 
 	@PostMapping("/changePass")
@@ -109,27 +121,36 @@ public class AccountController {
 
 				String encodedNewPassword = encoderService.encodePassword(user.newFirstPassword);
 
-				if (account.get().getPassword().equals(encodedOldPassword)) {
-					if (user.newFirstPassword.equals(user.newSecondPassword)) {
-						account.get().setPassword(encodedNewPassword);
-						accountService.update(account);
-						account.get().setStatus("Success");
-
-						return account.get();
-					} else {
-						account.get().setStatus("No match");
-
-						return account.get();
-					}
-				} else {
-					account.get().setStatus("Invalid pass");
-
-					return account.get();
-				}
+				return getUpdatedAccount(user, account, encodedOldPassword, encodedNewPassword);
 			}
 		}
 
 		return new Account("Invalid data");
+	}
+
+	private Account getUpdatedAccount(UserDto user, Optional<Account> account, String encodedOldPassword,
+			String encodedNewPassword) {
+		if (account.get().getPassword().equals(encodedOldPassword)) {
+			return updatePasswordAndGetAccount(user, account, encodedNewPassword);
+		} else {
+			account.get().setStatus("Invalid pass");
+
+			return account.get();
+		}
+	}
+
+	private Account updatePasswordAndGetAccount(UserDto user, Optional<Account> account, String encodedNewPassword) {
+		if (user.newFirstPassword.equals(user.newSecondPassword)) {
+			account.get().setPassword(encodedNewPassword);
+			accountService.update(account);
+			account.get().setStatus("Success");
+
+			return account.get();
+		} else {
+			account.get().setStatus("No match");
+
+			return account.get();
+		}
 	}
 
 	@PostMapping("/restorePass")

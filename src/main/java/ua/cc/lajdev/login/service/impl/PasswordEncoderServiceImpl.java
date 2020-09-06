@@ -13,26 +13,22 @@ import ua.cc.lajdev.login.service.PasswordEncoderService;
 
 @Service
 public class PasswordEncoderServiceImpl implements PasswordEncoderService {
-	
+
 	private static Logger LOGGER = LoggerFactory.getLogger(PasswordEncoderServiceImpl.class);
 
 	public String encodePassword(String password) {
 		MessageDigest md = null;
-
 		try {
 			md = MessageDigest.getInstance("SHA");
 		} catch (NoSuchAlgorithmException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
-
 		String encodedPassword = null;
-
 		try {
 			encodedPassword = Base64.getEncoder().encodeToString(md.digest(password.getBytes("UTF-8")));
 		} catch (UnsupportedEncodingException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
-
 		return encodedPassword;
 	}
 

@@ -46,16 +46,13 @@ public class AccountController {
 		if ((!user.login.equals("") && !user.email.equals("") && !user.password.equals("")
 				&& !user.passwordSecond.equals(""))) {
 			Optional<Account> account = accountService.findByLogin(user.login);
-
 			if (!account.isPresent()) {
 				return getAccountIffPasswordsEquals(user, account);
 			} else {
 				account.get().setStatus("Login exists");
-
 				return account.get();
 			}
 		}
-
 		return new Account("Invalid data");
 	}
 
@@ -71,9 +68,7 @@ public class AccountController {
 		if (mailService.isCorrectEmailAddress(user.email)) {
 			account = Optional.of(accountService.create(
 					new Account(user.login, encoderService.encodePassword(user.password), user.email, "Success")));
-
 			mailService.sendMail(user, new MailAccountTemplate(user));
-
 			return account.get();
 		} else
 			return new Account("Invalid email");
@@ -83,29 +78,23 @@ public class AccountController {
 	public Account login(@RequestBody UserDto login) {
 		if (login.login != null && login.password != null) {
 			Optional<Account> account = accountService.findByLogin(login.login);
-
 			if (account.isPresent()) {
 				return getAccountIfPasswordIsValid(login, account);
 			} else {
 				LOGGER.error("Account with login {" + login + "} not found");
-
 				return new Account("Not exists");
 			}
 		}
-
 		return new Account("Invalid data");
 	}
 
 	private Account getAccountIfPasswordIsValid(UserDto login, Optional<Account> account) {
 		String encodedPassword = encoderService.encodePassword(login.password);
-
 		if (account.get().getPassword().equals(encodedPassword)) {
 			account.get().setStatus("Success");
-
 			return account.get();
 		} else {
 			account.get().setStatus("Incorrect password");
-
 			return account.get();
 		}
 	}
@@ -115,12 +104,9 @@ public class AccountController {
 		if ((!user.login.equals("") && !user.oldPassword.equals("") && !user.newFirstPassword.equals("")
 				&& !user.newSecondPassword.equals(""))) {
 			Optional<Account> account = accountService.findByLogin(user.login);
-
 			if (account.isPresent()) {
 				String encodedOldPassword = encoderService.encodePassword(user.oldPassword);
-
 				String encodedNewPassword = encoderService.encodePassword(user.newFirstPassword);
-
 				return getUpdatedAccount(user, account, encodedOldPassword, encodedNewPassword);
 			}
 		}
@@ -134,7 +120,6 @@ public class AccountController {
 			return updatePasswordAndGetAccount(user, account, encodedNewPassword);
 		} else {
 			account.get().setStatus("Invalid pass");
-
 			return account.get();
 		}
 	}
@@ -144,11 +129,9 @@ public class AccountController {
 			account.get().setPassword(encodedNewPassword);
 			accountService.update(account);
 			account.get().setStatus("Success");
-
 			return account.get();
 		} else {
 			account.get().setStatus("No match");
-
 			return account.get();
 		}
 	}
@@ -157,19 +140,14 @@ public class AccountController {
 	public Account rememberPassword(@RequestBody UserDto user) {
 		if (!user.login.equals("") && !user.email.equals("")) {
 			Optional<Account> account = accountService.findByLogin(user.login);
-
 			if (account.isPresent()) {
 				if (account.get().getLogin().equals(user.login)) {
 					user.password = PasswordGenerator.generateRandomPassword(8);
-
 					String encodedPassword = encoderService.encodePassword(user.password);
-
 					account.get().setPassword(encodedPassword);
 					accountService.update(account);
 					account.get().setStatus("Success");
-
 					mailService.sendMail(user, new MailPasswordTemplate(user));
-
 					return account.get();
 				} else {
 					return new Account("Invalid login");
@@ -190,15 +168,11 @@ public class AccountController {
 	public Account sendMessage(@RequestBody UserDto user) {
 		if ((!user.email.equals("") && !user.message.equals("") && !user.login.equals(""))) {
 			Optional<Account> account = accountService.findByLogin(user.login);
-
 			if (account.isPresent()) {
 				if (account.get().getLogin().equals(user.login)) {
 					user.login = account.get().getLogin();
-
 					account.get().setStatus("Success");
-
 					mailService.sendMail(user, new MailTemplate(user));
-
 					return account.get();
 				} else
 					return new Account("Invalid login");

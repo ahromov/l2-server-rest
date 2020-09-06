@@ -28,12 +28,10 @@ public class ServerStatusServiceImpl implements ServerStatusService {
 	public boolean checkStatus() {
 		try (Socket socket = new Socket()) {
 			socket.connect(new InetSocketAddress(settings.getIp(), settings.getPort()), 3000);
-
 			return true;
 		} catch (IOException e) {
 			LOGGER.error("Connection to the server was dropped ...");
 		}
-
 		return false;
 	}
 

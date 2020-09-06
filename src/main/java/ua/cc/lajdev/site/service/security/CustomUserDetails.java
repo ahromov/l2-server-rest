@@ -23,9 +23,7 @@ public class CustomUserDetails extends User implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		String roles = StringUtils.collectionToCommaDelimitedString(userRoles);
-
-		return AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
+		return AuthorityUtils.commaSeparatedStringToAuthorityList(StringUtils.collectionToCommaDelimitedString(userRoles));
 	}
 
 	@Override

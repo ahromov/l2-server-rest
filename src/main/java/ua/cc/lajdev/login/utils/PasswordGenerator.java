@@ -21,7 +21,6 @@ public class PasswordGenerator {
 	public static String generateRandomPassword(int length) {
 		if (length < 1)
 			throw new IllegalArgumentException();
-
 		StringBuilder sb = new StringBuilder(length);
 		for (int i = 0; i < length; i++) {
 			int rndCharAt = random.nextInt(PASSWORD_ALLOW.length());
@@ -29,14 +28,12 @@ public class PasswordGenerator {
 
 			sb.append(rndChar);
 		}
-
 		return sb.toString();
 	}
 
 	public static String shuffleString(String string) {
 		List<String> letters = Arrays.asList(string.split(""));
 		Collections.shuffle(letters);
-
 		return letters.stream().collect(Collectors.joining());
 	}
 

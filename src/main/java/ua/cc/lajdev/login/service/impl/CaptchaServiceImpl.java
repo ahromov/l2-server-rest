@@ -38,19 +38,15 @@ public class CaptchaServiceImpl implements CaptchaService {
 		} catch (InvalidReCaptchaException e) {
 			LOGGER.error(e.getMessage());
 		}
-
-		URI verifyUri = URI
-				.create(String.format("https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s",
-						captchaSettings.getSecret(), response));
-
-		GoogleResponseDto googleResponse = restTemplate.getForObject(verifyUri, GoogleResponseDto.class);
-
+		GoogleResponseDto googleResponse = restTemplate.getForObject(
+				URI.create(String.format("https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s",
+						captchaSettings.getSecret(), response)),
+				GoogleResponseDto.class);
 		try {
 			isResponseSuccesss(googleResponse);
 		} catch (InvalidReCaptchaException e) {
 			LOGGER.error(e.getMessage());
 		}
-
 		return googleResponse;
 	}
 

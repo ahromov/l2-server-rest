@@ -31,29 +31,24 @@ public class RatesServiceImpl implements RatesService {
 
 	public Map<String, String> getRates() {
 		InputStream isr = null;
-
 		try {
 			isr = new FileInputStream(config.getRatesConfigFile());
 		} catch (FileNotFoundException e) {
 			LOGGER.error("Rates properties file not found");
 		}
-
 		Properties props = new Properties();
 		try {
 			props.load(isr);
 		} catch (IOException e) {
 			LOGGER.error("Cannot load properties from stream");
 		}
-
 		Map<String, String> rates = new HashMap<>();
-
 		for (Rates propertyName : Rates.values()) {
 			if (propertyName.name().contentEquals("DropAmountMultiplierByItemId")) {
 				rates.put(propertyName.getPropertyName(), props.getProperty(propertyName.name()).substring(3));
 			} else
 				rates.put(propertyName.getPropertyName(), props.getProperty(propertyName.name()));
 		}
-
 		return rates;
 	}
 

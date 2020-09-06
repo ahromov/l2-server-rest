@@ -39,14 +39,11 @@ public class MailServiceImpl implements MailService {
 	public boolean isCorrectEmailAddress(String email) {
 		try {
 			InternetAddress emailAddr = new InternetAddress(email);
-
 			emailAddr.validate();
-
 			if (isMxRecords(email) == false)
 				return false;
 		} catch (AddressException ex) {
 			LOGGER.error("Incorrect email address");
-
 			return false;
 		}
 
@@ -55,16 +52,13 @@ public class MailServiceImpl implements MailService {
 
 	public void sendMail(UserDto user, Template template) {
 		MimeMessage msg = mailSender.createMimeMessage();
-
 		MimeMessageHelper helper;
-
 		try {
 			helper = new MimeMessageHelper(msg, true);
 			helper.setTo(user.email);
 			helper.setReplyTo(mailSettings.getUsername());
 			helper.setSubject(template.getSubject());
 			helper.setText(template.getBoby(), true);
-
 			mailSender.send(msg);
 		} catch (MessagingException e) {
 			LOGGER.error(e.getMessage());
@@ -75,27 +69,19 @@ public class MailServiceImpl implements MailService {
 
 	private boolean isMxRecords(String email) {
 		String domainName = email.substring(email.indexOf("@") + 1);
-
 		InitialDirContext iDirC = null;
-
 		Attributes attributes = null;
-
 		try {
 			iDirC = new InitialDirContext();
-
 			attributes = iDirC.getAttributes("dns:/" + domainName, new String[] { "MX" });
 		} catch (NamingException e) {
 			LOGGER.error("Cannot get MX records");
-
 			return false;
 		}
-
 		Attribute attributeMX = attributes.get("MX");
-
 		if (attributeMX == null) {
 			return false;
 		}
-
 		return true;
 	}
 

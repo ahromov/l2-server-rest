@@ -29,7 +29,6 @@ public class CabinetController {
 			if (userService.changePassword(username, newPassword))
 				return "Success";
 		}
-
 		return "Passwords no match";
 	}
 

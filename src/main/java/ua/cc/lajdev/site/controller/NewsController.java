@@ -37,15 +37,12 @@ public class NewsController {
 	public News addNew(@RequestParam("title") String title, @RequestParam("text") String text,
 			@RequestParam("image") MultipartFile image) {
 		News news = null;
-
 		try {
 			news = newsService.create(new News(title, text, new Date(), image.getBytes()));
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 		}
-
 		news.setStatus("Success");
-
 		return news;
 	}
 

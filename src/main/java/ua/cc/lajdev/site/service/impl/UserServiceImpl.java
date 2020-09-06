@@ -28,12 +28,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean changePassword(String username, String password) {
 		User user = repository.findByUserName(username);
-
 		if (user != null)
 			user.setPassword(passwordEncoder.encode(password));
-
 		repository.save(user);
-
 		return true;
 	}
 

@@ -33,16 +33,12 @@ public class GameServerController {
 	@GetMapping("/get/status")
 	public StatusDto getServerStatus() {
 		StatusDto status = new StatusDto();
-
 		if (statusService.checkStatus()) {
 			status.setStatus("ON");
 			status.setOnlineCounter(characterService.getOnlineNoGm());
-
 			return status;
 		}
-
 		status.setStatus("OFF");
-
 		return status;
 	}
 

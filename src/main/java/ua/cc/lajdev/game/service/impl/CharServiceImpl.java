@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -45,9 +44,7 @@ public class CharServiceImpl implements CharService {
 
 	@Override
 	public List<PlayersChar> getTop10() {
-		Pageable pageWithThreeNews = PageRequest.of(0, 10, Sort.by("onlineTime").descending());
-
-		return repository.findAll(pageWithThreeNews).getContent().stream()
+		return repository.findAll(PageRequest.of(0, 10, Sort.by("onlineTime").descending())).getContent().stream()
 				.filter(x -> x.getAccesslevel() == 0 && x.getNobless() == 1).collect(Collectors.toList());
 	}
 

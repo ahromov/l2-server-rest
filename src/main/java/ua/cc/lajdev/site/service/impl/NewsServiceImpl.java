@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -34,9 +33,7 @@ public class NewsServiceImpl implements NewsService {
 
 	@Override
 	public List<News> getNewsPage(Integer number) {
-		Pageable pageWithThreeNews = PageRequest.of(number, 3, Sort.by("date").descending());
-
-		return repository.findAll(pageWithThreeNews).getContent();
+		return repository.findAll(PageRequest.of(number, 3, Sort.by("date").descending())).getContent();
 	}
 
 	@Override
@@ -46,9 +43,7 @@ public class NewsServiceImpl implements NewsService {
 
 	@Override
 	public Integer countAllPage() {
-		Pageable pageParam = PageRequest.of(0, 3);
-
-		return repository.findAll(pageParam).getTotalPages();
+		return repository.findAll(PageRequest.of(0, 3)).getTotalPages();
 	}
 
 }

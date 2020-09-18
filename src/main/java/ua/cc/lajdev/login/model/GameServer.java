@@ -4,11 +4,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.PostLoad;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity(name = "gameservers")
+@Entity
+@Table(name = "gameservers")
 public class GameServer {
 
 	private static final String[] serversNames = { "Bartz", "Sieghardt", "Kain", "Lionna", "Erica", "Gustin",

@@ -16,8 +16,12 @@ import ua.cc.lajdev.game.service.FortService;
 @RequestMapping("forts")
 public class FortController {
 
+	private final FortService fortService;
+
 	@Autowired
-	private FortService fortService;
+	public FortController(FortService fortService) {
+		this.fortService = fortService;
+	}
 
 	@GetMapping("/get/all")
 	public List<Fort> getForts() {

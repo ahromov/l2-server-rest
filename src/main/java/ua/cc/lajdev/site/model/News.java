@@ -36,7 +36,6 @@ public class News {
 	private String status;
 
 	public News() {
-
 	}
 
 	public News(String title, String text, Date date, byte[] bs) {

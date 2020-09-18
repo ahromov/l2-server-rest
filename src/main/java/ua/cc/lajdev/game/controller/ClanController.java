@@ -16,12 +16,21 @@ import ua.cc.lajdev.game.service.ClanService;
 @RequestMapping("clans")
 public class ClanController {
 
+	private final ClanService clanService;
+
 	@Autowired
-	private ClanService clanService;
+	public ClanController(ClanService clanService) {
+		this.clanService = clanService;
+	}
 
 	@GetMapping("/count/all")
 	public Long countAllClans() {
 		return clanService.countAll();
+	}
+
+	@GetMapping("/count/allAllys")
+	public Long countAllAllys() {
+		return clanService.countAllAllys();
 	}
 
 	@GetMapping("/get/all")

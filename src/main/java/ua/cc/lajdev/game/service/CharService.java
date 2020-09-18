@@ -2,7 +2,7 @@ package ua.cc.lajdev.game.service;
 
 import java.util.List;
 
-import ua.cc.lajdev.game.model.Char;
+import ua.cc.lajdev.game.model.PlayersChar;
 
 public interface CharService {
 
@@ -14,6 +14,6 @@ public interface CharService {
 
 	public Long countGms();
 
-	public List<Char> getTop10();
+	public List<PlayersChar> getTop10();
 
 }

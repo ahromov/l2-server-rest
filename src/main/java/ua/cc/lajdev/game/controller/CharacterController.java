@@ -1,7 +1,5 @@
 package ua.cc.lajdev.game.controller;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ua.cc.lajdev.game.dto.CharsDto;
-import ua.cc.lajdev.game.model.Char;
+import ua.cc.lajdev.game.model.PlayersChar;
 import ua.cc.lajdev.game.service.CharService;
-import ua.cc.lajdev.game.service.ClanService;
 import ua.cc.lajdev.game.service.HeroService;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -21,14 +18,14 @@ import ua.cc.lajdev.game.service.HeroService;
 @RequestMapping("characters")
 public class CharacterController {
 
-	@Autowired
-	CharService charService;
+	private final CharService charService;
+	private final HeroService heroService;
 
 	@Autowired
-	ClanService clanService;
-
-	@Autowired
-	private HeroService heroService;
+	public CharacterController(CharService charService, HeroService heroService) {
+		this.charService = charService;
+		this.heroService = heroService;
+	}
 
 	@GetMapping("/count/byType")
 	public CharsDto countChars() {
@@ -37,17 +34,8 @@ public class CharacterController {
 	}
 
 	@GetMapping("/get/top10")
-	public List<Char> getTop10chars() {
-		List<Char> chars = charService.getTop10();
-
-		Collections.sort(chars, Collections.reverseOrder(new Comparator<Char>() {
-			@Override
-			public int compare(Char o1, Char o2) {
-				return o1.getOnlineTime() - o2.getOnlineTime();
-			}
-		}));
-
-		return chars;
+	public List<PlayersChar> getTop10chars() {
+		return charService.getTop10();
 	}
 
 }

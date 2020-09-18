@@ -14,17 +14,21 @@ import ua.cc.lajdev.site.service.UserService;
 @RequestMapping("cabinet")
 public class CabinetController {
 
+	private final UserService userService;
+
 	@Autowired
-	private UserService userService;
+	public CabinetController(UserService userService) {
+		this.userService = userService;
+	}
 
 	@PostMapping("/password/change")
-	public String changePassword(@RequestParam("username") String username, @RequestParam("newPassword") String newPassword,
+	public String changePassword(@RequestParam("username") String username,
+			@RequestParam("newPassword") String newPassword,
 			@RequestParam("secondNewPassword") String secondNewPassword) {
 		if (newPassword.contentEquals(secondNewPassword)) {
 			if (userService.changePassword(username, newPassword))
 				return "Success";
 		}
-
 		return "Passwords no match";
 	}
 

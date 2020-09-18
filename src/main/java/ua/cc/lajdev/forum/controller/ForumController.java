@@ -3,9 +3,6 @@ package ua.cc.lajdev.forum.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,14 +16,16 @@ import ua.cc.lajdev.forum.service.TopicService;
 @RequestMapping("forums")
 public class ForumController {
 
+	private final TopicService topicService;
+
 	@Autowired
-	private TopicService topicService;
+	public ForumController(TopicService topicService) {
+		this.topicService = topicService;
+	}
 
 	@GetMapping("/get/topics/last5")
-	public List<Topic> nextNews() {
-		Pageable pageWithThreeNews = PageRequest.of(0, 5, Sort.by("topicLastPostTime").descending());
-
-		return topicService.getPage(pageWithThreeNews).getContent();
+	public List<Topic> getTopics() {
+		return topicService.getTopics();
 	}
 
 }

@@ -1,17 +1,19 @@
 package ua.cc.lajdev.login.service;
 
+import java.util.Optional;
+
 import ua.cc.lajdev.login.model.Account;
 
 public interface AccountService {
 
-	public Account create(Account account);
+	Account create(Account account);
 
-	public Account findByLogin(String login);
+	Optional<Account> findByLogin(String login);
 
-	public Account update(Account account);
+	Account update(Optional<Account> account);
 
-	public Account findByEmail(String email);
+	Optional<Account> findByEmail(String email);
 
-	public Long countAll();
+	Integer countNoGmAccounts();
 
 }

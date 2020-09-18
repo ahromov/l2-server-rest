@@ -1,16 +1,12 @@
 package ua.cc.lajdev.site.controller;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,24 +24,25 @@ import ua.cc.lajdev.site.service.NewsService;
 @RequestMapping("news")
 public class NewsController {
 
-	private static Logger logger = LoggerFactory.getLogger(NewsController.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(NewsController.class);
+
+	private final NewsService newsService;
 
 	@Autowired
-	private NewsService newsService;
+	public NewsController(NewsService newsService) {
+		this.newsService = newsService;
+	}
 
 	@PostMapping("/add")
 	public News addNew(@RequestParam("title") String title, @RequestParam("text") String text,
 			@RequestParam("image") MultipartFile image) {
 		News news = null;
-
 		try {
 			news = newsService.create(new News(title, text, new Date(), image.getBytes()));
 		} catch (IOException e) {
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 		}
-
 		news.setStatus("Success");
-
 		return news;
 	}
 
@@ -54,26 +51,14 @@ public class NewsController {
 		return newsService.getById(id);
 	}
 
-	@GetMapping("/get/pages")
+	@GetMapping("/pages/count")
 	public Integer getNewsIds() {
-		Pageable pageParam = PageRequest.of(0, 3);
-
-		return newsService.getPage(pageParam).getTotalPages();
+		return newsService.countAllPage();
 	}
 
 	@GetMapping("/get/pages/{pageNumber}")
 	public List<News> nextNews(@PathVariable("pageNumber") Integer pageNumber) {
-		Pageable pageWithThreeNews = PageRequest.of(pageNumber, 3, Sort.by("date").descending());
-
-		return newsService.getPage(pageWithThreeNews).getContent();
-	}
-
-	@GetMapping("/get/lastThree")
-	public List<News> getLastThree() {
-		List<News> list = newsService.getAll();
-		Collections.reverse(list);
-
-		return list.subList(0, 3);
+		return newsService.getNewsPage(pageNumber);
 	}
 
 }

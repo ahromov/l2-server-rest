@@ -9,8 +9,12 @@ import ua.cc.lajdev.game.service.HeroService;
 @Service
 public class HeroServiceImpl implements HeroService {
 
+	private final HeroRepository repository;
+
 	@Autowired
-	private HeroRepository repository;
+	public HeroServiceImpl(HeroRepository repository) {
+		this.repository = repository;
+	}
 
 	@Override
 	public Long countHeroes() {

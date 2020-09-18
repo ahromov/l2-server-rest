@@ -5,9 +5,12 @@ import org.springframework.data.jpa.repository.Query;
 
 import ua.cc.lajdev.game.model.Clan;
 
-public interface ClanRepository extends JpaRepository<Clan, Integer> {
+public interface ClanRepository extends JpaRepository<Clan, Long> {
 
-	@Query("SELECT COUNT(*) from clan_data")
+	@Query("SELECT COUNT(c) from Clan c")
 	Long countClans();
+
+	@Query("SELECT COUNT(c) from Clan c where c.allyId > 0")
+	Long countAllAllys();
 
 }

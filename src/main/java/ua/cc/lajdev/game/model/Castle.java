@@ -4,6 +4,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.PostLoad;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name = "castle")
 public class Castle {
@@ -25,7 +29,11 @@ public class Castle {
 	private Long siegeDate;
 
 	@OneToOne(mappedBy = "castle")
+	@JsonIgnore
 	private Clan clan;
+
+	@Transient
+	private String clanName = "None";
 
 	public Castle() {
 
@@ -57,6 +65,20 @@ public class Castle {
 
 	public void setClan(Clan clan) {
 		this.clan = clan;
+	}
+
+	public String getClanName() {
+		return clanName;
+	}
+
+	public void setClanName(String clanName) {
+		this.clanName = clanName;
+	}
+
+	@PostLoad
+	void initFields() {
+		if (clan != null)
+			this.clanName = clan.getName();
 	}
 
 }

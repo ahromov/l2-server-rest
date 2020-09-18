@@ -12,8 +12,12 @@ import ua.cc.lajdev.login.service.GameServerService;
 @Service
 public class GameServerServiceImpl implements GameServerService {
 
+	private final GameServerRepository repository;
+
 	@Autowired
-	private GameServerRepository repository;
+	public GameServerServiceImpl(GameServerRepository repository) {
+		this.repository = repository;
+	}
 
 	@Override
 	public List<GameServer> getAll() {

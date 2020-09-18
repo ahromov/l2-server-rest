@@ -1,5 +1,7 @@
 package ua.cc.lajdev.login.service.impl;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,31 +12,35 @@ import ua.cc.lajdev.login.service.AccountService;
 @Service
 public class AccountServiceImpl implements AccountService {
 
+	private final AccountRepository repository;
+
 	@Autowired
-	private AccountRepository repository;
+	public AccountServiceImpl(AccountRepository repository) {
+		this.repository = repository;
+	}
 
 	public Account create(Account account) {
 		return repository.save(account);
 	}
 
 	@Override
-	public Account findByLogin(String login) {
-		return repository.findById(login).get();
+	public Optional<Account> findByLogin(String login) {
+		return repository.findById(login);
 	}
 
 	@Override
-	public Account update(Account account) {
-		return repository.saveAndFlush(account);
+	public Account update(Optional<Account> account) {
+		return repository.save(account.get());
 	}
 
 	@Override
-	public Account findByEmail(String email) {
+	public Optional<Account> findByEmail(String email) {
 		return repository.findByEmail(email);
 	}
 
 	@Override
-	public Long countAll() {
-		return repository.countNotGmAccounts();
+	public Integer countNoGmAccounts() {
+		return repository.countNoGmAccounts();
 	}
 
 }

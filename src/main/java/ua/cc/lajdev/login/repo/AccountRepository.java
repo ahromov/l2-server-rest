@@ -1,17 +1,19 @@
 package ua.cc.lajdev.login.repo;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import ua.cc.lajdev.login.model.Account;
 
-public interface AccountRepository extends JpaRepository<Account, String> {
+@Repository
+public interface AccountRepository extends CrudRepository<Account, String> {
 
-	@Query("select b from accounts b where b.email = :email")
-	Account findByEmail(@Param("email") String email);
+	Optional<Account> findByEmail(String email);
 
-	@Query("select count(*) from accounts where accessLevel = 0")
-	Long countNotGmAccounts();
+	@Query("select count(a) from Account a")
+	Integer countNoGmAccounts();
 
 }

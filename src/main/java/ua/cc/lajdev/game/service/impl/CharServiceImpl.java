@@ -1,23 +1,30 @@
 package ua.cc.lajdev.game.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import ua.cc.lajdev.game.model.Char;
-import ua.cc.lajdev.game.repo.CharRepository;
+import ua.cc.lajdev.game.model.PlayersChar;
+import ua.cc.lajdev.game.repo.PlayersCharRepository;
 import ua.cc.lajdev.game.service.CharService;
 
 @Service
 public class CharServiceImpl implements CharService {
 
+	private final PlayersCharRepository repository;
+
 	@Autowired
-	private CharRepository repository;
+	public CharServiceImpl(PlayersCharRepository repository) {
+		this.repository = repository;
+	}
 
 	@Override
 	public Integer getOnlineNoGm() {
-		return repository.getOnlineNoneGmChars();
+		return repository.countOnlineNoGmChars();
 	}
 
 	@Override
@@ -27,7 +34,7 @@ public class CharServiceImpl implements CharService {
 
 	@Override
 	public Long countNobless() {
-		return repository.countNoblessChars();
+		return repository.countNoblessNoGmChars();
 	}
 
 	@Override
@@ -36,8 +43,9 @@ public class CharServiceImpl implements CharService {
 	}
 
 	@Override
-	public List<Char> getTop10() {
-		return repository.getTop10Chars();
+	public List<PlayersChar> getTop10() {
+		return repository.findAll(PageRequest.of(0, 10, Sort.by("onlineTime").descending())).getContent().stream()
+				.filter(x -> x.getAccesslevel() == 0 && x.getNobless() == 1).collect(Collectors.toList());
 	}
 
 }

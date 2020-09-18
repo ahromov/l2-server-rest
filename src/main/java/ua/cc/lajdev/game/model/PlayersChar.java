@@ -7,8 +7,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.PostLoad;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.NotFound;
@@ -17,13 +18,14 @@ import org.springframework.context.annotation.Scope;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity(name = "characters")
+@Entity
+@Table(name = "characters")
 @Scope("prototype")
-public class Char {
+public class PlayersChar {
 
 	@Id
 	@JsonIgnore
-	private Integer charId;
+	private Long charId;
 
 	@JsonIgnore
 	@Column(name = "account_name")
@@ -35,12 +37,17 @@ public class Char {
 	@Column(name = "level")
 	private Integer level;
 
-	@OneToOne
-	@JoinColumn(name = "clanid", referencedColumnName = "clan_id")
+	@ManyToOne
+	@JoinColumn(name = "clanid")
 	@NotFound(action = NotFoundAction.IGNORE)
+	@JsonIgnore
 	private Clan clan;
 
+	@Transient
+	private String clanName = "None";
+
 	@Column
+	@JsonIgnore
 	private Integer online;
 
 	@JsonIgnore
@@ -57,7 +64,7 @@ public class Char {
 	@Transient
 	private String gender;
 
-	@Column(name = "onlinetime")
+	@Column(name = "onlinetime", nullable = true)
 	private Integer onlineTime;
 
 	@Column(name = "pvpkills")
@@ -66,11 +73,18 @@ public class Char {
 	@Column(name = "pkkills")
 	private Integer pkKills;
 
+	@Column
+	private Integer accesslevel;
+
+	@Column
+	private Integer nobless;
+
 	private static Map<Integer, String> classes;
 	private static Map<Integer, String> genders;
 
 	static {
 		classes = new HashMap<>();
+		classes.put(0, "Newbie");
 		classes.put(1, "Human Warrior");
 		classes.put(2, "Gladiator");
 		classes.put(3, "Warlord");
@@ -183,15 +197,15 @@ public class Char {
 		genders.put(1, "Female");
 	}
 
-	public Char() {
+	public PlayersChar() {
 
 	}
 
-	public Integer getCharId() {
+	public Long getCharId() {
 		return charId;
 	}
 
-	public void setCharId(Integer charId) {
+	public void setCharId(Long charId) {
 		this.charId = charId;
 	}
 
@@ -224,7 +238,16 @@ public class Char {
 	}
 
 	public void setClan(Clan clan) {
-		this.clan = clan;
+		if (clan.getId() != 0)
+			this.clan = clan;
+	}
+
+	public String getClanName() {
+		return clanName;
+	}
+
+	public void setClanName(String clanName) {
+		this.clanName = clanName;
 	}
 
 	public Integer getOnline() {
@@ -291,16 +314,32 @@ public class Char {
 		this.pkKills = pkKills;
 	}
 
+	public Integer getAccesslevel() {
+		return accesslevel;
+	}
+
+	public void setAccesslevel(Integer accesslevel) {
+		this.accesslevel = accesslevel;
+	}
+
+	public Integer getNobless() {
+		return nobless;
+	}
+
+	public void setNobless(Integer nobless) {
+		this.nobless = nobless;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((accountName == null) ? 0 : accountName.hashCode());
-		result = prime * result + ((charId == null) ? 0 : charId.hashCode());
 		result = prime * result + ((charName == null) ? 0 : charName.hashCode());
+		result = prime * result + ((clanName == null) ? 0 : clanName.hashCode());
 		result = prime * result + ((className == null) ? 0 : className.hashCode());
 		result = prime * result + ((gender == null) ? 0 : gender.hashCode());
 		result = prime * result + ((level == null) ? 0 : level.hashCode());
+		result = prime * result + ((nobless == null) ? 0 : nobless.hashCode());
 		result = prime * result + ((online == null) ? 0 : online.hashCode());
 		result = prime * result + ((onlineTime == null) ? 0 : onlineTime.hashCode());
 		result = prime * result + ((pkKills == null) ? 0 : pkKills.hashCode());
@@ -316,21 +355,16 @@ public class Char {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Char other = (Char) obj;
-		if (accountName == null) {
-			if (other.accountName != null)
-				return false;
-		} else if (!accountName.equals(other.accountName))
-			return false;
-		if (charId == null) {
-			if (other.charId != null)
-				return false;
-		} else if (!charId.equals(other.charId))
-			return false;
+		PlayersChar other = (PlayersChar) obj;
 		if (charName == null) {
 			if (other.charName != null)
 				return false;
 		} else if (!charName.equals(other.charName))
+			return false;
+		if (clanName == null) {
+			if (other.clanName != null)
+				return false;
+		} else if (!clanName.equals(other.clanName))
 			return false;
 		if (className == null) {
 			if (other.className != null)
@@ -346,6 +380,11 @@ public class Char {
 			if (other.level != null)
 				return false;
 		} else if (!level.equals(other.level))
+			return false;
+		if (nobless == null) {
+			if (other.nobless != null)
+				return false;
+		} else if (!nobless.equals(other.nobless))
 			return false;
 		if (online == null) {
 			if (other.online != null)
@@ -373,7 +412,11 @@ public class Char {
 	@PostLoad
 	public void initFields() {
 		this.className = classes.get(this.classId);
+
 		this.gender = genders.get(this.genderId);
+
+		if (this.clan != null)
+			this.clanName = clan.getName();
 	}
 
 }

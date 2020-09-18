@@ -16,21 +16,22 @@ import ua.cc.lajdev.site.service.security.CustomUserDetails;
 @Service("customUserDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
+	private final UserRolesRepository userRolesRepository;
 
 	@Autowired
-	private UserRolesRepository userRolesRepository;
+	public UserDetailsServiceImpl(UserRepository userRepository, UserRolesRepository userRolesRepository) {
+		this.userRepository = userRepository;
+		this.userRolesRepository = userRolesRepository;
+	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userRepository.findByUserName(username);
-
 		if (null == user) {
 			throw new UsernameNotFoundException("No user present with username: " + username);
 		} else {
 			List<String> userRoles = userRolesRepository.findRoleByUserName(username);
-
 			return new CustomUserDetails(user, userRoles);
 		}
 	}

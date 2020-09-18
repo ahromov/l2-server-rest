@@ -3,11 +3,16 @@ package ua.cc.lajdev.login.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.springframework.context.annotation.Scope;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity(name = "accounts")
+@Entity
+@Table(name = "accounts")
+@Scope("prototype")
 public class Account {
 
 	@Id
@@ -23,7 +28,7 @@ public class Account {
 	private String email;
 
 	@Transient
-	public String status;
+	private String status;
 
 	public Account() {
 
@@ -34,14 +39,18 @@ public class Account {
 	}
 
 	public Account(String login, String status) {
+		this(status);
 		this.login = login;
-		this.status = status;
 	}
 
 	public Account(String login, String password, String email) {
-		this.login = login;
-		this.password = password;
+		this(login, password);
 		this.email = email;
+	}
+
+	public Account(String login, String password, String email, String status) {
+		this(login, password, email);
+		this.status = status;
 	}
 
 	public String getLogin() {

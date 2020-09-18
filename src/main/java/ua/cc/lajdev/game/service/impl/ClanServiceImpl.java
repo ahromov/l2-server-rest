@@ -12,8 +12,12 @@ import ua.cc.lajdev.game.service.ClanService;
 @Service
 public class ClanServiceImpl implements ClanService {
 
+	private final ClanRepository repository;
+
 	@Autowired
-	private ClanRepository repository;
+	public ClanServiceImpl(ClanRepository repository) {
+		this.repository = repository;
+	}
 
 	@Override
 	public Long countAll() {
@@ -23,6 +27,11 @@ public class ClanServiceImpl implements ClanService {
 	@Override
 	public List<Clan> getAll() {
 		return repository.findAll();
+	}
+
+	@Override
+	public Long countAllAllys() {
+		return repository.countAllAllys();
 	}
 
 }

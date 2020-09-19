@@ -8,8 +8,6 @@ pipeline {
                 archiveArtifacts artifacts: '**/target/*.war', fingerprint: true 
             }
         }
-    }
-    stages {
         stage('Test') {
             steps {
                 /* `make check` returns non-zero on test failures,
@@ -19,5 +17,5 @@ pipeline {
                 junit '**/target/*.xml' 
             }
         }
-    }
+    }    
 }

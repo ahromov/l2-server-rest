@@ -1,25 +1,17 @@
-#!groovy
-// Check ub1 properties
-properties([disableConcurrentBuilds()])
-
 pipeline {
-    agent { 
-        label 'master'
-        }
-    options {
-        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
-        timestamps()
-    }
+    agent any
+
     stages {
-        stage("First step") {
+        stage('Build') {
             steps {
-                sh '\'hostname\''
+                sh 'mvn clean install' 
+                archiveArtifacts artifacts: '**/target/*.war', fingerprint: true 
             }
         }
-        stage("Second step") {
+        stage('Test') {
             steps {
-                sh '\'uptime\''
+                sh 'mvn test'                 
             }
         }
-    }
+    }    
 }

@@ -43,16 +43,22 @@ public class AccountController {
 
 	@PostMapping("/create")
 	public Account registration(@RequestBody UserDto user) {
-		if ((!user.login.equals("") && !user.email.equals("") && !user.password.equals("")
-				&& !user.passwordSecond.equals(""))) {
-			Optional<Account> account = accountService.findByLogin(user.login);
-			if (!account.isPresent()) {
-				return getAccountIffPasswordsEquals(user, account);
-			} else {
-				account.get().setStatus("Login exists");
-				return account.get();
+
+		try {
+			if ((!user.login.equals("") && !user.email.equals("") && !user.password.equals("")
+					&& !user.passwordSecond.equals(""))) {
+				Optional<Account> account = accountService.findByLogin(user.login);
+				if (!account.isPresent()) {
+					return getAccountIffPasswordsEquals(user, account);
+				} else {
+					account.get().setStatus("Login exists");
+					return account.get();
+				}
 			}
+		} catch (CustomException e) {
+			throw new CustomException();
 		}
+
 		return new Account("Invalid data");
 	}
 

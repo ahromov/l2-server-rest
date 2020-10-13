@@ -12,7 +12,7 @@
 	<groupId>ua.cc.lajdev</groupId>
 	<artifactId>l2-server-rest</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>pom</packaging>
 	<name>L2 server rest services</name>
 	<description>Rest services for L2 game, login servers, site and forum</description>
 
@@ -147,4 +147,7 @@
 			</resource>
 		</resources>
 	</build>
+	<modules>
+		<module>forum</module>
+	</modules>
 </project>

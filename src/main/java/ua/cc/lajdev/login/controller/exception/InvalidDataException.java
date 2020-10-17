@@ -1,4 +1,4 @@
-package ua.cc.lajdev.login.controller;
+package ua.cc.lajdev.login.controller.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

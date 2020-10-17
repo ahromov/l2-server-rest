@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import ua.cc.lajdev.login.controller.exception.AccountPresentException;
+import ua.cc.lajdev.login.controller.exception.IncorrectEmailException;
+import ua.cc.lajdev.login.controller.exception.InvalidDataException;
+import ua.cc.lajdev.login.controller.exception.PasswordsNotMatchException;
 import ua.cc.lajdev.login.dto.RegistrationUserDto;
 import ua.cc.lajdev.login.model.Account;
 import ua.cc.lajdev.login.service.AccountService;

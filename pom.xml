@@ -12,7 +12,7 @@
 	<groupId>ua.cc.lajdev</groupId>
 	<artifactId>l2-server-rest</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
+	<packaging>war</packaging>
 	<name>L2 server rest services</name>
 	<description>Rest services for L2 game, login servers, site and forum</description>
 
@@ -74,6 +74,18 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -147,7 +159,4 @@
 			</resource>
 		</resources>
 	</build>
-	<modules>
-		<module>forum</module>
-	</modules>
 </project>

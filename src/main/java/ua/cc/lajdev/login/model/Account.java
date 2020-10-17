@@ -4,7 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.springframework.context.annotation.Scope;
 
@@ -27,30 +26,17 @@ public class Account {
 	@JsonIgnore
 	private String email;
 
-	@Transient
-	private String status;
-
 	public Account() {
 
 	}
 
-	public Account(String status) {
-		this.status = status;
-	}
-
 	public Account(String login, String status) {
-		this(status);
 		this.login = login;
 	}
 
 	public Account(String login, String password, String email) {
 		this(login, password);
 		this.email = email;
-	}
-
-	public Account(String login, String password, String email, String status) {
-		this(login, password, email);
-		this.status = status;
 	}
 
 	public String getLogin() {
@@ -75,14 +61,6 @@ public class Account {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
 	}
 
 }

@@ -8,11 +8,11 @@ public interface AccountService {
 
 	Account create(Account account);
 
-	Optional<Account> findByLogin(String login);
+	Account findByLogin(String login);
 
 	Account update(Optional<Account> account);
 
-	Optional<Account> findByEmail(String email);
+	Account findByEmail(String email);
 
 	Integer countNoGmAccounts();
 

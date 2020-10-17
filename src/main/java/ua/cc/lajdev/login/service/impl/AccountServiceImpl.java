@@ -24,8 +24,8 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public Optional<Account> findByLogin(String login) {
-		return repository.findById(login);
+	public Account findByLogin(String login) {
+		return repository.findByLogin(login);
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public Optional<Account> findByEmail(String email) {
+	public Account findByEmail(String email) {
 		return repository.findByEmail(email);
 	}
 

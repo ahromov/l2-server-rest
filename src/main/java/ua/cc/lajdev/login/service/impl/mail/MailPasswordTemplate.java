@@ -1,12 +1,12 @@
 package ua.cc.lajdev.login.service.impl.mail;
 
-import ua.cc.lajdev.login.dto.RegistrationUserDto;
+import ua.cc.lajdev.login.dto.user.UserDto;
 
 public class MailPasswordTemplate extends Template {
 
-	public MailPasswordTemplate(RegistrationUserDto user) {
+	public MailPasswordTemplate(UserDto user) {
 		this.subject = "Change password ... " + user.login + "!";
-		this.body = "<h1>Password succesful changed!</h1><p>Your new password: " + user.password;
+		this.body = "Password succesful changed!\n\tYour new password: " + user.password;
 	}
 
 }

@@ -1,7 +1,5 @@
 package ua.cc.lajdev.login.service;
 
-import java.util.Optional;
-
 import ua.cc.lajdev.login.model.Account;
 
 public interface AccountService {
@@ -10,7 +8,7 @@ public interface AccountService {
 
 	Account findByLogin(String login);
 
-	Account update(Optional<Account> account);
+	Account update(Account account);
 
 	Account findByEmail(String email);
 

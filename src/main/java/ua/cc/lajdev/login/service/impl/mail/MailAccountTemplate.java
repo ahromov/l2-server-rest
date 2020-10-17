@@ -1,10 +1,10 @@
 package ua.cc.lajdev.login.service.impl.mail;
 
-import ua.cc.lajdev.login.dto.RegistrationUserDto;
+import ua.cc.lajdev.login.dto.user.UserDto;
 
 public class MailAccountTemplate extends Template {
 
-	public MailAccountTemplate(RegistrationUserDto user) {
+	public MailAccountTemplate(UserDto user) {
 		this.subject = "Welcome " + user.login + "!";
 		this.body = "Your account data:\n\tLogin: " + user.login + "\n\tPassword: " + user.password;
 	}

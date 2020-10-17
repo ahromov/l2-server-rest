@@ -1,11 +1,12 @@
 package ua.cc.lajdev.login.service.impl.mail;
 
-import ua.cc.lajdev.login.dto.RegistrationUserDto;
+import ua.cc.lajdev.login.dto.user.UserDto;
 
 public class MailTemplate extends Template {
 
-	public MailTemplate(RegistrationUserDto user) {
+	public MailTemplate(UserDto user) {
 		this.subject = "Question from site by " + user.login + "!";
+		this.body = user.message;
 	}
 
 }

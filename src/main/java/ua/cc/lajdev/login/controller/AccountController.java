@@ -56,9 +56,8 @@ public class AccountController {
 						throw new IncorrectEmailException();
 				} else
 					throw new PasswordsNotMatchException();
-			} else {
+			} else
 				throw new AccountPresentException();
-			}
 		} else
 			throw new InvalidDataException();
 	}

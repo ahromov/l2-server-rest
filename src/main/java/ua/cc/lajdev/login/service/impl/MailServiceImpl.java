@@ -17,7 +17,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import ua.cc.lajdev.login.dto.UserDto;
+import ua.cc.lajdev.login.dto.user.UserDto;
 import ua.cc.lajdev.login.model.MailSettings;
 import ua.cc.lajdev.login.service.MailService;
 import ua.cc.lajdev.login.service.impl.mail.Template;

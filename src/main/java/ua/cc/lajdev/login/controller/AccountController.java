@@ -109,7 +109,6 @@ public class AccountController {
 
 	private void updateAccount(UserDto user, Account account) {
 		user.password = user.oldPassword;
-
 		if (isUserPasswordValid(user, account)) {
 			updatePassword(user, account);
 		} else
@@ -127,7 +126,6 @@ public class AccountController {
 	private void updatePassword(UserDto user, Account account) {
 		user.password = user.newFirstPassword;
 		user.passwordSecond = user.newSecondPassword;
-
 		if (isUserPasswordsEquals(user)) {
 			account.setPassword(encoderService.encodePassword(user.password));
 			accountService.update(account);

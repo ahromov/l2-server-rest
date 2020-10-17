@@ -145,10 +145,10 @@ public class AccountController {
 		if (!user.login.equals("") && !user.email.equals("")) {
 			Account account = accountService.findByLogin(user.login);
 			if (account != null) {
-				user.password = PasswordGenerator.generateRandomPassword(8);
-				account.setPassword(encoderService.encodePassword(user.password));
-				accountService.update(account);
-				if (mailService.isCorrectEmailAddress(user.email) && user.email.equals(account.getEmail())) {
+				if (user.email.equals(account.getEmail())) {
+					user.password = PasswordGenerator.generateRandomPassword(8);
+					account.setPassword(encoderService.encodePassword(user.password));
+					accountService.update(account);
 					mailService.sendMail(user, new MailPasswordTemplate(user));
 					LOGGER.info("Password restored: " + account);
 				} else

@@ -6,6 +6,6 @@ public interface UserService {
 
 	public User findByUserName(String username);
 
-	public boolean changePassword(String username, String password);
+	void update(User user);
 
 }

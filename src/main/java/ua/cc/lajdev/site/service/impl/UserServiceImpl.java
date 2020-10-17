@@ -1,7 +1,6 @@
 package ua.cc.lajdev.site.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import ua.cc.lajdev.site.model.User;
@@ -11,12 +10,10 @@ import ua.cc.lajdev.site.service.UserService;
 @Service
 public class UserServiceImpl implements UserService {
 
-	private final PasswordEncoder passwordEncoder;
 	private final UserRepository repository;
 
 	@Autowired
-	public UserServiceImpl(PasswordEncoder passwordEncoder, UserRepository repository) {
-		this.passwordEncoder = passwordEncoder;
+	public UserServiceImpl(UserRepository repository) {
 		this.repository = repository;
 	}
 
@@ -26,12 +23,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public boolean changePassword(String username, String password) {
-		User user = repository.findByUserName(username);
-		if (user != null)
-			user.setPassword(passwordEncoder.encode(password));
+	public void update(User user) {
 		repository.save(user);
-		return true;
 	}
 
 }

@@ -1,6 +1,6 @@
 package ua.cc.lajdev.login.service.impl.mail;
 
-import ua.cc.lajdev.login.dto.UserDto;
+import ua.cc.lajdev.login.dto.user.UserDto;
 
 public class MailTemplate extends Template {
 

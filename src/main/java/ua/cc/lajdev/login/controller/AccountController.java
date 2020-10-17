@@ -1,24 +1,30 @@
 package ua.cc.lajdev.login.controller;
 
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import ua.cc.lajdev.login.dto.UserDto;
+import ua.cc.lajdev.common.controller.exceptions.AccountExistsException;
+import ua.cc.lajdev.common.controller.exceptions.AccountNotExistsException;
+import ua.cc.lajdev.common.controller.exceptions.IncorrectEmailException;
+import ua.cc.lajdev.common.controller.exceptions.IncorrectPasswordException;
+import ua.cc.lajdev.common.controller.exceptions.InvalidDataException;
+import ua.cc.lajdev.common.controller.exceptions.PasswordsNotMatchException;
+import ua.cc.lajdev.login.dto.user.UserDto;
 import ua.cc.lajdev.login.model.Account;
 import ua.cc.lajdev.login.service.AccountService;
 import ua.cc.lajdev.login.service.MailService;
 import ua.cc.lajdev.login.service.PasswordEncoderService;
-import ua.cc.lajdev.login.service.impl.mail.MailPasswordTemplate;
 import ua.cc.lajdev.login.service.impl.mail.MailAccountTemplate;
+import ua.cc.lajdev.login.service.impl.mail.MailPasswordTemplate;
 import ua.cc.lajdev.login.service.impl.mail.MailTemplate;
 import ua.cc.lajdev.login.utils.PasswordGenerator;
 
@@ -27,7 +33,7 @@ import ua.cc.lajdev.login.utils.PasswordGenerator;
 @RequestMapping("accounts")
 public class AccountController {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
 
 	private final AccountService accountService;
 	private final PasswordEncoderService encoderService;
@@ -42,121 +48,113 @@ public class AccountController {
 	}
 
 	@PostMapping("/create")
-	public Account registration(@RequestBody UserDto user) {
+	@ResponseStatus(HttpStatus.CREATED)
+	public void registration(@RequestBody UserDto user) {
 		if ((!user.login.equals("") && !user.email.equals("") && !user.password.equals("")
 				&& !user.passwordSecond.equals(""))) {
-			Optional<Account> account = accountService.findByLogin(user.login);
-			if (!account.isPresent()) {
-				return getAccountIffPasswordsEquals(user, account);
-			} else {
-				account.get().setStatus("Login exists");
-				return account.get();
-			}
-		}
-		return new Account("Invalid data");
-	}
-
-	private Account getAccountIffPasswordsEquals(UserDto user, Optional<Account> account) {
-		if (user.password.equals(user.passwordSecond)) {
-			return getNewAccountAndSendMailIfEmailCorrect(user, account);
-		} else {
-			return new Account("No match");
-		}
-	}
-
-	private Account getNewAccountAndSendMailIfEmailCorrect(UserDto user, Optional<Account> account) {
-		if (mailService.isCorrectEmailAddress(user.email)) {
-			account = Optional.of(accountService.create(
-					new Account(user.login, encoderService.encodePassword(user.password), user.email, "Success")));
-			mailService.sendMail(user, new MailAccountTemplate(user));
-			return account.get();
+			Account account = accountService.findByLogin(user.login);
+			if (account == null) {
+				if (isUserPasswordsEquals(user)) {
+					if (isEmailCorrectSendNotification(user)) {
+						user.password = encoderService.encodePassword(user.password);
+						account = accountService.create(user.toAccount());
+						LOGGER.info("Created new: " + account);
+					} else
+						throw new IncorrectEmailException();
+				} else
+					throw new PasswordsNotMatchException();
+			} else
+				throw new AccountExistsException();
 		} else
-			return new Account("Invalid email");
+			throw new InvalidDataException();
+	}
+
+	private boolean isEmailCorrectSendNotification(UserDto user) {
+		if (mailService.isCorrectEmailAddress(user.email)) {
+			mailService.sendMail(user, new MailAccountTemplate(user));
+			return true;
+		}
+		return false;
 	}
 
 	@PostMapping(path = "/login")
-	public Account login(@RequestBody UserDto login) {
+	@ResponseStatus(HttpStatus.ACCEPTED)
+	public void login(@RequestBody UserDto login) {
 		if (login.login != null && login.password != null) {
-			Optional<Account> account = accountService.findByLogin(login.login);
-			if (account.isPresent()) {
-				return getAccountIfPasswordIsValid(login, account);
-			} else {
-				LOGGER.error("Account with login {" + login + "} not found");
-				return new Account("Not exists");
-			}
-		}
-		return new Account("Invalid data");
-	}
-
-	private Account getAccountIfPasswordIsValid(UserDto login, Optional<Account> account) {
-		String encodedPassword = encoderService.encodePassword(login.password);
-		if (account.get().getPassword().equals(encodedPassword)) {
-			account.get().setStatus("Success");
-			return account.get();
-		} else {
-			account.get().setStatus("Incorrect password");
-			return account.get();
-		}
+			Account account = accountService.findByLogin(login.login);
+			if (account != null) {
+				if (isUserPasswordValid(login, account)) {
+					LOGGER.info("Logined: " + account);
+				} else
+					throw new IncorrectPasswordException();
+			} else
+				throw new AccountNotExistsException();
+		} else
+			throw new InvalidDataException();
 	}
 
 	@PostMapping("/changePass")
-	public Account changePassword(@RequestBody UserDto user) {
+	@ResponseStatus(HttpStatus.OK)
+	public void changePassword(@RequestBody UserDto user) {
 		if ((!user.login.equals("") && !user.oldPassword.equals("") && !user.newFirstPassword.equals("")
 				&& !user.newSecondPassword.equals(""))) {
-			Optional<Account> account = accountService.findByLogin(user.login);
-			if (account.isPresent()) {
-				String encodedOldPassword = encoderService.encodePassword(user.oldPassword);
-				String encodedNewPassword = encoderService.encodePassword(user.newFirstPassword);
-				return getUpdatedAccount(user, account, encodedOldPassword, encodedNewPassword);
+			Account account = accountService.findByLogin(user.login);
+			if (account != null) {
+				updateAccount(user, account);
+				LOGGER.warn("Password changed: " + account);
 			}
-		}
-
-		return new Account("Invalid data");
+		} else
+			throw new InvalidDataException();
 	}
 
-	private Account getUpdatedAccount(UserDto user, Optional<Account> account, String encodedOldPassword,
-			String encodedNewPassword) {
-		if (account.get().getPassword().equals(encodedOldPassword)) {
-			return updatePasswordAndGetAccount(user, account, encodedNewPassword);
-		} else {
-			account.get().setStatus("Invalid pass");
-			return account.get();
-		}
+	private void updateAccount(UserDto user, Account account) {
+		user.password = user.oldPassword;
+		if (isUserPasswordValid(user, account)) {
+			updatePassword(user, account);
+		} else
+			throw new IncorrectPasswordException();
 	}
 
-	private Account updatePasswordAndGetAccount(UserDto user, Optional<Account> account, String encodedNewPassword) {
-		if (user.newFirstPassword.equals(user.newSecondPassword)) {
-			account.get().setPassword(encodedNewPassword);
+	private boolean isUserPasswordValid(UserDto user, Account account) {
+		String encodedPassword = encoderService.encodePassword(user.password);
+		if (account.getPassword().equals(encodedPassword)) {
+			return true;
+		}
+		return false;
+	}
+
+	private void updatePassword(UserDto user, Account account) {
+		user.password = user.newFirstPassword;
+		user.passwordSecond = user.newSecondPassword;
+		if (isUserPasswordsEquals(user)) {
+			account.setPassword(encoderService.encodePassword(user.password));
 			accountService.update(account);
-			account.get().setStatus("Success");
-			return account.get();
-		} else {
-			account.get().setStatus("No match");
-			return account.get();
-		}
+		} else
+			throw new PasswordsNotMatchException();
+	}
+
+	private boolean isUserPasswordsEquals(UserDto user) {
+		if (user.password.equals(user.passwordSecond))
+			return true;
+		return false;
 	}
 
 	@PostMapping("/restorePass")
-	public Account rememberPassword(@RequestBody UserDto user) {
+	@ResponseStatus(HttpStatus.OK)
+	public void rememberPassword(@RequestBody UserDto user) {
 		if (!user.login.equals("") && !user.email.equals("")) {
-			Optional<Account> account = accountService.findByLogin(user.login);
-			if (account.isPresent()) {
-				if (account.get().getLogin().equals(user.login)) {
-					user.password = PasswordGenerator.generateRandomPassword(8);
-					String encodedPassword = encoderService.encodePassword(user.password);
-					account.get().setPassword(encodedPassword);
-					accountService.update(account);
-					account.get().setStatus("Success");
-					mailService.sendMail(user, new MailPasswordTemplate(user));
-					return account.get();
-				} else {
-					return new Account("Invalid login");
-				}
-			} else {
-				return new Account("Not exists");
-			}
-		} else
-			return new Account("Invalid data");
+			Account account = accountService.findByLogin(user.login);
+			if (account != null) {
+				user.password = PasswordGenerator.generateRandomPassword(8);
+				account.setPassword(encoderService.encodePassword(user.password));
+				accountService.update(account);
+				mailService.sendMail(user, new MailPasswordTemplate(user));
+				LOGGER.info("Password restored: " + account);
+			} else
+				throw new AccountNotExistsException();
+		} else {
+			throw new InvalidDataException();
+		}
 	}
 
 	@GetMapping("/count/all")
@@ -165,22 +163,17 @@ public class AccountController {
 	}
 
 	@PostMapping("/sendMess")
-	public Account sendMessage(@RequestBody UserDto user) {
-		if ((!user.email.equals("") && !user.message.equals("") && !user.login.equals(""))) {
-			Optional<Account> account = accountService.findByLogin(user.login);
-			if (account.isPresent()) {
-				if (account.get().getLogin().equals(user.login)) {
-					user.login = account.get().getLogin();
-					account.get().setStatus("Success");
-					mailService.sendMail(user, new MailTemplate(user));
-					return account.get();
-				} else
-					return new Account("Invalid login");
-			} else {
-				return new Account("Email not found");
-			}
+	@ResponseStatus(HttpStatus.OK)
+	public void sendMessage(@RequestBody UserDto user) {
+		if (!user.email.equals("") && !user.login.equals("") && !user.message.equals("")) {
+			Account account = accountService.findByLogin(user.login);
+			if (account != null) {
+				mailService.sendMail(user, new MailTemplate(user));
+				LOGGER.info("Sended mail from: " + account);
+			} else
+				throw new AccountNotExistsException();
 		} else
-			return new Account("Invalid data");
+			throw new InvalidDataException();
 	}
 
 }

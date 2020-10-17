@@ -4,11 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.springframework.context.annotation.Scope;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "accounts")
@@ -20,37 +17,18 @@ public class Account {
 	private String login;
 
 	@Column
-	@JsonIgnore
 	private String password;
 
 	@Column
-	@JsonIgnore
 	private String email;
 
-	@Transient
-	private String status;
-
 	public Account() {
-
-	}
-
-	public Account(String status) {
-		this.status = status;
-	}
-
-	public Account(String login, String status) {
-		this(status);
-		this.login = login;
 	}
 
 	public Account(String login, String password, String email) {
-		this(login, password);
+		this.login = login;
+		this.password = password;
 		this.email = email;
-	}
-
-	public Account(String login, String password, String email, String status) {
-		this(login, password, email);
-		this.status = status;
 	}
 
 	public String getLogin() {
@@ -77,12 +55,46 @@ public class Account {
 		this.email = email;
 	}
 
-	public String getStatus() {
-		return status;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((email == null) ? 0 : email.hashCode());
+		result = prime * result + ((login == null) ? 0 : login.hashCode());
+		result = prime * result + ((password == null) ? 0 : password.hashCode());
+		return result;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Account other = (Account) obj;
+		if (email == null) {
+			if (other.email != null)
+				return false;
+		} else if (!email.equals(other.email))
+			return false;
+		if (login == null) {
+			if (other.login != null)
+				return false;
+		} else if (!login.equals(other.login))
+			return false;
+		if (password == null) {
+			if (other.password != null)
+				return false;
+		} else if (!password.equals(other.password))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Account [login=" + login + ", password=" + password + ", email=" + email + "]";
 	}
 
 }

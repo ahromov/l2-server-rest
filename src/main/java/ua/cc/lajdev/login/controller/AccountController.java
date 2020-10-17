@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ua.cc.lajdev.common.controller.exceptions.AccountExistsException;
-import ua.cc.lajdev.common.controller.exceptions.AccountNotExistsException;
+import ua.cc.lajdev.common.controller.exceptions.AccountNotFoundException;
 import ua.cc.lajdev.common.controller.exceptions.IncorrectEmailException;
 import ua.cc.lajdev.common.controller.exceptions.IncorrectPasswordException;
-import ua.cc.lajdev.common.controller.exceptions.InvalidDataException;
+import ua.cc.lajdev.common.controller.exceptions.InvalidDatasException;
 import ua.cc.lajdev.common.controller.exceptions.PasswordsNotMatchException;
 import ua.cc.lajdev.login.dto.user.UserDto;
 import ua.cc.lajdev.login.model.Account;
@@ -66,7 +66,7 @@ public class AccountController {
 			} else
 				throw new AccountExistsException();
 		} else
-			throw new InvalidDataException();
+			throw new InvalidDatasException();
 	}
 
 	private boolean isEmailCorrectSendNotification(UserDto user) {
@@ -80,7 +80,7 @@ public class AccountController {
 	@PostMapping(path = "/login")
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	public void login(@RequestBody UserDto login) {
-		if (login.login != null && login.password != null) {
+		if (!login.login.equals("") && !login.password.equals("")) {
 			Account account = accountService.findByLogin(login.login);
 			if (account != null) {
 				if (isUserPasswordValid(login, account)) {
@@ -88,9 +88,9 @@ public class AccountController {
 				} else
 					throw new IncorrectPasswordException();
 			} else
-				throw new AccountNotExistsException();
+				throw new AccountNotFoundException();
 		} else
-			throw new InvalidDataException();
+			throw new InvalidDatasException();
 	}
 
 	@PostMapping("/changePass")
@@ -104,7 +104,7 @@ public class AccountController {
 				LOGGER.warn("Password changed: " + account);
 			}
 		} else
-			throw new InvalidDataException();
+			throw new InvalidDatasException();
 	}
 
 	private void updateAccount(UserDto user, Account account) {
@@ -148,12 +148,15 @@ public class AccountController {
 				user.password = PasswordGenerator.generateRandomPassword(8);
 				account.setPassword(encoderService.encodePassword(user.password));
 				accountService.update(account);
-				mailService.sendMail(user, new MailPasswordTemplate(user));
-				LOGGER.info("Password restored: " + account);
+				if (mailService.isCorrectEmailAddress(user.email)) {
+					mailService.sendMail(user, new MailPasswordTemplate(user));
+					LOGGER.info("Password restored: " + account);
+				} else
+					throw new IncorrectEmailException();
 			} else
-				throw new AccountNotExistsException();
+				throw new AccountNotFoundException();
 		} else {
-			throw new InvalidDataException();
+			throw new InvalidDatasException();
 		}
 	}
 
@@ -171,9 +174,9 @@ public class AccountController {
 				mailService.sendMail(user, new MailTemplate(user));
 				LOGGER.info("Sended mail from: " + account);
 			} else
-				throw new AccountNotExistsException();
+				throw new AccountNotFoundException();
 		} else
-			throw new InvalidDataException();
+			throw new InvalidDatasException();
 	}
 
 }

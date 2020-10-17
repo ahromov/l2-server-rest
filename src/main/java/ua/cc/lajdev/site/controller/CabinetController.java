@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import ua.cc.lajdev.common.controller.exceptions.AccountNotExistsException;
-import ua.cc.lajdev.common.controller.exceptions.InvalidDataException;
+import ua.cc.lajdev.common.controller.exceptions.AccountNotFoundException;
+import ua.cc.lajdev.common.controller.exceptions.InvalidDatasException;
 import ua.cc.lajdev.common.controller.exceptions.PasswordsNotMatchException;
 import ua.cc.lajdev.site.model.User;
 import ua.cc.lajdev.site.service.UserService;
@@ -49,9 +49,9 @@ public class CabinetController {
 				} else
 					throw new PasswordsNotMatchException();
 			} else
-				throw new AccountNotExistsException();
+				throw new AccountNotFoundException();
 		} else
-			throw new InvalidDataException();
+			throw new InvalidDatasException();
 	}
 
 }

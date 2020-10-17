@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import ua.cc.lajdev.common.controller.exceptions.LoadImageException;
-import ua.cc.lajdev.common.controller.exceptions.InvalidDataException;
+import ua.cc.lajdev.common.controller.exceptions.InvalidDatasException;
 import ua.cc.lajdev.site.model.News;
 import ua.cc.lajdev.site.service.NewsService;
 
@@ -52,7 +52,7 @@ public class NewsController {
 				throw new LoadImageException();
 			}
 		} else
-			throw new InvalidDataException();
+			throw new InvalidDatasException();
 		return news;
 	}
 

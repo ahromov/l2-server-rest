@@ -152,11 +152,6 @@ public class AccountController {
 		}
 	}
 
-	@GetMapping("/count/all")
-	public Integer countAccounts() {
-		return accountService.countNoGmAccounts();
-	}
-
 	@PostMapping("/sendMess")
 	@ResponseStatus(HttpStatus.OK)
 	public void sendMessage(@RequestBody UserDto user) {
@@ -169,6 +164,11 @@ public class AccountController {
 				throw new AccountNotFoundException();
 		} else
 			throw new InvalidDatasException();
+	}
+
+	@GetMapping("/count/all")
+	public Integer countAccounts() {
+		return accountService.countNoGmAccounts();
 	}
 
 }

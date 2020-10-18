@@ -55,9 +55,10 @@ public class AccountController {
 			Account account = accountService.findByLogin(user.login);
 			if (account == null) {
 				if (isInputedPasswordsEquals(user)) {
-					if (isEmailCorrectSendNotification(user)) {
+					if (mailService.isCorrectEmailAddress(user.email)) {
 						user.password = encoderService.encodePassword(user.password);
 						account = accountService.create(user.toAccount());
+						mailService.sendMail(user, new MailAccountTemplate(user));
 						LOGGER.info("Created new: " + account);
 					} else
 						throw new IncorrectEmailException();
@@ -67,14 +68,6 @@ public class AccountController {
 				throw new AccountExistsException();
 		} else
 			throw new InvalidDatasException();
-	}
-
-	private boolean isEmailCorrectSendNotification(UserDto user) {
-		if (mailService.isCorrectEmailAddress(user.email)) {
-			mailService.sendMail(user, new MailAccountTemplate(user));
-			return true;
-		}
-		return false;
 	}
 
 	@PostMapping(path = "/login")

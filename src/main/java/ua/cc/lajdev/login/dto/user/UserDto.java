@@ -1,13 +1,20 @@
 package ua.cc.lajdev.login.dto.user;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+
 import ua.cc.lajdev.login.model.Account;
 
 public class UserDto {
 
+	@NotBlank
 	public String login;
+
+	@Email
+	public String email;
+
 	public String password;
 	public String passwordSecond;
-	public String email;
 	public String oldPassword;
 	public String newFirstPassword;
 	public String newSecondPassword;

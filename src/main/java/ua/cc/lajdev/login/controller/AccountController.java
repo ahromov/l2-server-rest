@@ -1,11 +1,17 @@
 package ua.cc.lajdev.login.controller;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.Validator;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,54 +56,43 @@ public class AccountController {
 	@PostMapping("/create")
 	@ResponseStatus(HttpStatus.CREATED)
 	public void registration(@RequestBody UserDto user) {
-		if ((!user.login.equals("") && !user.email.equals("") && !user.password.equals("")
-				&& !user.passwordSecond.equals(""))) {
-			Account account = accountService.findByLogin(user.login);
-			if (account == null) {
-				if (isInputedPasswordsEquals(user)) {
-					if (mailService.isCorrectEmailAddress(user.email)) {
-						user.password = encoderService.encodePassword(user.password);
-						account = accountService.create(user.toAccount());
-						mailService.sendMail(user, new MailAccountTemplate(user));
-						LOGGER.info("Created new: " + account);
-					} else
-						throw new IncorrectEmailException();
+		Account account = accountService.findByLogin(user.login);
+		if (account == null) {
+			if (isInputedPasswordsEquals(user)) {
+				if (mailService.isCorrectEmailAddress(user.email)) {
+					user.password = encoderService.encodePassword(user.password);
+					account = accountService.create(user.toAccount());
+					mailService.sendMail(user, new MailAccountTemplate(user));
+					LOGGER.info("Created new: " + account);
 				} else
-					throw new PasswordsNotMatchException();
+					throw new IncorrectEmailException();
 			} else
-				throw new AccountExistsException();
+				throw new PasswordsNotMatchException();
 		} else
-			throw new InvalidDatasException();
+			throw new AccountExistsException();
 	}
 
 	@PostMapping(path = "/login")
 	@ResponseStatus(HttpStatus.ACCEPTED)
-	public void login(@RequestBody UserDto login) {
-		if (!login.login.equals("") && !login.password.equals("")) {
-			Account account = accountService.findByLogin(login.login);
-			if (account != null) {
-				if (isUserPasswordValid(login, account)) {
-					LOGGER.info("Logined: " + account);
-				} else
-					throw new IncorrectPasswordException();
+	public void login(@Valid @RequestBody UserDto login) {
+		Account account = accountService.findByLogin(login.login);
+		if (account != null) {
+			if (isUserPasswordValid(login, account)) {
+				LOGGER.info("Logined: " + account);
 			} else
-				throw new AccountNotFoundException();
+				throw new IncorrectPasswordException();
 		} else
-			throw new InvalidDatasException();
+			throw new AccountNotFoundException();
 	}
 
 	@PostMapping("/changePass")
 	@ResponseStatus(HttpStatus.OK)
-	public void changePassword(@RequestBody UserDto user) {
-		if ((!user.login.equals("") && !user.oldPassword.equals("") && !user.newFirstPassword.equals("")
-				&& !user.newSecondPassword.equals(""))) {
-			Account account = accountService.findByLogin(user.login);
-			if (account != null) {
-				updateAccount(user, account);
-				LOGGER.warn("Password changed: " + account);
-			}
-		} else
-			throw new InvalidDatasException();
+	public void changePassword(@Valid @RequestBody UserDto user) {
+		Account account = accountService.findByLogin(user.login);
+		if (account != null) {
+			updateAccount(user, account);
+			LOGGER.warn("Password changed: " + account);
+		}
 	}
 
 	private void updateAccount(UserDto user, Account account) {
@@ -134,37 +129,30 @@ public class AccountController {
 
 	@PostMapping("/restorePass")
 	@ResponseStatus(HttpStatus.OK)
-	public void rememberPassword(@RequestBody UserDto user) {
-		if (!user.login.equals("") && !user.email.equals("")) {
-			Account account = accountService.findByLogin(user.login);
-			if (account != null) {
-				if (user.email.equals(account.getEmail())) {
-					account.setPassword(encoderService.encodePassword(PasswordGenerator.generateRandomPassword(8)));
-					accountService.update(account);
-					mailService.sendMail(user, new MailPasswordTemplate(user));
-					LOGGER.info("Password restored: " + account);
-				} else
-					throw new IncorrectEmailException();
+	public void rememberPassword(@Valid @RequestBody UserDto user) {
+		Account account = accountService.findByLogin(user.login);
+		if (account != null) {
+			if (user.email.equals(account.getEmail())) {
+				account.setPassword(encoderService.encodePassword(PasswordGenerator.generateRandomPassword(8)));
+				accountService.update(account);
+				mailService.sendMail(user, new MailPasswordTemplate(user));
+				LOGGER.info("Password restored: " + account);
 			} else
-				throw new AccountNotFoundException();
-		} else {
-			throw new InvalidDatasException();
-		}
+				throw new IncorrectEmailException();
+		} else
+			throw new AccountNotFoundException();
 	}
 
 	@PostMapping("/sendMess")
 	@ResponseStatus(HttpStatus.OK)
-	public void sendMessage(@RequestBody UserDto user) {
-		if (!user.login.equals("") && !user.message.equals("")) {
-			Account account = accountService.findByLogin(user.login);
-			if (account != null) {
-				user.email = account.getEmail();
-				mailService.sendMail(user, new MailTemplate(user));
-				LOGGER.info("Sended mail from: " + account);
-			} else
-				throw new AccountNotFoundException();
+	public void sendMessage(@Valid @RequestBody UserDto user) {
+		Account account = accountService.findByLogin(user.login);
+		if (account != null) {
+			user.email = account.getEmail();
+			mailService.sendMail(user, new MailTemplate(user));
+			LOGGER.info("Sended mail from: " + account);
 		} else
-			throw new InvalidDatasException();
+			throw new AccountNotFoundException();
 	}
 
 	@GetMapping("/count/all")

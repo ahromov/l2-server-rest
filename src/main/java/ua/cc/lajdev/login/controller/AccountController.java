@@ -139,8 +139,7 @@ public class AccountController {
 			Account account = accountService.findByLogin(user.login);
 			if (account != null) {
 				if (user.email.equals(account.getEmail())) {
-					user.password = PasswordGenerator.generateRandomPassword(8);
-					account.setPassword(encoderService.encodePassword(user.password));
+					account.setPassword(encoderService.encodePassword(PasswordGenerator.generateRandomPassword(8)));
 					accountService.update(account);
 					mailService.sendMail(user, new MailPasswordTemplate(user));
 					LOGGER.info("Password restored: " + account);

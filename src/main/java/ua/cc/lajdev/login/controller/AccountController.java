@@ -55,7 +55,7 @@ public class AccountController {
 
 	@PostMapping("/create")
 	@ResponseStatus(HttpStatus.CREATED)
-	public void registration(@RequestBody UserDto user) {
+	public void registration(@Valid @RequestBody UserDto user) {
 		Account account = accountService.findByLogin(user.login);
 		if (account == null) {
 			if (isInputedPasswordsEquals(user)) {

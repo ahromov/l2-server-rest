@@ -155,9 +155,10 @@ public class AccountController {
 	@PostMapping("/sendMess")
 	@ResponseStatus(HttpStatus.OK)
 	public void sendMessage(@RequestBody UserDto user) {
-		if (!user.email.equals("") && !user.login.equals("") && !user.message.equals("")) {
+		if (!user.login.equals("") && !user.message.equals("")) {
 			Account account = accountService.findByLogin(user.login);
 			if (account != null) {
+				user.email = account.getEmail();
 				mailService.sendMail(user, new MailTemplate(user));
 				LOGGER.info("Sended mail from: " + account);
 			} else

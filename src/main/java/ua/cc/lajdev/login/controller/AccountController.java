@@ -113,7 +113,7 @@ public class AccountController {
 
 	private void updatePassword(UserDto user, Account account) {
 		user.password = user.newFirstPassword;
-		user.passwordSecond = user.newSecondPassword;
+		user.repeatedPassword = user.newSecondPassword;
 		if (isInputedPasswordsEquals(user)) {
 			account.setPassword(encoderService.encodePassword(user.password));
 			accountService.update(account);
@@ -122,7 +122,7 @@ public class AccountController {
 	}
 
 	private boolean isInputedPasswordsEquals(UserDto user) {
-		if (user.password.equals(user.passwordSecond))
+		if (user.password.equals(user.repeatedPassword))
 			return true;
 		return false;
 	}

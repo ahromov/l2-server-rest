@@ -54,7 +54,7 @@ public class AccountController {
 				&& !user.passwordSecond.equals(""))) {
 			Account account = accountService.findByLogin(user.login);
 			if (account == null) {
-				if (isUserPasswordsEquals(user)) {
+				if (isInputedPasswordsEquals(user)) {
 					if (isEmailCorrectSendNotification(user)) {
 						user.password = encoderService.encodePassword(user.password);
 						account = accountService.create(user.toAccount());
@@ -126,14 +126,14 @@ public class AccountController {
 	private void updatePassword(UserDto user, Account account) {
 		user.password = user.newFirstPassword;
 		user.passwordSecond = user.newSecondPassword;
-		if (isUserPasswordsEquals(user)) {
+		if (isInputedPasswordsEquals(user)) {
 			account.setPassword(encoderService.encodePassword(user.password));
 			accountService.update(account);
 		} else
 			throw new PasswordsNotMatchException();
 	}
 
-	private boolean isUserPasswordsEquals(UserDto user) {
+	private boolean isInputedPasswordsEquals(UserDto user) {
 		if (user.password.equals(user.passwordSecond))
 			return true;
 		return false;

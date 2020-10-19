@@ -19,7 +19,12 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public Account create(Account account) {
-		return repository.save(account);
+		return repository.saveAndFlush(account);
+	}
+
+	@Override
+	public boolean isPresent(String login) {
+		return repository.existsById(login);
 	}
 
 	@Override
@@ -29,7 +34,7 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public Account update(Account account) {
-		return repository.save(account);
+		return repository.saveAndFlush(account);
 	}
 
 	@Override

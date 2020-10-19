@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,10 +54,9 @@ public class AccountController {
 	@PostMapping("/create")
 	@ResponseStatus(HttpStatus.CREATED)
 	public void registration(@Valid @RequestBody UserDto user) {
-		Account account = accountService.findByLogin(user.login);
-		if (account == null) {
-			validate(user, account);
-			account = accountService.create(user.toAccount(encoderService.encodePassword(user.password)));
+		if (!accountService.isPresent(user.login)) {
+			validate(user, null);
+			Account account = accountService.create(user.toAccount(encoderService.encodePassword(user.password)));
 			mailService.sendMail(user, new MailAccountTemplate(user));
 			LOGGER.info("Created new: " + account);
 		} else
@@ -65,8 +66,8 @@ public class AccountController {
 	@PostMapping(path = "/login")
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	public void login(@Valid @RequestBody UserDto user) {
-		Account account = accountService.findByLogin(user.login);
-		if (account != null) {
+		if (accountService.isPresent(user.login)) {
+			Account account = accountService.findByLogin(user.login);
 			validate(user, account);
 			LOGGER.info("Logined: " + account);
 		} else
@@ -76,8 +77,8 @@ public class AccountController {
 	@PostMapping("/changePass")
 	@ResponseStatus(HttpStatus.OK)
 	public void changePassword(@Valid @RequestBody UserDto user) {
-		Account account = accountService.findByLogin(user.login);
-		if (account != null) {
+		if (accountService.isPresent(user.login)) {
+			Account account = accountService.findByLogin(user.login);
 			user.password = user.oldPassword;
 			validate(user, account);
 			account.setPassword(encoderService.encodePassword(user.password));
@@ -90,8 +91,8 @@ public class AccountController {
 	@PostMapping("/restorePass")
 	@ResponseStatus(HttpStatus.OK)
 	public void rememberPassword(@Valid @RequestBody UserDto user) {
-		Account account = accountService.findByLogin(user.login);
-		if (account != null) {
+		if (accountService.isPresent(user.login)) {
+			Account account = accountService.findByLogin(user.login);
 			validate(user, account);
 			String newAutoGaneratedPassword = PasswordGenerator.generateRandomPassword(8);
 			account.setPassword(encoderService.encodePassword(newAutoGaneratedPassword));
@@ -106,8 +107,8 @@ public class AccountController {
 	@PostMapping("/sendMess")
 	@ResponseStatus(HttpStatus.OK)
 	public void sendMessage(@Valid @RequestBody UserDto user) {
-		Account account = accountService.findByLogin(user.login);
-		if (account != null) {
+		if (accountService.isPresent(user.login)) {
+			Account account = accountService.findByLogin(user.login);
 			validate(user, account);
 			user.email = account.getEmail();
 			mailService.sendMail(user, new MailTemplate(user));

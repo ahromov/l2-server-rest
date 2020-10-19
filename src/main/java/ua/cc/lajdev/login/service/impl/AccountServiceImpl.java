@@ -19,17 +19,22 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public Account create(Account account) {
-		return repository.save(account);
+		return repository.saveAndFlush(account);
 	}
 
 	@Override
-	public Account findByLogin(String login) {
+	public boolean isPresent(String login) {
+		return repository.existsById(login);
+	}
+
+	@Override
+	public Account getByLogin(String login) {
 		return repository.findByLogin(login);
 	}
 
 	@Override
 	public Account update(Account account) {
-		return repository.save(account);
+		return repository.saveAndFlush(account);
 	}
 
 	@Override

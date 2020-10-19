@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Scope;
 public class Account {
 
 	@Id
-	@Column
 	private String login;
 
 	@Column

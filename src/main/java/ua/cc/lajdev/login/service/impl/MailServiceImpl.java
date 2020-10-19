@@ -1,8 +1,6 @@
 package ua.cc.lajdev.login.service.impl;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -37,16 +35,9 @@ public class MailServiceImpl implements MailService {
 		this.mailSettings = mailSettings;
 	}
 
-	public boolean isCorrectEmailAddress(String email) {
-		try {
-			InternetAddress emailAddr = new InternetAddress(email);
-			emailAddr.validate();
-			if (isMxRecords(email))
-				return true;
-		} catch (AddressException ex) {
-			LOGGER.error("Incorrect email address");
-			return false;
-		}
+	public boolean isCorrectDomainEmailAddress(String email) {
+		if (isMxRecords(email))
+			return true;
 		return false;
 	}
 
@@ -73,11 +64,11 @@ public class MailServiceImpl implements MailService {
 
 	private boolean isMxRecords(String email) {
 		String domainName = email.substring(email.indexOf("@") + 1);
-		InitialDirContext iDirC = null;
+		InitialDirContext dirContext = null;
 		Attributes attributes = null;
 		try {
-			iDirC = new InitialDirContext();
-			attributes = iDirC.getAttributes("dns:/" + domainName, new String[] { "MX" });
+			dirContext = new InitialDirContext();
+			attributes = dirContext.getAttributes("dns:/" + domainName, new String[] { "MX" });
 		} catch (NamingException e) {
 			LOGGER.error("Cannot get MX records");
 			return false;

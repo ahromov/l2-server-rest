@@ -52,10 +52,9 @@ public class AccountController {
 	@PostMapping("/create")
 	@ResponseStatus(HttpStatus.CREATED)
 	public void registration(@Valid @RequestBody UserDto user) {
-		Account account = accountService.findByLogin(user.login);
-		if (account == null) {
-			validate(user, account);
-			account = accountService.create(user.toAccount(encoderService.encodePassword(user.password)));
+		if (!accountService.isPresent(user.login)) {
+			validate(user, null);
+			Account account = accountService.create(user.toAccount(encoderService.encodePassword(user.password)));
 			mailService.sendMail(user, new MailAccountTemplate(user));
 			LOGGER.info("Created new: " + account);
 		} else
@@ -65,8 +64,8 @@ public class AccountController {
 	@PostMapping(path = "/login")
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	public void login(@Valid @RequestBody UserDto user) {
-		Account account = accountService.findByLogin(user.login);
-		if (account != null) {
+		if (accountService.isPresent(user.login)) {
+			Account account = accountService.getByLogin(user.login);
 			validate(user, account);
 			LOGGER.info("Logined: " + account);
 		} else
@@ -76,12 +75,15 @@ public class AccountController {
 	@PostMapping("/changePass")
 	@ResponseStatus(HttpStatus.OK)
 	public void changePassword(@Valid @RequestBody UserDto user) {
-		Account account = accountService.findByLogin(user.login);
-		if (account != null) {
+		if (accountService.isPresent(user.login)) {
+			Account account = accountService.getByLogin(user.login);
 			user.password = user.oldPassword;
 			validate(user, account);
-			account.setPassword(encoderService.encodePassword(user.password));
+			account.setPassword(encoderService.encodePassword(user.newPassword));
 			accountService.update(account);
+			user.password = user.newPassword;
+			user.email = account.getEmail();
+			mailService.sendMail(user, new MailPasswordTemplate(user));
 			LOGGER.warn("Password changed: " + account);
 		} else
 			throw new AccountNotFoundException();
@@ -90,8 +92,8 @@ public class AccountController {
 	@PostMapping("/restorePass")
 	@ResponseStatus(HttpStatus.OK)
 	public void rememberPassword(@Valid @RequestBody UserDto user) {
-		Account account = accountService.findByLogin(user.login);
-		if (account != null) {
+		if (accountService.isPresent(user.login)) {
+			Account account = accountService.getByLogin(user.login);
 			validate(user, account);
 			String newAutoGaneratedPassword = PasswordGenerator.generateRandomPassword(8);
 			account.setPassword(encoderService.encodePassword(newAutoGaneratedPassword));
@@ -106,8 +108,8 @@ public class AccountController {
 	@PostMapping("/sendMess")
 	@ResponseStatus(HttpStatus.OK)
 	public void sendMessage(@Valid @RequestBody UserDto user) {
-		Account account = accountService.findByLogin(user.login);
-		if (account != null) {
+		if (accountService.isPresent(user.login)) {
+			Account account = accountService.getByLogin(user.login);
 			validate(user, account);
 			user.email = account.getEmail();
 			mailService.sendMail(user, new MailTemplate(user));
@@ -130,7 +132,8 @@ public class AccountController {
 		if (user != null && account != null && user.password != null
 				&& !account.getPassword().equals(encoderService.encodePassword(user.password)))
 			throw new IncorrectPasswordException();
-		if (user != null && account != null && user.email != null && !mailService.isCorrectEmailAddress(user.email))
+		if (user != null && account != null && user.email != null
+				&& !mailService.isCorrectDomainEmailAddress(user.email))
 			throw new IncorrectEmailException();
 	}
 

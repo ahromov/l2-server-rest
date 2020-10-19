@@ -193,14 +193,11 @@ public class Clan {
 	@PostLoad
 	void initFields() {
 		this.leaderName = leader.getCharName();
-
 		if (fort != null)
 			this.fortName = fort.getName();
-
 		if (castle != null)
 			this.castleName = castle.getName();
-
-		if (this.chars.size() > 0)
+		if (!this.chars.isEmpty())
 			this.midCharsLevel = calculateMidCharsLevel();
 	}
 

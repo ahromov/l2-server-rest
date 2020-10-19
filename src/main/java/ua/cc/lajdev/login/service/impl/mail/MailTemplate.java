@@ -5,7 +5,7 @@ import ua.cc.lajdev.login.dto.user.UserDto;
 public class MailTemplate extends Template {
 
 	public MailTemplate(UserDto user) {
-		this.subject = "Question from site by " + user.login + "!";
+		this.subject = "Mail from " + user.login + "!";
 		this.body = user.message;
 	}
 

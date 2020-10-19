@@ -17,16 +17,23 @@ public class UserDto {
 	@Size(min = 8)
 	public String password;
 
+	@Size(min = 8)
+	public String repeatedPassword;
+
 	@Size(min = 20)
 	public String message;
 
-	public String repeatedPassword;
+	@Size(min = 8)
 	public String oldPassword;
-	public String newFirstPassword;
-	public String newSecondPassword;
 
-	public Account toAccount() {
-		return new Account(this.login, this.password, this.email);
+	@Size(min = 8)
+	public String newPassword;
+
+	@Size(min = 8)
+	public String newRepeatedPassword;
+
+	public Account toAccount(String encodedPassword) {
+		return new Account(this.login, encodedPassword, this.email);
 	}
 
 }

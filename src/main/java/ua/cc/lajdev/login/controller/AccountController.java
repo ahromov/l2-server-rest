@@ -129,7 +129,7 @@ public class AccountController {
 		if (user != null && account != null && user.password != null
 				&& !account.getPassword().equals(encoderService.encodePassword(user.password)))
 			throw new IncorrectPasswordException();
-		if (user != null && account != null && user.email != null && !mailService.isCorrectEmailAddress(user.email))
+		if (user != null && account != null && user.email != null && !mailService.isCorrectDomainEmailAddress(user.email))
 			throw new IncorrectEmailException();
 	}
 

@@ -6,6 +6,8 @@ public interface AccountService {
 
 	Account create(Account account);
 
+	boolean isPresent(String login);
+
 	Account findByLogin(String login);
 
 	Account update(Account account);

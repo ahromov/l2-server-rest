@@ -79,8 +79,11 @@ public class AccountController {
 			Account account = accountService.getByLogin(user.login);
 			user.password = user.oldPassword;
 			validate(user, account);
-			account.setPassword(encoderService.encodePassword(user.password));
+			account.setPassword(encoderService.encodePassword(user.newPassword));
 			accountService.update(account);
+			user.password = user.newPassword;
+			user.email = account.getEmail();
+			mailService.sendMail(user, new MailPasswordTemplate(user));
 			LOGGER.warn("Password changed: " + account);
 		} else
 			throw new AccountNotFoundException();
@@ -129,7 +132,8 @@ public class AccountController {
 		if (user != null && account != null && user.password != null
 				&& !account.getPassword().equals(encoderService.encodePassword(user.password)))
 			throw new IncorrectPasswordException();
-		if (user != null && account != null && user.email != null && !mailService.isCorrectDomainEmailAddress(user.email))
+		if (user != null && account != null && user.email != null
+				&& !mailService.isCorrectDomainEmailAddress(user.email))
 			throw new IncorrectEmailException();
 	}
 

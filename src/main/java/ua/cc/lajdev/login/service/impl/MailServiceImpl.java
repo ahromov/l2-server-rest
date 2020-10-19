@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import ua.cc.lajdev.login.dto.user.UserDto;
 import ua.cc.lajdev.login.model.MailSettings;
 import ua.cc.lajdev.login.service.MailService;
+import ua.cc.lajdev.login.service.impl.mail.MailTemplate;
 import ua.cc.lajdev.login.service.impl.mail.Template;
 
 @Service
@@ -40,14 +41,13 @@ public class MailServiceImpl implements MailService {
 		try {
 			InternetAddress emailAddr = new InternetAddress(email);
 			emailAddr.validate();
-			if (isMxRecords(email) == false)
-				return false;
+			if (isMxRecords(email))
+				return true;
 		} catch (AddressException ex) {
 			LOGGER.error("Incorrect email address");
 			return false;
 		}
-
-		return true;
+		return false;
 	}
 
 	public void sendMail(UserDto user, Template template) {
@@ -55,8 +55,12 @@ public class MailServiceImpl implements MailService {
 		MimeMessageHelper helper;
 		try {
 			helper = new MimeMessageHelper(msg, true);
-			helper.setTo(user.email);
-			helper.setReplyTo(mailSettings.getUsername());
+			if (template instanceof MailTemplate) {
+				helper.setTo(mailSettings.getUsername());
+				helper.setReplyTo(user.email);
+			} else {
+				helper.setTo(user.email);
+			}
 			helper.setSubject(template.getSubject());
 			helper.setText(template.getBoby(), true);
 			mailSender.send(msg);

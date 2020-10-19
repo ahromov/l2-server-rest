@@ -65,7 +65,7 @@ public class AccountController {
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	public void login(@Valid @RequestBody UserDto user) {
 		if (accountService.isPresent(user.login)) {
-			Account account = accountService.findByLogin(user.login);
+			Account account = accountService.getByLogin(user.login);
 			validate(user, account);
 			LOGGER.info("Logined: " + account);
 		} else
@@ -76,7 +76,7 @@ public class AccountController {
 	@ResponseStatus(HttpStatus.OK)
 	public void changePassword(@Valid @RequestBody UserDto user) {
 		if (accountService.isPresent(user.login)) {
-			Account account = accountService.findByLogin(user.login);
+			Account account = accountService.getByLogin(user.login);
 			user.password = user.oldPassword;
 			validate(user, account);
 			account.setPassword(encoderService.encodePassword(user.password));
@@ -90,7 +90,7 @@ public class AccountController {
 	@ResponseStatus(HttpStatus.OK)
 	public void rememberPassword(@Valid @RequestBody UserDto user) {
 		if (accountService.isPresent(user.login)) {
-			Account account = accountService.findByLogin(user.login);
+			Account account = accountService.getByLogin(user.login);
 			validate(user, account);
 			String newAutoGaneratedPassword = PasswordGenerator.generateRandomPassword(8);
 			account.setPassword(encoderService.encodePassword(newAutoGaneratedPassword));
@@ -106,7 +106,7 @@ public class AccountController {
 	@ResponseStatus(HttpStatus.OK)
 	public void sendMessage(@Valid @RequestBody UserDto user) {
 		if (accountService.isPresent(user.login)) {
-			Account account = accountService.findByLogin(user.login);
+			Account account = accountService.getByLogin(user.login);
 			validate(user, account);
 			user.email = account.getEmail();
 			mailService.sendMail(user, new MailTemplate(user));

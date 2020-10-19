@@ -8,7 +8,7 @@ public interface AccountService {
 
 	boolean isPresent(String login);
 
-	Account findByLogin(String login);
+	Account getByLogin(String login);
 
 	Account update(Account account);
 

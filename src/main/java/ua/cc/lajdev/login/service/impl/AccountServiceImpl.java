@@ -28,7 +28,7 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public Account findByLogin(String login) {
+	public Account getByLogin(String login) {
 		return repository.findByLogin(login);
 	}
 

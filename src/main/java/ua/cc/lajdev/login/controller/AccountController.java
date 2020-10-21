@@ -55,7 +55,7 @@ public class AccountController {
 		if (!accountService.isPresent(user.login)) {
 			validate(user, null);
 			Account account = accountService.create(user.toAccount(encoderService.encodePassword(user.password)));
-			mailService.sendMail(user, new MailAccountTemplate(user));
+			mailService.sendMail(account, new MailAccountTemplate(user));
 			LOGGER.info("Created new: " + account);
 		} else
 			throw new AccountExistsException();
@@ -83,7 +83,7 @@ public class AccountController {
 			accountService.update(account);
 			user.password = user.newPassword;
 			user.email = account.getEmail();
-			mailService.sendMail(user, new MailPasswordTemplate(user));
+			mailService.sendMail(account, new MailPasswordTemplate(user));
 			LOGGER.warn("Password changed: " + account);
 		} else
 			throw new AccountNotFoundException();
@@ -99,7 +99,7 @@ public class AccountController {
 			account.setPassword(encoderService.encodePassword(newAutoGaneratedPassword));
 			user.password = newAutoGaneratedPassword;
 			accountService.update(account);
-			mailService.sendMail(user, new MailPasswordTemplate(user));
+			mailService.sendMail(account, new MailPasswordTemplate(user));
 			LOGGER.info("Password restored: " + account);
 		} else
 			throw new AccountNotFoundException();
@@ -112,7 +112,7 @@ public class AccountController {
 			Account account = accountService.getByLogin(user.login);
 			validate(user, account);
 			user.email = account.getEmail();
-			mailService.sendMail(user, new MailTemplate(user));
+			mailService.sendMail(account, new MailTemplate(user));
 			LOGGER.info("Sended mail from: " + account);
 		} else
 			throw new AccountNotFoundException();

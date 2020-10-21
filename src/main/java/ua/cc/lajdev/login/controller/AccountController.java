@@ -98,7 +98,7 @@ public class AccountController {
 
 	@PostMapping("/restorePass")
 	@ResponseStatus(HttpStatus.OK)
-	public void rememberPassword(@Valid @RequestBody UserDto user) {
+	public void restorePassword(@Valid @RequestBody UserDto user) {
 		try {
 			Account account = accountService.findByLogin(user.login);
 			validate(user, account);
@@ -128,7 +128,7 @@ public class AccountController {
 	}
 
 	@GetMapping("/count/all")
-	public Integer countAccounts() {
+	public Integer countAllAccounts() {
 		return accountService.countNoGmAccounts();
 	}
 

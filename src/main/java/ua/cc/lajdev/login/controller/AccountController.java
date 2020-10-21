@@ -1,5 +1,7 @@
 package ua.cc.lajdev.login.controller;
 
+import java.util.NoSuchElementException;
+
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -52,31 +54,35 @@ public class AccountController {
 	@PostMapping("/create")
 	@ResponseStatus(HttpStatus.CREATED)
 	public void registration(@Valid @RequestBody UserDto user) {
-		if (!accountService.isPresent(user.login)) {
+		Account account = null;
+		try {
+			account = accountService.findByLogin(user.login);
+			throw new AccountExistsException();
+		} catch (NoSuchElementException e) {
 			validate(user, null);
-			Account account = accountService.create(user.toAccount(encoderService.encodePassword(user.password)));
+			account = accountService.create(user.toAccount(encoderService.encodePassword(user.password)));
 			mailService.sendMail(account, new MailAccountTemplate(user));
 			LOGGER.info("Created new: " + account);
-		} else
-			throw new AccountExistsException();
+		}
 	}
 
 	@PostMapping(path = "/login")
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	public void login(@Valid @RequestBody UserDto user) {
-		if (accountService.isPresent(user.login)) {
-			Account account = accountService.getByLogin(user.login);
+		try {
+			Account account = accountService.findByLogin(user.login);
 			validate(user, account);
 			LOGGER.info("Logined: " + account);
-		} else
+		} catch (NoSuchElementException e) {
 			throw new AccountNotFoundException();
+		}
 	}
 
 	@PostMapping("/changePass")
 	@ResponseStatus(HttpStatus.OK)
 	public void changePassword(@Valid @RequestBody UserDto user) {
-		if (accountService.isPresent(user.login)) {
-			Account account = accountService.getByLogin(user.login);
+		try {
+			Account account = accountService.findByLogin(user.login);
 			user.password = user.oldPassword;
 			validate(user, account);
 			account.setPassword(encoderService.encodePassword(user.newPassword));
@@ -85,15 +91,16 @@ public class AccountController {
 			user.email = account.getEmail();
 			mailService.sendMail(account, new MailPasswordTemplate(user));
 			LOGGER.warn("Password changed: " + account);
-		} else
+		} catch (NoSuchElementException e) {
 			throw new AccountNotFoundException();
+		}
 	}
 
 	@PostMapping("/restorePass")
 	@ResponseStatus(HttpStatus.OK)
 	public void rememberPassword(@Valid @RequestBody UserDto user) {
-		if (accountService.isPresent(user.login)) {
-			Account account = accountService.getByLogin(user.login);
+		try {
+			Account account = accountService.findByLogin(user.login);
 			validate(user, account);
 			String newAutoGaneratedPassword = PasswordGenerator.generateRandomPassword(8);
 			account.setPassword(encoderService.encodePassword(newAutoGaneratedPassword));
@@ -101,21 +108,23 @@ public class AccountController {
 			accountService.update(account);
 			mailService.sendMail(account, new MailPasswordTemplate(user));
 			LOGGER.info("Password restored: " + account);
-		} else
+		} catch (NoSuchElementException e) {
 			throw new AccountNotFoundException();
+		}
 	}
 
 	@PostMapping("/sendMess")
 	@ResponseStatus(HttpStatus.OK)
 	public void sendMessage(@Valid @RequestBody UserDto user) {
-		if (accountService.isPresent(user.login)) {
-			Account account = accountService.getByLogin(user.login);
+		try {
+			Account account = accountService.findByLogin(user.login);
 			validate(user, account);
 			user.email = account.getEmail();
 			mailService.sendMail(account, new MailTemplate(user));
 			LOGGER.info("Sended mail from: " + account);
-		} else
+		} catch (NoSuchElementException e) {
 			throw new AccountNotFoundException();
+		}
 	}
 
 	@GetMapping("/count/all")

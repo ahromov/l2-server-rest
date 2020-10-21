@@ -1,12 +1,12 @@
 package ua.cc.lajdev.login.service;
 
-import ua.cc.lajdev.login.dto.user.UserDto;
+import ua.cc.lajdev.login.model.Account;
 import ua.cc.lajdev.login.service.impl.mail.Template;
 
 public interface MailService {
 
 	boolean isCorrectDomainEmailAddress(String email);
 
-	void sendMail(UserDto user, Template template);
+	void sendMail(Account account, Template template);
 
 }

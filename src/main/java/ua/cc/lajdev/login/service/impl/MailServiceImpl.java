@@ -15,7 +15,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import ua.cc.lajdev.login.dto.user.UserDto;
+import ua.cc.lajdev.login.model.Account;
 import ua.cc.lajdev.login.model.MailSettings;
 import ua.cc.lajdev.login.service.MailService;
 import ua.cc.lajdev.login.service.impl.mail.MailTemplate;
@@ -41,16 +41,16 @@ public class MailServiceImpl implements MailService {
 		return false;
 	}
 
-	public void sendMail(UserDto user, Template template) {
+	public void sendMail(Account account, Template template) {
 		MimeMessage msg = mailSender.createMimeMessage();
 		MimeMessageHelper helper;
 		try {
 			helper = new MimeMessageHelper(msg, true);
 			if (template instanceof MailTemplate) {
 				helper.setTo(mailSettings.getUsername());
-				helper.setReplyTo(user.email);
+				helper.setReplyTo(account.getEmail());
 			} else {
-				helper.setTo(user.email);
+				helper.setTo(account.getEmail());
 			}
 			helper.setSubject(template.getSubject());
 			helper.setText(template.getBoby(), true);

@@ -23,23 +23,13 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
-	public boolean isPresent(String login) {
-		return repository.existsById(login);
-	}
-
-	@Override
-	public Account getByLogin(String login) {
-		return repository.findByLogin(login);
+	public Account findByLogin(String login) {
+		return repository.findById(login).get();
 	}
 
 	@Override
 	public Account update(Account account) {
 		return repository.saveAndFlush(account);
-	}
-
-	@Override
-	public Account findByEmail(String email) {
-		return repository.findByEmail(email);
 	}
 
 	@Override

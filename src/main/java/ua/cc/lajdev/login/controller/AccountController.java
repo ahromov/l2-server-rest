@@ -54,13 +54,12 @@ public class AccountController {
 	@PostMapping("/create")
 	@ResponseStatus(HttpStatus.CREATED)
 	public void registration(@Valid @RequestBody UserDto user) {
-		Account account = null;
 		try {
-			account = accountService.findByLogin(user.login);
+			accountService.findByLogin(user.login);
 			throw new AccountExistsException();
 		} catch (NoSuchElementException e) {
 			validate(user, null);
-			account = accountService.create(user.toAccount(encoderService.encodePassword(user.password)));
+			Account account = accountService.create(user.toAccount(encoderService.encodePassword(user.password)));
 			mailService.sendMail(account, new MailAccountTemplate(user));
 			LOGGER.info("Created new: " + account);
 		}

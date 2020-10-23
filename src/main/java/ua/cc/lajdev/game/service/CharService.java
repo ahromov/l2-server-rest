@@ -6,7 +6,7 @@ import ua.cc.lajdev.game.model.PlayersChar;
 
 public interface CharService {
 
-	public Integer getOnlineNoGm();
+	public Integer getOnlineNoGmPlayers();
 
 	public Long countAll();
 

@@ -1,22 +1,30 @@
 package ua.cc.lajdev.game.controller;
 
+import java.io.IOException;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import ua.cc.lajdev.game.dto.StatusDto;
+import ua.cc.lajdev.game.controller.exception.ServerUnreachException;
 import ua.cc.lajdev.game.service.CharService;
 import ua.cc.lajdev.game.service.RatesService;
 import ua.cc.lajdev.game.service.ServerStatusService;
+import ua.cc.lajdev.game.service.impl.ServerStatusServiceImpl;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("gs")
 public class GameServerController {
+
+	private static Logger LOGGER = LoggerFactory.getLogger(ServerStatusServiceImpl.class);
 
 	private final ServerStatusService statusService;
 	private final CharService characterService;
@@ -30,16 +38,16 @@ public class GameServerController {
 		this.rateService = rateService;
 	}
 
-	@GetMapping("/get/status")
-	public StatusDto getServerStatus() {
-		StatusDto status = new StatusDto();
-		if (statusService.checkStatus()) {
-			status.setStatus("ON");
-			status.setOnlineCounter(characterService.getOnlineNoGm());
-			return status;
+	@GetMapping("/status")
+	@ResponseStatus(code = HttpStatus.OK)
+	public Integer checkServerStatus() {
+		try {
+			statusService.checkStatus();
+			return characterService.getOnlineNoGmPlayers();
+		} catch (IOException e) {
+			LOGGER.error("Game server unreach ...");
+			throw new ServerUnreachException();
 		}
-		status.setStatus("OFF");
-		return status;
 	}
 
 	@GetMapping("/get/rates")

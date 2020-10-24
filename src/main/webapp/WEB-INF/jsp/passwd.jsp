@@ -23,25 +23,30 @@
 					<h3>Change password</h3>
 
 					<form id="changePassword" name="changePassword">
-						<label>Login: </label><input id="username" type="text"
-							name="username" required /> <br> <label>New
-							password: </label><input id="newPassword" type="password"
-							name="newPassword" required /> <br> <label>Repeat
-							password: </label><input id="secondNewPassword" type="password"
-							name="secondNewPassword" required /> <br>
-						<button class="button green" type="submit">Change</button>
+						<label>Login: <input id="username" type="text"
+							name="username" required /></label> <br> <label>Old
+							password:<input id="password" type="password" name="password"
+							required /> <br>
+						</label> New password: <input id="newPassword" type="password"
+							name="newPassword" required /></label> <br> <label>Repeat
+							password:<input id="newRepeatedPassword" type="password"
+							name="newRepeatedPassword" required />
+						</label> <br>
+						<button class="button green" type="button">Change</button>
 						<a href="/home">Back to home</a>
 					</form>
 
 					<div>
-						<div id="newsUploadError"></div>
-						<div id="newsUploadSuccess"></div>
+						<div class="responseStatus" id="newsUploadError"></div>
+						<div class="responseStatus" id="newsUploadSuccess"></div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script src="js/passwd.js"></script>
 </body>
 </html>

@@ -1,7 +1,5 @@
 package ua.cc.lajdev.login.controller;
 
-import java.util.NoSuchElementException;
-
 import javax.validation.Valid;
 
 import org.slf4j.Logger;

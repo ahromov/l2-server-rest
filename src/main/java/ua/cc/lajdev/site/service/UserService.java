@@ -5,6 +5,8 @@ import ua.cc.lajdev.site.model.User;
 
 public interface UserService {
 
+	boolean isExistsByUserName(String username);
+
 	User findByEmail(String email);
 
 	User findByUserName(UserDto user);

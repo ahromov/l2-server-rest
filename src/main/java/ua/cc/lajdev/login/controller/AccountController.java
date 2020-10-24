@@ -59,72 +59,55 @@ public class AccountController {
 	@PostMapping("/create")
 	@ResponseStatus(HttpStatus.CREATED)
 	public void registration(@Valid @RequestBody RegistrationDto user) {
-		try {
-			accountService.findByLogin(user.login);
-			throw new AccountExistsException();
-		} catch (NoSuchElementException e) {
-			validate(user, null);
-			Account account = accountService.create(user.toAccount(encoderService.encodePassword(user.password)));
-			mailService.sendMail(account, new MailAccountTemplate(user));
-		}
+		validate(user, null);
+		Account account = accountService.create(user.toAccount(encoderService.encodePassword(user.password)));
+		mailService.sendMail(account, new MailAccountTemplate(user));
 	}
 
 	@PostMapping(path = "/login")
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	public void login(@Valid @RequestBody LoginDto user) {
-		try {
-			Account account = accountService.findByLogin(user.login);
-			validate(user, account);
-			LOGGER.info("Logined: " + account);
-		} catch (NoSuchElementException e) {
-			throw new AccountNotFoundException();
-		}
+		validate(user, null);
+		Account account = accountService.findByLogin(user.login);
+		validate(user, account);
+		LOGGER.info("Logined: " + account);
 	}
 
 	@PostMapping("/changePass")
 	@ResponseStatus(HttpStatus.OK)
 	public void changePassword(@Valid @RequestBody ChangePasswordDto user) {
-		try {
-			Account account = accountService.findByLogin(user.login);
-			validate(user, account);
-			account.setPassword(user.newPassword);
-			mailService.sendMail(account, new MailPasswordTemplate(account));
-			account.setPassword(encoderService.encodePassword(user.newPassword));
-			accountService.update(account);
-			LOGGER.warn("Password changed: " + account);
-		} catch (NoSuchElementException e) {
-			throw new AccountNotFoundException();
-		}
+		validate(user, null);
+		Account account = accountService.findByLogin(user.login);
+		validate(user, account);
+		account.setPassword(user.newPassword);
+		mailService.sendMail(account, new MailPasswordTemplate(account));
+		account.setPassword(encoderService.encodePassword(user.newPassword));
+		accountService.update(account);
+		LOGGER.warn("Password changed: " + account);
 	}
 
 	@PostMapping("/restorePass")
 	@ResponseStatus(HttpStatus.OK)
 	public void restorePassword(@Valid @RequestBody RestorePasswordDto user) {
-		try {
-			Account account = accountService.findByLogin(user.login);
-			validate(user, account);
-			String newAutoGaneratedPassword = PasswordGenerator.generateRandomPassword(8);
-			account.setPassword(newAutoGaneratedPassword);
-			mailService.sendMail(account, new MailPasswordTemplate(account));
-			account.setPassword(encoderService.encodePassword(newAutoGaneratedPassword));
-			accountService.update(account);
-			LOGGER.info("Password restored: " + account);
-		} catch (NoSuchElementException e) {
-			throw new AccountNotFoundException();
-		}
+		validate(user, null);
+		Account account = accountService.findByLogin(user.login);
+		validate(user, account);
+		String newAutoGaneratedPassword = PasswordGenerator.generateRandomPassword(8);
+		account.setPassword(newAutoGaneratedPassword);
+		mailService.sendMail(account, new MailPasswordTemplate(account));
+		account.setPassword(encoderService.encodePassword(newAutoGaneratedPassword));
+		accountService.update(account);
+		LOGGER.info("Password restored: " + account);
 	}
 
 	@PostMapping("/sendMess")
 	@ResponseStatus(HttpStatus.OK)
 	public void sendMessage(@Valid @RequestBody MessageDto user) {
-		try {
-			Account account = accountService.findByLogin(user.login);
-			validate(user, account);
-			mailService.sendMail(account, new MailTemplate(user));
-			LOGGER.info("Sended mail from: " + account);
-		} catch (NoSuchElementException e) {
-			throw new AccountNotFoundException();
-		}
+		validate(user, null);
+		Account account = accountService.findByLogin(user.login);
+		validate(user, account);
+		mailService.sendMail(account, new MailTemplate(user));
+		LOGGER.info("Sended mail from: " + account);
 	}
 
 	@GetMapping("/count/all")
@@ -133,16 +116,24 @@ public class AccountController {
 	}
 
 	private <T extends UserDto> void validate(T user, Account account) {
+		if ((user instanceof LoginDto || user instanceof ChangePasswordDto || user instanceof RestorePasswordDto
+				|| user instanceof MessageDto) && !accountService.isExistsByLogin(user.login))
+			throw new AccountNotFoundException();
+		if (user instanceof RegistrationDto && accountService.isExistsByLogin(user.login))
+			throw new AccountExistsException();
 		if (user instanceof RegistrationDto && account == null
 				&& !((RegistrationDto) user).password.equals(((RegistrationDto) user).repeatedPassword))
 			throw new PasswordsNotMatchException();
 		if (user instanceof RegistrationDto && account == null
 				&& !mailService.isCorrectDomainEmailAddress(((RegistrationDto) user).email))
 			throw new IncorrectEmailException();
-		if (user instanceof LoginDto
+		if (user instanceof LoginDto && account != null
 				&& !encoderService.encodePassword(((LoginDto) user).password).equals(account.getPassword()))
 			throw new IncorrectPasswordException();
-		if (user instanceof ChangePasswordDto
+		if (user instanceof ChangePasswordDto && account != null
+				&& !encoderService.encodePassword(((ChangePasswordDto) user).password).equals(account.getPassword()))
+			throw new IncorrectPasswordException();
+		if (user instanceof ChangePasswordDto && account != null
 				&& !((ChangePasswordDto) user).newPassword.equals(((ChangePasswordDto) user).newRepeatedPassword))
 			throw new NewPasswordsNotMatchException();
 		if (user instanceof RestorePasswordDto && account != null

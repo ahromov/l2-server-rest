@@ -37,4 +37,9 @@ public class AccountServiceImpl implements AccountService {
 		return repository.countNoGmAccounts();
 	}
 
+	@Override
+	public Account findByEmail(String email) {
+		return repository.findByEmail(email);
+	}
+
 }

@@ -1,31 +1,41 @@
-var passwdForm = document.querySelector('#changePassword');
-var uploadError = document.querySelector('#newsUploadError');
-var uploadSuccess = document.querySelector('#newsUploadSuccess');
-
-function changePasswd() {
-	let formData = new FormData(passwdForm);
-
-	let xhr = new XMLHttpRequest();
-	xhr.open("POST", "/cabinet/password/change");
-	xhr.send(formData);
-	xhr.onload = function () {
-		var response = xhr.responseText;
-
-		if (xhr.status == '200') {
-			passwdForm.style.display = "none";
-			uploadError.style.display = "none";
-			uploadSuccess.innerHTML = `<p>${response}</p><br><a href="/home">Back to home</a>`;
-			uploadSuccess.style.display = "block";
-		} else {
-			uploadSuccess.style.display = "none";
-			uploadError.innerHTML = (response && response.status)
-				|| "Some Error Occurred";
-		}
-	}
+async function send(method, url, data) {
+	return await fetch(url, {
+		method: method,
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(data)
+	});
 }
 
-passwdForm.addEventListener('submit', function (event) {
-	changePasswd();
+$(document).on('click', "button.button", function() {
+	let login = $("#username").val();
+	let password = $("#password").val();
+	let newPassword = $("#newPassword").val();
+	let newRepeatedPassword = $("#newRepeatedPassword").val();
 
-	event.preventDefault();
-}, true);
+	var userData = {
+		login: login,
+		password: password,
+		newPassword: newPassword,
+		newRepeatedPassword: newRepeatedPassword
+	};
+
+	let prom = send('POST', '/cabinet/changePass', userData);
+	prom.then(response => {
+		if (response.status == 200) {
+			resetFormAndHideStatus();
+			$("#newsUploadSuccess").html(`<p>${response.status}</p><br><a href="/home">Back to home</a>`).css('display', 'block').css('color', 'green');
+		} else {
+			prom.then(response => response.json()).then(data => {
+				resetFormAndHideStatus();
+				$("#newsUploadError").html(`<p>${data.status}</p><br><a href="/home">Back to home</a>`).css('display', 'block').css('color', 'red');
+			})
+		}
+	});
+
+	function resetFormAndHideStatus() {
+		$('form').trigger('reset');
+		$('.responseStatus').css('display', 'none');
+	}
+})

@@ -12,4 +12,6 @@ public interface AccountService {
 
 	Integer countNoGmAccounts();
 
+	Account findByEmail(String email);
+
 }

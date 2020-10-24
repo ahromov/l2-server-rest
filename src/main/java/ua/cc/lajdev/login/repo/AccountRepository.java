@@ -9,6 +9,8 @@ import ua.cc.lajdev.login.model.Account;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, String> {
 
+	Account findByEmail(String email);
+
 	@Query("select count(a) from Account a")
 	Integer countNoGmAccounts();
 

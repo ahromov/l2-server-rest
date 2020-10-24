@@ -23,7 +23,7 @@ public class CharServiceImpl implements CharService {
 	}
 
 	@Override
-	public Integer getOnlineNoGm() {
+	public Integer getOnlineNoGmPlayers() {
 		return repository.countOnlineNoGmChars();
 	}
 

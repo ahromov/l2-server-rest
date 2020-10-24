@@ -1,7 +1,9 @@
 package ua.cc.lajdev.game.service;
 
+import java.io.IOException;
+
 public interface ServerStatusService {
 
-	boolean checkStatus();
+	void checkStatus() throws IOException;
 
 }

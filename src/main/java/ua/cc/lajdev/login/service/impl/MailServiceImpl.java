@@ -18,8 +18,10 @@ import org.springframework.stereotype.Service;
 import ua.cc.lajdev.login.model.Account;
 import ua.cc.lajdev.login.model.MailSettings;
 import ua.cc.lajdev.login.service.MailService;
+import ua.cc.lajdev.login.service.impl.mail.MailPasswordTemplate;
 import ua.cc.lajdev.login.service.impl.mail.MailTemplate;
 import ua.cc.lajdev.login.service.impl.mail.Template;
+import ua.cc.lajdev.site.model.User;
 
 @Service
 public class MailServiceImpl implements MailService {
@@ -55,9 +57,22 @@ public class MailServiceImpl implements MailService {
 			helper.setSubject(template.getSubject());
 			helper.setText(template.getBoby(), true);
 			mailSender.send(msg);
-		} catch (MessagingException e) {
+		} catch (MessagingException | MailException e) {
 			LOGGER.error(e.getMessage());
-		} catch (MailException e) {
+		}
+	}
+
+	@Override
+	public void sendMail(User account, MailPasswordTemplate template) {
+		MimeMessage msg = mailSender.createMimeMessage();
+		MimeMessageHelper helper;
+		try {
+			helper = new MimeMessageHelper(msg, true);
+			helper.setTo(account.getEmail());
+			helper.setSubject(template.getSubject());
+			helper.setText(template.getBoby(), true);
+			mailSender.send(msg);
+		} catch (MessagingException | MailException e) {
 			LOGGER.error(e.getMessage());
 		}
 	}

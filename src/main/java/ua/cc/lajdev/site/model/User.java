@@ -15,10 +15,6 @@ import org.springframework.context.annotation.Scope;
 public class User {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
-	private Long id;
-
 	@Column(name = "username")
 	private String userName;
 
@@ -35,19 +31,10 @@ public class User {
 	}
 
 	public User(User user) {
-		this.id = user.id;
 		this.userName = user.userName;
 		this.email = user.email;
 		this.password = user.password;
 		this.enabled = user.enabled;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long userId) {
-		this.id = userId;
 	}
 
 	public String getUserName() {
@@ -88,7 +75,6 @@ public class User {
 		int result = 1;
 		result = prime * result + ((email == null) ? 0 : email.hashCode());
 		result = prime * result + enabled;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((password == null) ? 0 : password.hashCode());
 		result = prime * result + ((userName == null) ? 0 : userName.hashCode());
 		return result;
@@ -110,11 +96,6 @@ public class User {
 			return false;
 		if (enabled != other.enabled)
 			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
 		if (password == null) {
 			if (other.password != null)
 				return false;
@@ -130,8 +111,8 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", userName=" + userName + ", password=" + password + ", email=" + email
-				+ ", enabled=" + enabled + "]";
+		return "User [userName=" + userName + ", password=" + password + ", email=" + email + ", enabled=" + enabled
+				+ "]";
 	}
 
 }

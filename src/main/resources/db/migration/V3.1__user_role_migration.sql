@@ -7,4 +7,4 @@ CREATE TABLE IF NOT EXISTS user_roles (
 );
 
 INSERT INTO user_roles (id, role, userid) VALUES
-	(1, 'ROLE_ADMIN', '1');
+	(1, 'ROLE_ADMIN', 'admin');

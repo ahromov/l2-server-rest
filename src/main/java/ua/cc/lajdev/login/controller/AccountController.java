@@ -2,7 +2,6 @@ package ua.cc.lajdev.login.controller;
 
 import java.util.NoSuchElementException;
 
-import javax.persistence.NonUniqueResultException;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -22,7 +21,6 @@ import ua.cc.lajdev.common.controller.exceptions.AccountNotFoundException;
 import ua.cc.lajdev.common.controller.exceptions.IncorrectEmailException;
 import ua.cc.lajdev.common.controller.exceptions.IncorrectPasswordException;
 import ua.cc.lajdev.common.controller.exceptions.NewPasswordsNotMatchException;
-import ua.cc.lajdev.common.controller.exceptions.NonUniqueEmailException;
 import ua.cc.lajdev.common.controller.exceptions.PasswordsNotMatchException;
 import ua.cc.lajdev.common.dto.user.ChangePasswordDto;
 import ua.cc.lajdev.common.dto.user.LoginDto;

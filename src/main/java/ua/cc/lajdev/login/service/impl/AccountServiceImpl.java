@@ -18,6 +18,11 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
+	public boolean isExistsByLogin(String login) {
+		return repository.existsById(login);
+	}
+
+	@Override
 	public Account create(Account account) {
 		return repository.saveAndFlush(account);
 	}

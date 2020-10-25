@@ -33,11 +33,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/hello", "/passwd").access("hasRole('ROLE_ADMIN')").anyRequest()
-				.permitAll().and().formLogin().loginPage("/login").loginProcessingUrl("/j_spring_security_check")
-				.usernameParameter("j_username").passwordParameter("j_password").and().logout()
-				.logoutSuccessUrl("/login?logout").and().exceptionHandling().accessDeniedPage("/403").and().csrf()
-				.disable();
+		http.authorizeRequests().antMatchers("/hello", "/passwd", "/news/add").access("hasRole('ROLE_ADMIN')")
+				.anyRequest().permitAll().and().formLogin().loginPage("/login")
+				.loginProcessingUrl("/j_spring_security_check").usernameParameter("j_username")
+				.passwordParameter("j_password").and().logout().logoutSuccessUrl("/login?logout").and()
+				.exceptionHandling().accessDeniedPage("/403").and().csrf().disable();
 	}
 
 	@Bean(name = "passwordEncoder")

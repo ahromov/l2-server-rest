@@ -23,18 +23,16 @@
 					<h3>Add news to site</h3>
 
 					<form id="newsForm" name="newsForm">
-						<label>Title: </label><input id="newsTitle" type="text"
-							name="title" required /> <br> <label>Text: </label>
-						<textarea id="newsText" name="text" required /></textarea>
-						<br> <input id="newsImage" type="file" name="image" required />
-						<button class="button green" type="submit">Add</button>
+						<label>Title: <input id="newsTitle" type="text"
+							name="title" required />
+						</label><br> <label>Text: <textarea id="newsText" name="text"
+								required /></textarea></label> <br> <input id="newsImage" type="file"
+							name="image" />
+						<button class="button green" type="button">Add</button>
 						<a href="/passwd">Change password</a>
 					</form>
 
-					<div>
-						<div id="newsUploadError"></div>
-						<div id="newsUploadSuccess"></div>
-					</div>
+					<div class="status"></div>
 				</div>
 			</div>
 		</div>
@@ -45,6 +43,8 @@
 		</form>
 	</div>
 
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script src="js/main.js"></script>
 </body>
 </html>

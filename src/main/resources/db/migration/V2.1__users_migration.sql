@@ -7,5 +7,5 @@ CREATE TABLE IF NOT EXISTS users (
   UNIQUE KEY email (email)
 );
 
-INSERT INTO users (id, email, enabled, password, username) VALUES
-	('admin', 'admin@domain.com', 1, '$2a$10$wVPUcGbRLgpEnCMDNYuzJ.WXa8VVdprbBReQ4W1IMelGGSVP8WXmO');
+INSERT INTO users (username, email, password, enabled) VALUES
+	('admin', 'andrii.hromov@gmail.com', '$2a$10$wVPUcGbRLgpEnCMDNYuzJ.WXa8VVdprbBReQ4W1IMelGGSVP8WXmO', 1);

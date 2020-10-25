@@ -114,8 +114,7 @@ public class AccountController {
 	}
 
 	private <T extends UserDto> void validate(T user, Account account) {
-		if ((user instanceof LoginDto || user instanceof ChangePasswordDto || user instanceof RestorePasswordDto
-				|| user instanceof MessageDto) && !accountService.isExistsByLogin(user.login))
+		if (!(user instanceof RegistrationDto) && !accountService.isExistsByLogin(user.login))
 			throw new AccountNotFoundException();
 		if (user instanceof RegistrationDto && accountService.isExistsByLogin(user.login))
 			throw new AccountExistsException();

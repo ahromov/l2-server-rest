@@ -13,8 +13,8 @@
 <body class="security-app">
 
 
-	<form name='f' action="<c:url value='/j_spring_security_check' />" method='POST'>
-
+	<form name='f' action="<c:url value='/j_spring_security_check' />"
+		method='POST'>
 		<div class="lc-block">
 			<div>
 				<input type="text" class="style-4" name="j_username"

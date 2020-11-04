@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -71,7 +72,7 @@ public class AccountController {
 		LOGGER.info("Logined: " + account);
 	}
 
-	@PostMapping("/changePass")
+	@PutMapping("/changePass")
 	@ResponseStatus(HttpStatus.OK)
 	public void changePassword(@Valid @RequestBody ChangePasswordDto user) {
 		validate(user, null);
@@ -84,7 +85,7 @@ public class AccountController {
 		LOGGER.warn("Password changed: " + account);
 	}
 
-	@PostMapping("/restorePass")
+	@PutMapping("/restorePass")
 	@ResponseStatus(HttpStatus.OK)
 	public void restorePassword(@Valid @RequestBody RestorePasswordDto user) {
 		validate(user, null);

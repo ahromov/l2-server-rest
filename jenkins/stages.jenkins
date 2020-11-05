@@ -18,5 +18,6 @@ pipeline {
                 sh /home/andrew/l2rest_deploy                
             }
         }
+        
     }    
 }

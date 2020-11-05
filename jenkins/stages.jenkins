@@ -15,9 +15,8 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh /home/andrew/l2rest_deploy                
+                sh '/home/andrew/l2rest_deploy'               
             }
-        }
-        
+        }        
     }    
 }

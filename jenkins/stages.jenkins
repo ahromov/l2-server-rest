@@ -14,9 +14,8 @@ pipeline {
             }
         }
         stage('Deploy') {
-            steps {
-                sh 'su - root'
-                sh './l2rest_deploy'               
+            steps {                
+                sh 'sudo /root/l2rest_deploy'               
             }
         }        
     }    

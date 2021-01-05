@@ -30,7 +30,7 @@ status_cmd="goprogram_status"
 goprogram_start() {
 	echo "${name} starting ..."
 	cd ${folder}
-	./RestServer_loop.sh ${goprogram_user} ${goprogram_pidfile} 
+	./RestServer_loop.sh ${goprogram_user} ${goprogram_pidfile}
 }
 
 goprogram_stop() {

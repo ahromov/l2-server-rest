@@ -10,6 +10,6 @@ pidfile=$2
 # let pid=$!+1
 
 # echo ${pid} > ${pidfile}
-cat ${pidfile}
+# cat ${pidfile}
 
 

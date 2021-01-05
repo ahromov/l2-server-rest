@@ -2,6 +2,7 @@ package ua.cc.lajdev;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
@@ -9,7 +10,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 public class L2ServerRestApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(L2ServerRestApplication.class, args);
+		SpringApplication springApplication = new SpringApplication(L2ServerRestApplication.class);
+		springApplication.addListeners(new ApplicationPidFileWriter());
+		springApplication.run(args);
+
+//		SpringApplication.run(L2ServerRestApplication.class, args);
 	}
 
 }

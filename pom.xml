@@ -12,7 +12,7 @@
 	<groupId>ua.cc.lajdev</groupId>
 	<artifactId>l2-server-rest</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>L2 server rest services</name>
 	<description>Rest services for L2 game, login servers, site and forum</description>
 
@@ -87,76 +87,24 @@
 			<artifactId>h2</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.flywaydb</groupId>
-				<artifactId>flyway-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>l2site</id>
-						<phase>install</phase>
-						<goals>
-							<goal>migrate</goal>
-						</goals>
-						<configuration>
-							<url>jdbc:mysql://127.0.0.1:3306/?serverTimezone=Europe/Kiev</url>
-							<user>root</user>
-							<password>toor</password>
-							<schemas>
-								<schema>l2site</schema>
-							</schemas>
-							<baselineOnMigrate>true</baselineOnMigrate>
-							<dependencies>
-								<dependency>
-									<groupId>mysql</groupId>
-									<artifactId>mysql-connector-java</artifactId>
-									<version>8.0.16</version>
-								</dependency>
-							</dependencies>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>install</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<finalName>${project.artifactId}-${project.version}</finalName>
-							<appendAssemblyId>false</appendAssemblyId>
-							<descriptors>
-								<descriptor>src/main/assembly/zip.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<finalName>l2rest</finalName>
-				</configuration>
 			</plugin>
 		</plugins>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-				<excludes>
-					<exclude>db/**</exclude>
-				</excludes>
-			</resource>
-		</resources>
 	</build>
 </project>

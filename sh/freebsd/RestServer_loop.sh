@@ -7,6 +7,7 @@ pidfile=$2
 #/usr/local/openjdk14/bin/java -Xms128m -Xmx1g -jar l2rest.war --spring.config.location=application.properties &
 # /usr/sbin/daemon -f -u ${user} -o /usr/home/andrew/l2-server-rest/log/app.log /usr/local/openjdk14/bin/java -Xms128m -Xmx1g -jar l2rest.war --spring.config.location=application.properties &
 /usr/sbin/daemon -f -u ${user} -o /usr/home/${user}/l2-server-rest/log/app.log /usr/local/openjdk14/bin/java -Xms128m -Xmx1g -jar l2-server-rest-0.0.1-SNAPSHOT.jar
+chown -R ${user}:${user} /home/${user}/l2-server-rest
 chmod 700 /usr/home/${user}/l2-server-rest/log/app.log
 # let pid=$!+1
 

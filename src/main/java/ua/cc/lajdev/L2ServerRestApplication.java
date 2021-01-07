@@ -12,6 +12,7 @@ public class L2ServerRestApplication {
 	public static void main(String[] args) {
 		SpringApplication springApplication = new SpringApplication(L2ServerRestApplication.class);
 		springApplication.addListeners(new ApplicationPidFileWriter());
+		springApplication.setAddCommandLineProperties(false);
 		springApplication.run(args);
 
 //		SpringApplication.run(L2ServerRestApplication.class, args);
